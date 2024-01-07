@@ -1,0 +1,17 @@
+gear at 78,15 (87,16 curs vim)
+
+shows in display as having part at 77,16 (86,17)
+and 79,13 (88,14) for starting.
+
+both parts are listed as being 3 digits (correct)
+
+in the arrangement of the grid,
+
+          123           '609'
+         *
+       123              '477'
+
+debug range 77-79 row
+followed by cols 10 through 20
+
+80703636

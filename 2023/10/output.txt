@@ -1,0 +1,3 @@
+loopwalk from origin result 13727
+part one: 6864
+part two: 349

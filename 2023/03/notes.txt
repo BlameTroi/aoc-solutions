@@ -1,0 +1,17 @@
+2023 03 gear ratios
+
+this is a bit of a minesweeper type problem. or maybe the game of
+life. given a large grid, on which possible part numbers (apparently
+laid out horizontally only) must be found and summed.
+
+the catch is that a number is a part number only if it is immediately
+adjacent to a symbol. a symbol is a single character that is not a
+digit or a period.
+
+the grid is rectangular. i'll break from my tradition of linked lists
+and allocate a large array of characters to store it. to make edge
+checking easier there will be boundary rows and columns around the
+grid.
+
+
+

@@ -1,0 +1,29 @@
+input here is a duration and distance and a distance to exceed. the
+distance you can travel is based upon how long you delay starting.
+each unit of time you wait increases your velocity by 1 unit of
+distance per unit of time. if you don't wait, your velocity is 0. if
+you want until the end, the effect as if you didn't do anything.
+
+using whole numbers of units of time, how long do you need to wait to
+exceed the distance given.
+
+eg:
+
+T=7, record distance=9
+
+v and t are the same numerically so call it u
+wait      velocity       distance (v * (t-w))
+  0              0       0
+  1              1       6
+  2              2       10
+  3              3       12
+  4              4       12
+  5              5       10
+  6              6       6
+  7              7       0
+
+how many of the outcomes above exceed the old record?
+
+d = u * (u - w)
+  = u**2 - uw
+

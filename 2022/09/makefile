@@ -1,0 +1,16 @@
+# shell or sample makefile for fpc
+# see https://bytes.usc.edu/cs104/wiki/makefile/ for a quick reference
+
+solution: solution.pas
+	fpc -glw3 -Ciort -ap -Sgix -Sh- -vewnlb -Fi../../common/ solution
+
+run:
+	./solution ../../../datasets/2022/09/dataset.txt >output.txt
+
+test:
+	./solution ../../../datasets/2022/09/testone.txt >testing.txt
+	./solution ../../../datasets/2022/09/testtwo.txt >>testing.txt
+
+
+clean:
+	rm -f solution *.o output.txt testing.txt

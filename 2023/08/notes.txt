@@ -1,0 +1,20 @@
+walk the nodes, directions in the first non comment line, and they are
+circular. if exhausted, restart at the beginning.
+
+count the steps to get from AAA to ZZZ.
+
+it's not a tree.
+
+data structures
+
+node
+id
+  left id
+  right id
+
+as the ids are tags, they can be replaced or shadowed by indices, but
+there's no reason not to sort the input.
+
+testone has 7 nodes
+testtwo has 3 nodes
+dataset has 765 nodes

@@ -1,0 +1,725 @@
+
+cosmos loading...
+   1  ...#......
+   2  .......#..
+   3  #.........
+   4  ..........
+   5  ......#...
+   6  .#........
+   7  .........#
+   8  ..........
+   9  .......#..
+  10  #...#.....
+end of load
+
+galaxies in the expanded cosmos
+
+    1 {001,004}      2 {002,008}      3 {003,001}      4 {005,007}      5 {006,002}  
+    6 {007,010}      7 {009,008}      8 {010,001}      9 {010,005}  
+
+there are 9 galaxies
+after sort
+   1{001,004}
+   2{002,008}
+   3{003,001}
+   4{005,007}
+   5{006,002}
+   6{007,010}
+   7{009,008}
+   8{010,001}
+   9{010,005}
+
+load and basic parse complete
+
+
+the expanded cosmos
+  "#" = galaxy
+  "." = the void
+  "-" = no galaxies on this row
+  "|" = no galaxies on this column
+  "+" = no galaxies on this row and column
+
+   1  ..|#.|..|.
+   2  ..|..|.#|.
+   3  #.|..|..|.
+   4  --+--+--+-
+   5  ..|..|#.|.
+   6  .#|..|..|.
+   7  ..|..|..|#
+   8  --+--+--+-
+   9  ..|..|.#|.
+  10  #.|.#|..|.
+
+galaxies :
+   1 {001,004}    1,   4
+   2 {002,008}    2,   8
+   3 {003,001}    3,   1
+   4 {005,007}    5,   7
+   5 {006,002}    6,   2
+   6 {007,010}    7,  10
+   7 {009,008}    9,   8
+   8 {010,001}   10,   1
+   9 {010,005}   10,   5
+end
+
+part one...
+walking from 1 to 2
+from:to =   1   4 :    2   8
+rowdist = 1 coldist = 5 steps = 0
+from:to =   1   5 :    2   8
+rowdist = 1 coldist = 4 steps = 1
+from:to =   1   6 :    2   8
+rowdist = 1 coldist = 2 steps = 3
+from:to =   1   7 :    2   8
+rowdist = 1 coldist = 1 steps = 4
+from:to =   2   7 :    2   8
+rowdist = 0 coldist = 1 steps = 5
+final = 6
+walking from 1 to 3
+from:to =   1   4 :    3   1
+rowdist = 2 coldist = -4 steps = 0
+from:to =   1   3 :    3   1
+rowdist = 2 coldist = -3 steps = 2
+from:to =   1   2 :    3   1
+rowdist = 2 coldist = -1 steps = 3
+from:to =   2   2 :    3   1
+rowdist = 1 coldist = -1 steps = 4
+from:to =   3   2 :    3   1
+rowdist = 0 coldist = -1 steps = 5
+final = 6
+walking from 1 to 4
+from:to =   1   4 :    5   7
+rowdist = 5 coldist = 4 steps = 0
+from:to =   2   4 :    5   7
+rowdist = 4 coldist = 4 steps = 1
+from:to =   3   4 :    5   7
+rowdist = 3 coldist = 4 steps = 2
+from:to =   3   5 :    5   7
+rowdist = 3 coldist = 3 steps = 3
+from:to =   4   5 :    5   7
+rowdist = 1 coldist = 3 steps = 5
+from:to =   4   6 :    5   7
+rowdist = 1 coldist = 1 steps = 7
+from:to =   5   6 :    5   7
+rowdist = 0 coldist = 1 steps = 8
+final = 9
+walking from 1 to 5
+from:to =   1   4 :    6   2
+rowdist = 6 coldist = -3 steps = 0
+from:to =   2   4 :    6   2
+rowdist = 5 coldist = -3 steps = 1
+from:to =   3   4 :    6   2
+rowdist = 4 coldist = -3 steps = 2
+from:to =   4   4 :    6   2
+rowdist = 2 coldist = -3 steps = 4
+from:to =   4   3 :    6   2
+rowdist = 2 coldist = -2 steps = 6
+from:to =   5   3 :    6   2
+rowdist = 1 coldist = -2 steps = 7
+from:to =   5   2 :    6   2
+rowdist = 1 coldist = 0 steps = 8
+final = 9
+walking from 1 to 6
+from:to =   1   4 :    7  10
+rowdist = 7 coldist = 8 steps = 0
+from:to =   1   5 :    7  10
+rowdist = 7 coldist = 7 steps = 1
+from:to =   2   5 :    7  10
+rowdist = 6 coldist = 7 steps = 2
+from:to =   2   6 :    7  10
+rowdist = 6 coldist = 5 steps = 4
+from:to =   3   6 :    7  10
+rowdist = 5 coldist = 5 steps = 5
+from:to =   4   6 :    7  10
+rowdist = 3 coldist = 5 steps = 7
+from:to =   4   7 :    7  10
+rowdist = 3 coldist = 4 steps = 8
+from:to =   4   8 :    7  10
+rowdist = 3 coldist = 3 steps = 9
+from:to =   5   8 :    7  10
+rowdist = 2 coldist = 3 steps = 10
+from:to =   5   9 :    7  10
+rowdist = 2 coldist = 1 steps = 12
+from:to =   6   9 :    7  10
+rowdist = 1 coldist = 1 steps = 13
+from:to =   7   9 :    7  10
+rowdist = 0 coldist = 1 steps = 14
+final = 15
+walking from 1 to 7
+from:to =   1   4 :    9   8
+rowdist = 10 coldist = 5 steps = 0
+from:to =   2   4 :    9   8
+rowdist = 9 coldist = 5 steps = 1
+from:to =   3   4 :    9   8
+rowdist = 8 coldist = 5 steps = 2
+from:to =   4   4 :    9   8
+rowdist = 6 coldist = 5 steps = 4
+from:to =   5   4 :    9   8
+rowdist = 5 coldist = 5 steps = 5
+from:to =   6   4 :    9   8
+rowdist = 4 coldist = 5 steps = 6
+from:to =   6   5 :    9   8
+rowdist = 4 coldist = 4 steps = 7
+from:to =   7   5 :    9   8
+rowdist = 3 coldist = 4 steps = 8
+from:to =   7   6 :    9   8
+rowdist = 3 coldist = 2 steps = 10
+from:to =   8   6 :    9   8
+rowdist = 1 coldist = 2 steps = 12
+from:to =   8   7 :    9   8
+rowdist = 1 coldist = 1 steps = 13
+from:to =   9   7 :    9   8
+rowdist = 0 coldist = 1 steps = 14
+final = 15
+walking from 1 to 8
+from:to =   1   4 :   10   1
+rowdist = 11 coldist = -4 steps = 0
+from:to =   2   4 :   10   1
+rowdist = 10 coldist = -4 steps = 1
+from:to =   3   4 :   10   1
+rowdist = 9 coldist = -4 steps = 2
+from:to =   4   4 :   10   1
+rowdist = 7 coldist = -4 steps = 4
+from:to =   5   4 :   10   1
+rowdist = 6 coldist = -4 steps = 5
+from:to =   6   4 :   10   1
+rowdist = 5 coldist = -4 steps = 6
+from:to =   7   4 :   10   1
+rowdist = 4 coldist = -4 steps = 7
+from:to =   8   4 :   10   1
+rowdist = 2 coldist = -4 steps = 9
+from:to =   8   3 :   10   1
+rowdist = 2 coldist = -3 steps = 11
+from:to =   8   2 :   10   1
+rowdist = 2 coldist = -1 steps = 12
+from:to =   9   2 :   10   1
+rowdist = 1 coldist = -1 steps = 13
+from:to =  10   2 :   10   1
+rowdist = 0 coldist = -1 steps = 14
+final = 15
+walking from 1 to 9
+from:to =   1   4 :   10   5
+rowdist = 11 coldist = 1 steps = 0
+from:to =   2   4 :   10   5
+rowdist = 10 coldist = 1 steps = 1
+from:to =   3   4 :   10   5
+rowdist = 9 coldist = 1 steps = 2
+from:to =   4   4 :   10   5
+rowdist = 7 coldist = 1 steps = 4
+from:to =   5   4 :   10   5
+rowdist = 6 coldist = 1 steps = 5
+from:to =   6   4 :   10   5
+rowdist = 5 coldist = 1 steps = 6
+from:to =   7   4 :   10   5
+rowdist = 4 coldist = 1 steps = 7
+from:to =   8   4 :   10   5
+rowdist = 2 coldist = 1 steps = 9
+from:to =   9   4 :   10   5
+rowdist = 1 coldist = 1 steps = 10
+from:to =  10   4 :   10   5
+rowdist = 0 coldist = 1 steps = 11
+final = 12
+walking from 2 to 3
+from:to =   2   8 :    3   1
+rowdist = 1 coldist = -9 steps = 0
+from:to =   2   7 :    3   1
+rowdist = 1 coldist = -8 steps = 1
+from:to =   2   6 :    3   1
+rowdist = 1 coldist = -7 steps = 3
+from:to =   2   5 :    3   1
+rowdist = 1 coldist = -5 steps = 4
+from:to =   2   4 :    3   1
+rowdist = 1 coldist = -4 steps = 5
+from:to =   2   3 :    3   1
+rowdist = 1 coldist = -3 steps = 7
+from:to =   2   2 :    3   1
+rowdist = 1 coldist = -1 steps = 8
+from:to =   3   2 :    3   1
+rowdist = 0 coldist = -1 steps = 9
+final = 10
+walking from 2 to 4
+from:to =   2   8 :    5   7
+rowdist = 4 coldist = -1 steps = 0
+from:to =   3   8 :    5   7
+rowdist = 3 coldist = -1 steps = 1
+from:to =   4   8 :    5   7
+rowdist = 1 coldist = -1 steps = 3
+from:to =   5   8 :    5   7
+rowdist = 0 coldist = -1 steps = 4
+final = 5
+walking from 2 to 5
+from:to =   2   8 :    6   2
+rowdist = 5 coldist = -8 steps = 0
+from:to =   2   7 :    6   2
+rowdist = 5 coldist = -7 steps = 1
+from:to =   2   6 :    6   2
+rowdist = 5 coldist = -6 steps = 3
+from:to =   2   5 :    6   2
+rowdist = 5 coldist = -4 steps = 4
+from:to =   3   5 :    6   2
+rowdist = 4 coldist = -4 steps = 5
+from:to =   4   5 :    6   2
+rowdist = 2 coldist = -4 steps = 7
+from:to =   4   4 :    6   2
+rowdist = 2 coldist = -3 steps = 8
+from:to =   4   3 :    6   2
+rowdist = 2 coldist = -2 steps = 10
+from:to =   5   3 :    6   2
+rowdist = 1 coldist = -2 steps = 11
+from:to =   5   2 :    6   2
+rowdist = 1 coldist = 0 steps = 12
+final = 13
+walking from 2 to 6
+from:to =   2   8 :    7  10
+rowdist = 6 coldist = 3 steps = 0
+from:to =   3   8 :    7  10
+rowdist = 5 coldist = 3 steps = 1
+from:to =   4   8 :    7  10
+rowdist = 3 coldist = 3 steps = 3
+from:to =   5   8 :    7  10
+rowdist = 2 coldist = 3 steps = 4
+from:to =   5   9 :    7  10
+rowdist = 2 coldist = 1 steps = 6
+from:to =   6   9 :    7  10
+rowdist = 1 coldist = 1 steps = 7
+from:to =   7   9 :    7  10
+rowdist = 0 coldist = 1 steps = 8
+final = 9
+walking from 2 to 7
+from:to =   2   8 :    9   8
+rowdist = 9 coldist = 0 steps = 0
+from:to =   3   8 :    9   8
+rowdist = 8 coldist = 0 steps = 1
+from:to =   4   8 :    9   8
+rowdist = 6 coldist = 0 steps = 3
+from:to =   5   8 :    9   8
+rowdist = 5 coldist = 0 steps = 4
+from:to =   6   8 :    9   8
+rowdist = 4 coldist = 0 steps = 5
+from:to =   7   8 :    9   8
+rowdist = 3 coldist = 0 steps = 6
+from:to =   8   8 :    9   8
+rowdist = 1 coldist = 0 steps = 8
+final = 9
+walking from 2 to 8
+from:to =   2   8 :   10   1
+rowdist = 10 coldist = -9 steps = 0
+from:to =   3   8 :   10   1
+rowdist = 9 coldist = -9 steps = 1
+from:to =   4   8 :   10   1
+rowdist = 7 coldist = -9 steps = 3
+from:to =   4   7 :   10   1
+rowdist = 7 coldist = -8 steps = 4
+from:to =   4   6 :   10   1
+rowdist = 7 coldist = -7 steps = 6
+from:to =   5   6 :   10   1
+rowdist = 6 coldist = -7 steps = 7
+from:to =   5   5 :   10   1
+rowdist = 6 coldist = -5 steps = 8
+from:to =   6   5 :   10   1
+rowdist = 5 coldist = -5 steps = 9
+from:to =   7   5 :   10   1
+rowdist = 4 coldist = -5 steps = 10
+from:to =   7   4 :   10   1
+rowdist = 4 coldist = -4 steps = 11
+from:to =   8   4 :   10   1
+rowdist = 2 coldist = -4 steps = 13
+from:to =   8   3 :   10   1
+rowdist = 2 coldist = -3 steps = 15
+from:to =   8   2 :   10   1
+rowdist = 2 coldist = -1 steps = 16
+from:to =   9   2 :   10   1
+rowdist = 1 coldist = -1 steps = 17
+from:to =  10   2 :   10   1
+rowdist = 0 coldist = -1 steps = 18
+final = 19
+walking from 2 to 9
+from:to =   2   8 :   10   5
+rowdist = 10 coldist = -4 steps = 0
+from:to =   3   8 :   10   5
+rowdist = 9 coldist = -4 steps = 1
+from:to =   4   8 :   10   5
+rowdist = 7 coldist = -4 steps = 3
+from:to =   5   8 :   10   5
+rowdist = 6 coldist = -4 steps = 4
+from:to =   6   8 :   10   5
+rowdist = 5 coldist = -4 steps = 5
+from:to =   7   8 :   10   5
+rowdist = 4 coldist = -4 steps = 6
+from:to =   8   8 :   10   5
+rowdist = 2 coldist = -4 steps = 8
+from:to =   8   7 :   10   5
+rowdist = 2 coldist = -3 steps = 9
+from:to =   8   6 :   10   5
+rowdist = 2 coldist = -2 steps = 11
+from:to =   9   6 :   10   5
+rowdist = 1 coldist = -2 steps = 12
+from:to =   9   5 :   10   5
+rowdist = 1 coldist = 0 steps = 13
+final = 14
+walking from 3 to 4
+from:to =   3   1 :    5   7
+rowdist = 3 coldist = 8 steps = 0
+from:to =   3   2 :    5   7
+rowdist = 3 coldist = 7 steps = 1
+from:to =   3   3 :    5   7
+rowdist = 3 coldist = 5 steps = 3
+from:to =   3   4 :    5   7
+rowdist = 3 coldist = 4 steps = 4
+from:to =   3   5 :    5   7
+rowdist = 3 coldist = 3 steps = 5
+from:to =   4   5 :    5   7
+rowdist = 1 coldist = 3 steps = 7
+from:to =   4   6 :    5   7
+rowdist = 1 coldist = 1 steps = 9
+from:to =   5   6 :    5   7
+rowdist = 0 coldist = 1 steps = 10
+final = 11
+walking from 3 to 5
+from:to =   3   1 :    6   2
+rowdist = 4 coldist = 1 steps = 0
+from:to =   4   1 :    6   2
+rowdist = 2 coldist = 1 steps = 2
+from:to =   5   1 :    6   2
+rowdist = 1 coldist = 1 steps = 3
+from:to =   6   1 :    6   2
+rowdist = 0 coldist = 1 steps = 4
+final = 5
+walking from 3 to 6
+from:to =   3   1 :    7  10
+rowdist = 5 coldist = 12 steps = 0
+from:to =   3   2 :    7  10
+rowdist = 5 coldist = 11 steps = 1
+from:to =   3   3 :    7  10
+rowdist = 5 coldist = 9 steps = 3
+from:to =   3   4 :    7  10
+rowdist = 5 coldist = 8 steps = 4
+from:to =   3   5 :    7  10
+rowdist = 5 coldist = 7 steps = 5
+from:to =   3   6 :    7  10
+rowdist = 5 coldist = 5 steps = 7
+from:to =   4   6 :    7  10
+rowdist = 3 coldist = 5 steps = 9
+from:to =   4   7 :    7  10
+rowdist = 3 coldist = 4 steps = 10
+from:to =   4   8 :    7  10
+rowdist = 3 coldist = 3 steps = 11
+from:to =   5   8 :    7  10
+rowdist = 2 coldist = 3 steps = 12
+from:to =   5   9 :    7  10
+rowdist = 2 coldist = 1 steps = 14
+from:to =   6   9 :    7  10
+rowdist = 1 coldist = 1 steps = 15
+from:to =   7   9 :    7  10
+rowdist = 0 coldist = 1 steps = 16
+final = 17
+walking from 3 to 7
+from:to =   3   1 :    9   8
+rowdist = 8 coldist = 9 steps = 0
+from:to =   3   2 :    9   8
+rowdist = 8 coldist = 8 steps = 1
+from:to =   4   2 :    9   8
+rowdist = 6 coldist = 8 steps = 3
+from:to =   4   3 :    9   8
+rowdist = 6 coldist = 6 steps = 5
+from:to =   5   3 :    9   8
+rowdist = 5 coldist = 6 steps = 6
+from:to =   5   4 :    9   8
+rowdist = 5 coldist = 5 steps = 7
+from:to =   6   4 :    9   8
+rowdist = 4 coldist = 5 steps = 8
+from:to =   6   5 :    9   8
+rowdist = 4 coldist = 4 steps = 9
+from:to =   7   5 :    9   8
+rowdist = 3 coldist = 4 steps = 10
+from:to =   7   6 :    9   8
+rowdist = 3 coldist = 2 steps = 12
+from:to =   8   6 :    9   8
+rowdist = 1 coldist = 2 steps = 14
+from:to =   8   7 :    9   8
+rowdist = 1 coldist = 1 steps = 15
+from:to =   9   7 :    9   8
+rowdist = 0 coldist = 1 steps = 16
+final = 17
+walking from 3 to 8
+from:to =   3   1 :   10   1
+rowdist = 9 coldist = 0 steps = 0
+from:to =   4   1 :   10   1
+rowdist = 7 coldist = 0 steps = 2
+from:to =   5   1 :   10   1
+rowdist = 6 coldist = 0 steps = 3
+from:to =   6   1 :   10   1
+rowdist = 5 coldist = 0 steps = 4
+from:to =   7   1 :   10   1
+rowdist = 4 coldist = 0 steps = 5
+from:to =   8   1 :   10   1
+rowdist = 2 coldist = 0 steps = 7
+from:to =   9   1 :   10   1
+rowdist = 1 coldist = 0 steps = 8
+final = 9
+walking from 3 to 9
+from:to =   3   1 :   10   5
+rowdist = 9 coldist = 5 steps = 0
+from:to =   4   1 :   10   5
+rowdist = 7 coldist = 5 steps = 2
+from:to =   5   1 :   10   5
+rowdist = 6 coldist = 5 steps = 3
+from:to =   6   1 :   10   5
+rowdist = 5 coldist = 5 steps = 4
+from:to =   7   1 :   10   5
+rowdist = 4 coldist = 5 steps = 5
+from:to =   7   2 :   10   5
+rowdist = 4 coldist = 4 steps = 6
+from:to =   8   2 :   10   5
+rowdist = 2 coldist = 4 steps = 8
+from:to =   8   3 :   10   5
+rowdist = 2 coldist = 2 steps = 10
+from:to =   9   3 :   10   5
+rowdist = 1 coldist = 2 steps = 11
+from:to =   9   4 :   10   5
+rowdist = 1 coldist = 1 steps = 12
+from:to =  10   4 :   10   5
+rowdist = 0 coldist = 1 steps = 13
+final = 14
+walking from 4 to 5
+from:to =   5   7 :    6   2
+rowdist = 1 coldist = -7 steps = 0
+from:to =   5   6 :    6   2
+rowdist = 1 coldist = -6 steps = 2
+from:to =   5   5 :    6   2
+rowdist = 1 coldist = -4 steps = 3
+from:to =   5   4 :    6   2
+rowdist = 1 coldist = -3 steps = 4
+from:to =   5   3 :    6   2
+rowdist = 1 coldist = -2 steps = 6
+from:to =   5   2 :    6   2
+rowdist = 1 coldist = 0 steps = 7
+final = 8
+walking from 4 to 6
+from:to =   5   7 :    7  10
+rowdist = 2 coldist = 4 steps = 0
+from:to =   5   8 :    7  10
+rowdist = 2 coldist = 3 steps = 1
+from:to =   5   9 :    7  10
+rowdist = 2 coldist = 1 steps = 3
+from:to =   6   9 :    7  10
+rowdist = 1 coldist = 1 steps = 4
+from:to =   7   9 :    7  10
+rowdist = 0 coldist = 1 steps = 5
+final = 6
+walking from 4 to 7
+from:to =   5   7 :    9   8
+rowdist = 5 coldist = 1 steps = 0
+from:to =   6   7 :    9   8
+rowdist = 4 coldist = 1 steps = 1
+from:to =   7   7 :    9   8
+rowdist = 3 coldist = 1 steps = 2
+from:to =   8   7 :    9   8
+rowdist = 1 coldist = 1 steps = 4
+from:to =   9   7 :    9   8
+rowdist = 0 coldist = 1 steps = 5
+final = 6
+walking from 4 to 8
+from:to =   5   7 :   10   1
+rowdist = 6 coldist = -8 steps = 0
+from:to =   5   6 :   10   1
+rowdist = 6 coldist = -7 steps = 2
+from:to =   5   5 :   10   1
+rowdist = 6 coldist = -5 steps = 3
+from:to =   6   5 :   10   1
+rowdist = 5 coldist = -5 steps = 4
+from:to =   7   5 :   10   1
+rowdist = 4 coldist = -5 steps = 5
+from:to =   7   4 :   10   1
+rowdist = 4 coldist = -4 steps = 6
+from:to =   8   4 :   10   1
+rowdist = 2 coldist = -4 steps = 8
+from:to =   8   3 :   10   1
+rowdist = 2 coldist = -3 steps = 10
+from:to =   8   2 :   10   1
+rowdist = 2 coldist = -1 steps = 11
+from:to =   9   2 :   10   1
+rowdist = 1 coldist = -1 steps = 12
+from:to =  10   2 :   10   1
+rowdist = 0 coldist = -1 steps = 13
+final = 14
+walking from 4 to 9
+from:to =   5   7 :   10   5
+rowdist = 6 coldist = -3 steps = 0
+from:to =   6   7 :   10   5
+rowdist = 5 coldist = -3 steps = 1
+from:to =   7   7 :   10   5
+rowdist = 4 coldist = -3 steps = 2
+from:to =   8   7 :   10   5
+rowdist = 2 coldist = -3 steps = 4
+from:to =   8   6 :   10   5
+rowdist = 2 coldist = -2 steps = 6
+from:to =   9   6 :   10   5
+rowdist = 1 coldist = -2 steps = 7
+from:to =   9   5 :   10   5
+rowdist = 1 coldist = 0 steps = 8
+final = 9
+walking from 5 to 6
+from:to =   6   2 :    7  10
+rowdist = 1 coldist = 11 steps = 0
+from:to =   6   3 :    7  10
+rowdist = 1 coldist = 9 steps = 2
+from:to =   6   4 :    7  10
+rowdist = 1 coldist = 8 steps = 3
+from:to =   6   5 :    7  10
+rowdist = 1 coldist = 7 steps = 4
+from:to =   6   6 :    7  10
+rowdist = 1 coldist = 5 steps = 6
+from:to =   6   7 :    7  10
+rowdist = 1 coldist = 4 steps = 7
+from:to =   6   8 :    7  10
+rowdist = 1 coldist = 3 steps = 8
+from:to =   6   9 :    7  10
+rowdist = 1 coldist = 1 steps = 10
+from:to =   7   9 :    7  10
+rowdist = 0 coldist = 1 steps = 11
+final = 12
+walking from 5 to 7
+from:to =   6   2 :    9   8
+rowdist = 4 coldist = 8 steps = 0
+from:to =   6   3 :    9   8
+rowdist = 4 coldist = 6 steps = 2
+from:to =   6   4 :    9   8
+rowdist = 4 coldist = 5 steps = 3
+from:to =   6   5 :    9   8
+rowdist = 4 coldist = 4 steps = 4
+from:to =   7   5 :    9   8
+rowdist = 3 coldist = 4 steps = 5
+from:to =   7   6 :    9   8
+rowdist = 3 coldist = 2 steps = 7
+from:to =   8   6 :    9   8
+rowdist = 1 coldist = 2 steps = 9
+from:to =   8   7 :    9   8
+rowdist = 1 coldist = 1 steps = 10
+from:to =   9   7 :    9   8
+rowdist = 0 coldist = 1 steps = 11
+final = 12
+walking from 5 to 8
+from:to =   6   2 :   10   1
+rowdist = 5 coldist = -1 steps = 0
+from:to =   7   2 :   10   1
+rowdist = 4 coldist = -1 steps = 1
+from:to =   8   2 :   10   1
+rowdist = 2 coldist = -1 steps = 3
+from:to =   9   2 :   10   1
+rowdist = 1 coldist = -1 steps = 4
+from:to =  10   2 :   10   1
+rowdist = 0 coldist = -1 steps = 5
+final = 6
+walking from 5 to 9
+from:to =   6   2 :   10   5
+rowdist = 5 coldist = 4 steps = 0
+from:to =   7   2 :   10   5
+rowdist = 4 coldist = 4 steps = 1
+from:to =   8   2 :   10   5
+rowdist = 2 coldist = 4 steps = 3
+from:to =   8   3 :   10   5
+rowdist = 2 coldist = 2 steps = 5
+from:to =   9   3 :   10   5
+rowdist = 1 coldist = 2 steps = 6
+from:to =   9   4 :   10   5
+rowdist = 1 coldist = 1 steps = 7
+from:to =  10   4 :   10   5
+rowdist = 0 coldist = 1 steps = 8
+final = 9
+walking from 6 to 7
+from:to =   7  10 :    9   8
+rowdist = 3 coldist = -3 steps = 0
+from:to =   8  10 :    9   8
+rowdist = 1 coldist = -3 steps = 2
+from:to =   8   9 :    9   8
+rowdist = 1 coldist = -2 steps = 4
+from:to =   8   8 :    9   8
+rowdist = 1 coldist = 0 steps = 5
+final = 6
+walking from 6 to 8
+from:to =   7  10 :   10   1
+rowdist = 4 coldist = -12 steps = 0
+from:to =   7   9 :   10   1
+rowdist = 4 coldist = -11 steps = 2
+from:to =   7   8 :   10   1
+rowdist = 4 coldist = -9 steps = 3
+from:to =   7   7 :   10   1
+rowdist = 4 coldist = -8 steps = 4
+from:to =   7   6 :   10   1
+rowdist = 4 coldist = -7 steps = 6
+from:to =   7   5 :   10   1
+rowdist = 4 coldist = -5 steps = 7
+from:to =   7   4 :   10   1
+rowdist = 4 coldist = -4 steps = 8
+from:to =   8   4 :   10   1
+rowdist = 2 coldist = -4 steps = 10
+from:to =   8   3 :   10   1
+rowdist = 2 coldist = -3 steps = 12
+from:to =   8   2 :   10   1
+rowdist = 2 coldist = -1 steps = 13
+from:to =   9   2 :   10   1
+rowdist = 1 coldist = -1 steps = 14
+from:to =  10   2 :   10   1
+rowdist = 0 coldist = -1 steps = 15
+final = 16
+walking from 6 to 9
+from:to =   7  10 :   10   5
+rowdist = 4 coldist = -7 steps = 0
+from:to =   7   9 :   10   5
+rowdist = 4 coldist = -6 steps = 2
+from:to =   7   8 :   10   5
+rowdist = 4 coldist = -4 steps = 3
+from:to =   8   8 :   10   5
+rowdist = 2 coldist = -4 steps = 5
+from:to =   8   7 :   10   5
+rowdist = 2 coldist = -3 steps = 6
+from:to =   8   6 :   10   5
+rowdist = 2 coldist = -2 steps = 8
+from:to =   9   6 :   10   5
+rowdist = 1 coldist = -2 steps = 9
+from:to =   9   5 :   10   5
+rowdist = 1 coldist = 0 steps = 10
+final = 11
+walking from 7 to 8
+from:to =   9   8 :   10   1
+rowdist = 1 coldist = -9 steps = 0
+from:to =   9   7 :   10   1
+rowdist = 1 coldist = -8 steps = 1
+from:to =   9   6 :   10   1
+rowdist = 1 coldist = -7 steps = 3
+from:to =   9   5 :   10   1
+rowdist = 1 coldist = -5 steps = 4
+from:to =   9   4 :   10   1
+rowdist = 1 coldist = -4 steps = 5
+from:to =   9   3 :   10   1
+rowdist = 1 coldist = -3 steps = 7
+from:to =   9   2 :   10   1
+rowdist = 1 coldist = -1 steps = 8
+from:to =  10   2 :   10   1
+rowdist = 0 coldist = -1 steps = 9
+final = 10
+walking from 7 to 9
+from:to =   9   8 :   10   5
+rowdist = 1 coldist = -4 steps = 0
+from:to =   9   7 :   10   5
+rowdist = 1 coldist = -3 steps = 1
+from:to =   9   6 :   10   5
+rowdist = 1 coldist = -2 steps = 3
+from:to =   9   5 :   10   5
+rowdist = 1 coldist = 0 steps = 4
+final = 5
+walking from 8 to 9
+from:to =  10   1 :   10   5
+rowdist = 0 coldist = 5 steps = 0
+from:to =  10   2 :   10   5
+rowdist = 0 coldist = 4 steps = 1
+from:to =  10   3 :   10   5
+rowdist = 0 coldist = 2 steps = 3
+from:to =  10   4 :   10   5
+rowdist = 0 coldist = 1 steps = 4
+final = 5
+part one answer: 374
+
+part one answer : 374
+part two answer : 0

@@ -1,0 +1,1 @@
+Day 3 presents variable data and leads to using sets, particularly set intersection.

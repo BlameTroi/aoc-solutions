@@ -1,0 +1,14 @@
+
+input is game #: sample (;sample)*
+  sample is # color (, # color)*
+  color is red | blue | green
+  # is an integer 
+
+part one -- sum the game #s of games for which all samples could be be
+pulled from a bag of 12 red cubes, 13 green cubes, and 14 blue cubes.
+
+part two -- first, determine in each game you played, what is the
+fewest number of cubes of each color that could have been in the bag
+to make the game possible? second, determine the power of that set of
+cubes. This is the number of cubes multiplied together. the answer for
+part two is the sum of the powers of cubes.

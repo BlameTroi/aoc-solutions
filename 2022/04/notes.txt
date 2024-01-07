@@ -1,0 +1,14 @@
+day 4 is another problem that lends itself to using sets. both set intersection (*) and containing one or the other (<=).
+
+given two ranges of integers, how many of the ranges pairs have one that completely encompasses the other?
+
+eg:
+
+2-4,6-8 ... no overlap at all
+5-7,7-9 ... overlap at one cell, 7
+2-8,3-7 ... first completely contains second
+4-6,2-6 ... second completely contains first
+
+part 1, count pairs where one completely contains another.
+
+input is 00-99, no triple digit values, so a set could be used.

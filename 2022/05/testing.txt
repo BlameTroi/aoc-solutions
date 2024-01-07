@@ -1,0 +1,19 @@
+starting part one...
+
+beginning load ... 
+deepest stack is 3 crates
+there are 4 moves
+
+completed...
+ending state: CMZ      
+starting part two...
+
+beginning load ... 
+deepest stack is 3 crates
+there are 4 moves
+
+completed...
+ending state: MCD      
+
+part one answer : CMZ      
+part two answer : MCD      

@@ -1,0 +1,14 @@
+scratchcards
+
+given a set of used lottery scratchoff cards, score them. for part
+one, the score for each card is the number of 2 ** (number of draws in
+winners - 1). easy peasy. parse and count.
+
+for part two, the number of winners gets you more copies of subsequent
+cards. i fail to see how this pays off, but hey, it's a puzzle. having
+more winners than cards left in the deck truncates.
+
+the copies go in the same position as their original. things get
+exponential since copies can win more copies.
+
+count the total number of cards after a complete pass through the deck

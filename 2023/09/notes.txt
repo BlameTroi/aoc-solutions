@@ -1,0 +1,10 @@
+triangular number pattern but the basic idea looks a bit like pascal's triangle.
+
+for each row, next row is diff
+once all diffs are zero, the new value on
+the right can be calculated by adding a 0 and
+working the sums back up to the source row
+
+how best to represent as a data structure?
+
+one big matrix gets the trick done.

@@ -1,0 +1,50 @@
+the problem involves repeated index lookups, taking the input of seeds
+and then chasing through the maps to find where we end up (locations).
+
+range index format is
+
+type tRange = record
+  begdest   : uint64; { first slot in dest }
+  begsource : uint64; { first slot in source }
+  len       : uint64; { length of each }
+end;
+
+there are multiple ranges in a map. given the input number, identify
+it in the range index (between begsource & begsource + len), and map
+it to begdest (key - begsource + begdest) and use that new value in
+the next index.
+
+ignore the index names, just chase to last one.
+
+there are seven of these 'maps'.
+
+the goal of part one is to find the lowest location number (last range
+index) after chasing through all the inputs.
+
+input formatting
+
+there are seven maps in both datasets
+
+there are 20 seeds in the main dataset
+and 4 in the test dataset
+
+the maps are input records with 3 numbers on each, a blank or end of
+file marks the end of a map.
+
+there are 4 records max in the test dataset, and ~50 in the main datasets. so
+
+const
+
+MAXMAPS = 7;
+MAXRANGES = 75 (or 5)
+
+of course part 2 introduces a fun change!
+
+the seeds are actually pairs: source location, count of seeds
+
+this changes the view of the input a good bit :) the "easy" answer to
+to blow out the size of the seeds array and use the same code, but
+counts in the live dataset are 9 digit numbers. rather than munge up
+the code, i'll create a new solution for part two and modify it
+appropriately.
+

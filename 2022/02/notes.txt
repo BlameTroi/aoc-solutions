@@ -1,0 +1,60 @@
+Day two involves assigning meaning to data and then interpretting the data in different ways.
+I approached this as a chance to use control tables.
+
+"Encrypted strategy guide"
+
+col 1 opponent will play 
+col 1 A = rock, B = paper, C = scissors
+
+col 2 your response
+col 2 X = Rock, Y = paper, Z = scissors
+
+score is shape you selected (1 Rock, 2 Paper, 3 Scissors) plus outcome of the round (0 lose, 3 draw, 6 win).
+
+So
+
+A Y    paper covers rock, i win    2 + 6 = 8
+B X    paper covers rock, i lose   1 + 0 = 1
+C Z    we scissor, draw            3 + 3 = 6
+
+there are 3 x 3 or 9 possible outcomes, so a table driven approach seems the most sensible.
+
+A X    rock rock draw             1 + 3 = 4
+A Y    rock paper win             2 + 6 = 8
+A Z    rock scissors lose         3 + 0 = 3
+B X    paper rock lose            1 + 0 = 1
+B Y    paper paper draw           2 + 3 = 5
+B Z    paper scissors win         3 + 6 = 9
+C X    scissors rock win          1 + 6 = 7
+C Y    scissors paper lose        2 + 0 = 2
+C Z    scissors scissors draw     3 + 3 = 6
+
+type tRound = record
+  play: string;
+  score: integer;
+end;
+
+for part 2, we learn that the second column shows how the round should end.
+
+x = lose
+y = draw
+z = win
+
+but scoring is the same
+
+so y is easy, pick the same 
+
+paper covers rock
+rock crushes scissors
+scissors cut paper
+
+A X    rock lose scissors
+A Y    rock draw rock
+A Z    rock win paper
+B X    paper lose rock
+B Y    paper draw paper
+B Z    paper win scissors
+C X    scissors lose paper
+C Y    scissors draw scissors
+C Z    scissors win rock
+

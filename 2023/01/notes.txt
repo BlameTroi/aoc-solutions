@@ -1,0 +1,20 @@
+day one involves extracting information out of noise.
+
+algorithmically it's very straight forward. the only catch is in part
+two where the information (digits) can be spelled out in addition to
+being just plain digit characters.
+
+a7ztrwzerone89six 
+
+the question that is left unanswered in the problem text is should the
+sequence zerone be interpretted as zero one or zero or one?
+
+since the problem only concerns itself with the first and last digits
+in each input line, using one seems to be the right answer. the
+checksum will tell if this is so.
+
+the only problems i had with this were self inflicted errors. i am
+writing my own support functions (substr, strbegins, etc) rather than
+using the library code in fpc and of course if i'm having an off day,
+i make mistakes. my purpose in doing advent of code is to practice
+coding as much as it is to solve problems.

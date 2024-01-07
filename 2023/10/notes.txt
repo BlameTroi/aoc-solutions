@@ -1,0 +1,91 @@
+Here's the more complex loop again:
+
+..F7.
+.FJ|.
+SJ.L7
+|F--J
+LJ...
+
+Here are the distances for each tile on that loop:
+
+..45.
+.236.
+01.78
+14567
+23...
+
+you need the key to the symols, the entry to the maze is the S.
+
+    | is a vertical pipe connecting north and south.
+    - is a horizontal pipe connecting east and west.
+    L is a 90-degree bend connecting north and east.
+    J is a 90-degree bend connecting north and west.
+    7 is a 90-degree bend connecting south and west.
+    F is a 90-degree bend connecting south and east.
+    . is ground; there is no pipe in this tile.
+    S is the starting position of the animal; there is a pipe on this tile, but your sketch doesn't show what shape the pipe has.
+
+the grid is 140x140 of these nodes
+node attributes are links to the cardinal directions, an on or off the loop flag, an integer that we'll probably use for counting, but what else?
+
+note:
+
+each grid location has only two live connections.
+many pipes in the dataset are not connected to the S pipe.
+you can determine the shape of the pipe at S by what
+connects to it.
+
+from the dataset
+
+L7.F7
+7L-JL
+L7S7F
+7LJLJ
+L----
+
+the entry to s is from the south pipe J    w-n
+the exit from s is from the east pipe 7    s-w
+
+this means it's an F pipe, s-e.
+
+
+first, let's draft up our data structures trying an array
+
+tConnectCoord = record
+  blocked: boolean;
+  x, y: integer;
+end;
+
+tNode = record
+  origin: boolean; the s marks the spot
+  onloop: boolean; connected to origin?
+  glyph : one of L7.F7-|J ... s
+  path : ns, ew, ne, nw, sw, se, nil
+  cahcedcoords: one for each path, can be nil.
+  work : integer;
+end;
+    | is a vertical pipe connecting north and south.
+    - is a horizontal pipe connecting east and west.
+    L is a 90-degree bend connecting north and east.
+    J is a 90-degree bend connecting north and west.
+    7 is a 90-degree bend connecting south and west.
+    F is a 90-degree bend connecting south and east.
+    . is ground; there is no pipe in this tile.
+unconnected pipes are in the input.
+
+i think this is a goal seeking thing like i've did in the algorithms class, but I have to think it through some more.
+
+useless for this run I suspect, but:
+counts...
+             count   minl   maxl
+   lines :     140    140    140
+   words :     140      1    140
+per line :              1      1
+   chars :   19740
+
+character distribution...
+ alphabetic :   9237
+     digits :   3105
+    special :   7258
+white space :    140
+
