@@ -20,7 +20,6 @@ type
 {$I aocinput.p }
 
 var
-   dataset  : text;
    words, lines, characters,
    linelen, maxline, minline,
    wordlen, maxword, minword,
@@ -104,10 +103,4 @@ begin
    aocclose;
 end.
 
-begin
-end.
-
 { end dsmetrics.pas }
-
-
-{$I constchars.p }
