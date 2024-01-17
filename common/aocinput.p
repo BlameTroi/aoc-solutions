@@ -211,18 +211,26 @@ end;
 
 function aocread : string;
 
+   function notcomment(s : string) : boolean;
+   begin
+      notcomment := true;
+      if (aocinput.comment = chr(0)) or (length(s) = 0) then
+         notcomment := true
+      else
+         notcomment := s[1] <> aocinput.comment;
+   end;
+
 begin
    if not aocinput.open then
       aochalt('error: aocread called out of sequence');
-
    repeat
-      if aoceof then begin
-         aocread :=  'EOF';
-         exit;
+      if aoceof then
+         aocinput.rec := ''
+      else begin
+         readln(input, aocinput.rec);
+         aocinput.count := aocinput.count + 1;
       end;
-      readln(input, aocinput.rec);
-      aocinput.count := aocinput.count + 1;
-   until aoceof or (aocinput.rec[1] <> aocinput.comment);
+   until aoceof or notcomment(aocinput.rec);
    aocread := copy(aocinput.rec, 1);
 end;
 
