@@ -1,14 +1,22 @@
 # shell or sample makefile for fpc
 # see https://bytes.usc.edu/cs104/wiki/makefile/ for a quick reference
 
-solution: solution.pas
-	fpc -glw3 -Ciort -ap -Sgix -Sh- -vewnlb -Fi../../common/ solution
+COMPILER=fpc
+OPTIONS=-glw3 -Ciort -ap -Sgix -Sh- -vewnlb
+INCLUDES=-Fi../../common/
+UNITS=
+COMPILE=$(COMPILER) $(OPTIONS) $(INCLUDES) $(UNITS)
+
+all: program
+
+program: solution.pas
+	$(COMPILE) solution
 
 run:
-	./solution ../../../datasets/2022/18/dataset.txt >output.txt
+	./solution ../../../datasets/2022/14/dataset.txt >output.txt
 
 test:
-	./solution ../../../datasets/2022/18/testone.txt >testing.txt
+	./solution ../../../datasets/2022/14/testone.txt >testing.txt
 
 clean:
-	rm -f solution *.o output.txt testing.txt
+	rm -f solution *.o output.txt testing.txt aoc-log
