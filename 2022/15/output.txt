@@ -1,0 +1,65 @@
+
+sensor  0 at (2692921,2988627) has closest beacon at (2453611,3029623) at a distance of 280306 and a minimum distance from targety of 988627
+sensor  1 at (1557973,1620482) has closest beacon at (1908435,2403457) at a distance of 1133437 and a minimum distance from targety of 379518
+sensor  2 at (278431,3878878) has closest beacon at (-1050422,3218536) at a distance of 1989195 and a minimum distance from targety of 1878878
+sensor  3 at (1432037,3317707) has closest beacon at (2453611,3029623) at a distance of 1309658 and a minimum distance from targety of 1317707
+sensor  4 at (3191434,3564121) has closest beacon at (3420256,2939344) at a distance of 853599 and a minimum distance from targety of 1564121
+sensor  5 at (3080887,2781756) has closest beacon at (3420256,2939344) at a distance of 496957 and a minimum distance from targety of 781756
+sensor  6 at (3543287,3060807) has closest beacon at (3420256,2939344) at a distance of 244494 and a minimum distance from targety of 1060807
+sensor  7 at (2476158,3949016) has closest beacon at (2453611,3029623) at a distance of 941940 and a minimum distance from targety of 1949016
+sensor  8 at (3999769,3985671) has closest beacon at (3420256,2939344) at a distance of 1625840 and a minimum distance from targety of 1985671
+sensor  9 at (2435331,2200565) has closest beacon at (1908435,2403457) at a distance of 729788 and a minimum distance from targety of 200565
+sensor 10 at (3970047,2036397) has closest beacon at (3691788,1874066) at a distance of 440590 and a minimum distance from targety of 36397
+sensor 11 at (2232167,2750817) has closest beacon at (2453611,3029623) at a distance of 500250 and a minimum distance from targety of 750817
+sensor 12 at (157988,333826) has closest beacon at (-1236383,477990) at a distance of 1538535 and a minimum distance from targety of 1666174
+sensor 13 at (1035254,2261267) has closest beacon at (1908435,2403457) at a distance of 1015371 and a minimum distance from targety of 261267
+sensor 14 at (1154009,888885) has closest beacon at (1070922,-543463) at a distance of 1515435 and a minimum distance from targety of 1111115
+sensor 15 at (2704724,257848) has closest beacon at (3428489,-741777) at a distance of 1723390 and a minimum distance from targety of 1742152
+sensor 16 at (3672526,2651153) has closest beacon at (3420256,2939344) at a distance of 540461 and a minimum distance from targety of 651153
+sensor 17 at (2030614,2603134) has closest beacon at (1908435,2403457) at a distance of 321856 and a minimum distance from targety of 603134
+sensor 18 at (2550448,2781018) has closest beacon at (2453611,3029623) at a distance of 345442 and a minimum distance from targety of 781018
+sensor 19 at (3162759,2196461) has closest beacon at (3691788,1874066) at a distance of 851424 and a minimum distance from targety of 196461
+sensor 20 at (463834,1709480) has closest beacon at (-208427,2000000) at a distance of 962781 and a minimum distance from targety of 290520
+sensor 21 at (217427,2725325) has closest beacon at (-208427,2000000) at a distance of 1151179 and a minimum distance from targety of 725325
+sensor 22 at (3903198,945190) has closest beacon at (3691788,1874066) at a distance of 1140286 and a minimum distance from targety of 1054810
+
+coordinate ranges (-1236383,-741777) to (3999769,3985671)
+
+target y line = 2000000
+
+sensor  1 at (1557973,1620482) has a range of 1133437 and can see along line y=2000000 from 804054 to 2311892
+sensor  2 at (278431,3878878) has a range of 1989195 and can see along line y=2000000 from 168114 to 388748
+sensor  9 at (2435331,2200565) has a range of 729788 and can see along line y=2000000 from 1906108 to 2964554
+sensor 10 at (3970047,2036397) has a range of 440590 and can see along line y=2000000 from 3565854 to 4374240
+sensor 13 at (1035254,2261267) has a range of 1015371 and can see along line y=2000000 from 281150 to 1789358
+sensor 14 at (1154009,888885) has a range of 1515435 and can see along line y=2000000 from 749689 to 1558329
+sensor 19 at (3162759,2196461) has a range of 851424 and can see along line y=2000000 from 2507796 to 3817722
+sensor 20 at (463834,1709480) has a range of 962781 and can see along line y=2000000 from -208427 to 1136095
+sensor 21 at (217427,2725325) has a range of 1151179 and can see along line y=2000000 from -208427 to 643281
+sensor 22 at (3903198,945190) has a range of 1140286 and can see along line y=2000000 from 3817722 to 3988674
+
+sorted ranges ...
+     -208427      643281
+     -208427     1136095
+      168114      388748
+      281150     1789358
+      749689     1558329
+      804054     2311892
+     1906108     2964554
+     2507796     3817722
+     3565854     4374240
+     3817722     3988674
+
+collapsing ranges ...
+
+merging ranges ...
+
+collapsed and merged ranges ...
+     -208427     4374240
+
+minimum and maximum are ...
+     -208427     4374240
+
+for a maximum of 4582667
+part one answer : 4582667
+part two answer : -1

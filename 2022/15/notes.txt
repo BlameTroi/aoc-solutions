@@ -1,0 +1,89 @@
+
+
+   calcdistance := abs(p1.x - p2.x) + abs(p1.y - p2.y);
+
+
+if beacon is p1 and sensor is p2, what we need to calculate is the points where a circle drawn from p1 at a distance of calcdistance intersects a particular y line.
+
+one from the test dataset
+
+sensor 20,14  beacon 25,17 distance of 8
+
+20-25 = 5
+14-17 = 3 (abs)
+
+let's check y=16
+
+
+so we solve for 20-?  = 6                  14 and 26 
+                14-16 = 2
+
+
+solve for mmx
+
+dist = abs(x - mmx) + abs(y - ty)
+dist = x - mmx + y - ty
+dist - x - y + ty = -mmx    but the absolute values hork it up
+
+
+
+so
+   14,16    
+   15,16
+   16,16
+   17,16
+   18,16
+   19,16
+   20,16
+   21,16
+   22,16
+   23,16
+   24,16
+   25,16
+   26,16
+
+should all be within 8 of 20,14 
+
+and they are, so this is basically the right approach
+
+
+
+does sensor reach y coordinate?
+
+if y coordinate - sensor y >= distance
+
+
+sensor  6 at (8,7) has closest beacon at (2,10) at a distance of 9 and a minimum distance from targety of 3
+sensor  8 at (0,11) has closest beacon at (2,10) at a distance of 3 and a minimum distance from targety of 1
+sensor  9 at (20,14) has closest beacon at (25,17) at a distance of 8 and a minimum distance from targety of 4
+sensor 11 at (16,7) has closest beacon at (15,3) at a distance of 5 and a minimum distance from targety of 3
+
+coordinate ranges (-2,0) to (25,22)
+
+target y line = 10
+
+sensor  6 at (8,7) has a range of 9 and can see along line y=10 from 0 to 0    2 to 14
+tangential (2,0)
+sensor  8 at (0,11) has a range of 3 and can see along line y=10 from 0 to 0   -2 to 2
+sensor  9 at (20,14) has a range of 8 and can see along line y=10 from 0 to 0  16 to 24
+sensor 11 at (16,7) has a range of 5 and can see along line y=10 from 0 to 0   14 to 18
+
+part one answer : 0
+part two answer : -1
+
+2,10 and 14,10
+
+so y dy is always 3       9 - 3 = 6, so coords 8-6 and 8+6 
+
+                        0    1
+                       0567890
+                       1
+                       2
+                       3
+                       4
+                       5
+                       6
+                       7   S
+                       8
+                       9
+          ----------x------Y-----x------------- 

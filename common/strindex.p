@@ -4,21 +4,32 @@
 
 { find position of c in s. returns -1 if not found. }
 
-function strindex(s : string;
-                  c : char) : integer;
+function strindexpos(    s : string;
+                     var p : integer;
+                         c : char) : integer;
 var
    i : integer;
 
 begin
-   strindex := -1;
-   i := 0;
+   strindexpos := -1;
+   i := p;
    while i < length(s) do begin
       i := i + 1;
       if s[i] = c then begin
-         strindex := i;
+         strindexpos := i;
+         p := i;
          break;
       end;
    end;
+end;
+
+function strindex(s : string; c : char) : integer;
+var
+   p : integer;
+
+begin
+   p := 1;
+   strindex := strindexpos(s, p, c);
 end;
 
 {$endif}
