@@ -28,7 +28,7 @@ program solution
    integer(kind=8)     :: i                       ! count
    integer(kind=8)     :: partone, parttwo        !
    integer             :: scores(3, 3)             ! map scores ax->cz
-   character           :: morphplays(3, 3)         ! part two strategy changer
+   character(len=1)    :: morphplays(3, 3)         ! part two strategy changer
 
    ! in a real app we'd check for missing arguments
    call get_command_argument(1, fname)
@@ -41,28 +41,21 @@ program solution
    ! initialization
 
    i = 0; partone = 0; parttwo = 0
-
-   ! lookup table for scores, translate a-c and x-z to an appropriate subscript.
-   ! the scores follow the part one rules and is calculated from the play you
-   ! selected plus the score for the outcome of the round. rock = 1, paper = 2,
-   ! and scissors = 3. lose = 0, draw = 3, and win = 6.
-
-   scores(1, 1) = 4; scores(1, 2) = 8; scores(1, 3) = 3
-   scores(2, 1) = 1; scores(2, 2) = 5; scores(2, 3) = 9
-   scores(3, 1) = 7; scores(3, 2) = 2; scores(3, 3) = 6
-
-   ! for part two, x-y indicates an outcome and not a play. translate it back to
-   ! the appropriate play to get the desired outcome and then the part one score
-   ! rules are back in force.
-
-   morphplays(1, 1) = 'Z'; morphplays(1, 2) = 'X'; morphplays(1, 3) = 'Y'
-   morphplays(2, 1) = 'X'; morphplays(2, 2) = 'Y'; morphplays(2, 3) = 'Z'
-   morphplays(3, 1) = 'Y'; morphplays(3, 2) = 'Z'; morphplays(3, 3) = 'X'
+   call inittables(scores, morphplays)
 
    ! input is a series of instructions for a round of rock-paper-scissors.
    ! opponent play is one character, a blank, and then the player play. there
-   ! are two different interpretations for the player play so the input will be
-   ! read twie, once for each part.
+   ! are two different interpretations for the player play but the processing
+   ! is straight forward and easily handled in one pass through the data.
+   !
+   ! lookup table 'scores', translates a-c and x-z to an appropriate subscript
+   ! to get actual score. the calculation is based on a weight for the item
+   ! you seelcted (rock=1, paper=2, scissors=3) and the outcome (lose=0, draw=3,
+   ! and win=6).
+   !
+   ! for part two, x-y indicates an outcome and not a play. the lookup table
+   ! 'morphplays' maps the opponent play and desired outcome back to the actual
+   ! play you would make. then the part one score is applied.
 
    do
 
@@ -99,4 +92,24 @@ program solution
    print *
 
    close (funitin)
+
+contains
+
+   subroutine inittables(s, m)
+      implicit none
+      integer, intent(inout) :: s(3, 3)
+      character*1, intent(inout) :: m(3, 3)
+
+      ! scores for opponent play (rows) versus your play (columns)
+      s(1, 1) = 4; s(1, 2) = 8; s(1, 3) = 3
+      s(2, 1) = 1; s(2, 2) = 5; s(2, 3) = 9
+      s(3, 1) = 7; s(3, 2) = 2; s(3, 3) = 6
+
+      ! treating your play as a desired outcome, translate it back
+      ! to the right play to get that outcome versus the opponent
+      ! play.
+      m(1, 1) = 'Z'; m(1, 2) = 'X'; m(1, 3) = 'Y'
+      m(2, 1) = 'X'; m(2, 2) = 'Y'; m(2, 3) = 'Z'
+      m(3, 1) = 'Y'; m(3, 2) = 'Z'; m(3, 3) = 'X'
+   end subroutine inittables
 end program solution
