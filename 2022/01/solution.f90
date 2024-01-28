@@ -1,4 +1,4 @@
-! solution.f90 -- 2022 day 01 -- callor hoarders -- Troy Brumley blametroi@gmail.com
+! solution.f90 -- 2022 day 01 -- calorie hoarders -- Troy Brumley blametroi@gmail.com
 
 ! as an experiment, can i translate (transliterate more likely) from pascal to
 ! fortran 90? and i quickly determine that this will go better starting from
@@ -20,7 +20,7 @@ program solution
    logical             :: eof
    integer(kind=8)     :: i, n                    ! count, work
    integer(kind=8)     :: gtotal, stotal, mtotal  ! grand, sub, and max
-   integer(kind=8)     :: topthree(4)             ! fourth slot is for sort work
+   integer(kind=8)     :: topthree(3)             ! top three subtotals
 
    ! in a real app we'd check for missing arguments
    call get_command_argument(1, fname)
@@ -38,7 +38,7 @@ program solution
    ! initialization
    eof = .false.
    i = 0; n = 0; gtotal = 0; stotal = 0; mtotal = 0
-   topthree = (/0, 0, 0, 0/)
+   topthree = (/0, 0, 0/)
 
    ! input is a list of integers, one to a line, broken into groups by blank
    ! lines. find the grand total, the maximum single group total, and the sum of
