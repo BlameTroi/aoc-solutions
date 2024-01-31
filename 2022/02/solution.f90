@@ -14,29 +14,24 @@
 
 program solution
 
+   use iso_fortran_env
+   use aocinput
+
    implicit none
 
    ! file io
    integer, parameter  :: funitin = 10
-   character(len=255)  :: fname = "./dataset.txt"
-   integer             :: fstat
-   character(len=255)  :: frecin
+   character(len=1024) :: frecin
 
    ! application
    character(len=1)    :: opp, you, myou          ! input for opponent, you, and later morphed you
    integer             :: sopp, syou, smyou       ! a-c and x-z as subscripts
-   integer(kind=8)     :: i                       ! count
-   integer(kind=8)     :: partone, parttwo        !
-   integer             :: scores(3, 3)             ! map scores ax->cz
+   integer(kind=int64) :: i                       ! count
+   integer(kind=int64) :: partone, parttwo        !
+   integer(kind=int64) :: scores(3, 3)             ! map scores ax->cz
    character(len=1)    :: morphplays(3, 3)         ! part two strategy changer
 
-   ! in a real app we'd check for missing arguments
-   call get_command_argument(1, fname)
-   open (unit=funitin, file=trim(fname), access="stream", form="formatted", status="old", iostat=fstat)
-   if (fstat /= 0) then ! ERROR
-      print *, "error opening dataset = ", fstat
-      stop
-   end if
+   call open_aoc_input(funitin)
 
    ! initialization
 
@@ -61,12 +56,7 @@ program solution
 
       i = i + 1
 
-      read (funitin, "(a)", iostat=fstat) frecin
-      if (fstat < 0) exit ! end of file
-      if (fstat > 0) then ! some other error
-         print *, "error reading dataset = ", fstat
-         stop
-      end if
+      if (.not. read_aoc_input(funitin, frecin)) exit ! read until end of file
 
       opp = frecin(1:1)
       you = frecin(3:3)
@@ -91,14 +81,14 @@ program solution
    print *, parttwo, " part two "
    print *
 
-   close (funitin)
+   call close_aoc_input(funitin)
 
 contains
 
    subroutine inittables(s, m)
       implicit none
-      integer, intent(inout) :: s(3, 3)
-      character*1, intent(inout) :: m(3, 3)
+      integer(kind=int64), intent(inout) :: s(3, 3)
+      character*1, intent(inout)         :: m(3, 3)
 
       ! scores for opponent play (rows) versus your play (columns)
       s(1, 1) = 4; s(1, 2) = 8; s(1, 3) = 3
