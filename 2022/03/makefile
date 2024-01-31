@@ -4,7 +4,7 @@
 ROOTDIR=$(HOME)
 PROJDIR=$(ROOTDIR)/projects/aoc/solutions
 COMPILER=gfortran
-OPTIONS=-g -Wall -fcheck=all
+OPTIONS=-Wall -fcheck=all
 INCDIR=$(PROJDIR)/commonf90
 MODDIR=$(PROJDIR)/commonf90
 DATDIR=$(ROOTDIR)/projects/aoc/datasets
