@@ -4,18 +4,25 @@
 ROOTDIR=$(HOME)
 PROJDIR=$(ROOTDIR)/projects/aoc/solutions
 COMPILER=gfortran
-OPTIONS=-fdefault-integer-8 -Wall -fcheck=all
-INCLUDES=-I$(PROJDIR)/commonf90
-MODULES=-J$(PROJDIR)/commonf90
+OPTIONS=-g -Wall -fcheck=all
+INCDIR=$(PROJDIR)/commonf90
+MODDIR=$(PROJDIR)/commonf90
+DATDIR=$(ROOTDIR)/projects/aoc/datasets
+INCLUDES=-I$(INCDIR)
+MODULES=-J$(MODDIR)
 COMPILE=$(COMPILER) -c $(OPTIONS) $(INCLUDES) $(MODULES)
+COMPLINK=$(COMPILER) $(OPTIONS) $(INCLUDES) $(MODULES) $(MODDIR)/*.o
 
 default:
 
-aocinput: aocinput.f90
-	$(COMPILE) aocinput.f90
+solution: solution.f90
+	$(COMPLINK) solution.f90 -o solution
 
-charset: charset.f90
-	$(COMPILE) charset.f90
+short:
+	./solution $(DATDIR)/2022/03/testone.txt
+
+full:
+	./solution $(DATDIR)/2022/03/dataset.txt
 
 clean:
 	rm -rf *.mod *.o

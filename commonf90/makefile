@@ -3,11 +3,15 @@
 # attempting to do the include paths cleanly
 ROOTDIR=$(HOME)
 PROJDIR=$(ROOTDIR)/projects/aoc/solutions
+INCDIR=$(PROJDIR)/commonf90
+MODDIR=$(PROJDIR)/commonf90
+DATDIR=$(ROOTDIR)/projects/aoc/datasets
+INCLUDES=-I$(INCDIR)
+MODULES=-J$(MODDIR)
 COMPILER=gfortran
-OPTIONS=-fdefault-integer-8 -Wall -fcheck=all
-INCLUDES=-I$(PROJDIR)/commonf90
-MODULES=-J$(PROJDIR)/commonf90
+OPTIONS=-g -Wall -fcheck=all
 COMPILE=$(COMPILER) -c $(OPTIONS) $(INCLUDES) $(MODULES)
+COMPLINK=$(COMPILER) $(OPTIONS) $(INCLUDES) $(MODULES) $(MODDIR)/*.o
 
 default:
 

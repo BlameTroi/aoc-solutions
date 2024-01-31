@@ -37,7 +37,7 @@ program solution
    ! application
    integer(kind=int64) :: cntone, cnttwo          ! work
    integer(kind=int64) :: partone, parttwo        ! results
-   integer             :: item, i                 ! work
+   integer             :: item                    ! work
    integer             :: reclen
    character(len=1024) :: recin
    logical             :: left(255), right(255)   ! a poor man's set of characters
@@ -151,10 +151,10 @@ program solution
 
    ! report and close
    print *
-   print *, cntone, " records read "
-   print *, cnttwo, " groups read "
-   print *, partone, " part one "
-   print *, parttwo, " part two "
+   print *, cntone, "records read"
+   print *, cnttwo, "groups read"
+   print *, partone, "part one"
+   print *, parttwo, "part two"
    print *
 
    call close_aoc_input(funitin)
