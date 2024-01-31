@@ -7,33 +7,22 @@
 ! group? part two: what is the sum of the values of the three largest groups?
 
 program solution
+   use iso_fortran_env
+   use aocinput
 
    implicit none
 
    ! file io
    integer, parameter  :: funitin = 10
-   character(len=255)  :: fname = "./dataset.txt"
-   integer             :: fstat
-   character(len=255)  :: frecin
+   character(len=1024) :: frecin
 
    ! application
    logical             :: eof
-   integer(kind=8)     :: i, n                    ! count, work
-   integer(kind=8)     :: gtotal, stotal, mtotal  ! grand, sub, and max
-   integer(kind=8)     :: topthree(3)             ! top three subtotals
+   integer(kind=int64) :: i, n                    ! count, work
+   integer(kind=int64) :: gtotal, stotal, mtotal  ! grand, sub, and max
+   integer(kind=int64) :: topthree(3)             ! top three subtotals
 
-   ! in a real app we'd check for missing arguments
-   call get_command_argument(1, fname)
-   open (unit=funitin, &
-         file=trim(fname), &
-         access="stream", &
-         form="formatted", &
-         status="old", &
-         iostat=fstat)
-   if (fstat /= 0) then ! ERROR
-      print *, "error opening dataset = ", fstat
-      stop
-   end if
+   call open_aoc_input(funitin)
 
    ! initialization
    eof = .false.
@@ -47,13 +36,7 @@ program solution
 
       i = i + 1
 
-      read (funitin, "(a)", iostat=fstat) frecin
-      if (fstat < 0) then ! end of file
-         eof = .true.
-      elseif (fstat > 0) then ! some other error
-         print *, "error reading dataset = ", fstat
-         stop
-      end if
+      eof = .not. read_aoc_input(funitin, frecin)
 
       ! if there's a better way to check for blank lines, i have yet to find it
       if ((eof .eqv. .false.) .and. (len_trim(adjustl(frecin)) > 0)) then
@@ -104,5 +87,5 @@ program solution
    print *, stotal, " sum of top three groups "
    print *
 
-   close (funitin)
+   call close_aoc_input(funitin)
 end program solution
