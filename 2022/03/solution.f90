@@ -25,32 +25,27 @@
 
 program solution
 
+   use iso_fortran_env
    use charset
+   use aocinput
 
    implicit none
 
    ! file io
    integer, parameter  :: funitin = 10
-   character(len=255)  :: fname = "./dataset.txt"
-   integer             :: fstat
 
    ! application
-   integer(kind=8)     :: cntone, cnttwo          ! work
-   integer(kind=8)     :: partone, parttwo        ! results
+   integer(kind=int64) :: cntone, cnttwo          ! work
+   integer(kind=int64) :: partone, parttwo        ! results
    integer             :: item, i                 ! work
    integer             :: reclen
-   character(len=512)  :: recin
+   character(len=1024) :: recin
    logical             :: left(255), right(255)   ! a poor man's set of characters
    logical             :: first(255), second(255), third(255) ! for part two
    logical             :: dup12(255), dup23(255), dups(255)   ! ..
 
-   ! in a real app we'd check for missing arguments
-   call get_command_argument(1, fname)
-   open (unit=funitin, file=trim(fname), access="stream", form="formatted", status="old", iostat=fstat)
-   if (fstat /= 0) then ! ERROR
-      print *, "error opening dataset = ", fstat
-      stop
-   end if
+   ! input file is argument 1
+   call open_aoc_input(funitin)
 
    ! initialize
    cntone = 0; cnttwo = 0; partone = 0; parttwo = 0
@@ -60,12 +55,7 @@ program solution
 
    readone: do
 
-      read (funitin, "(a)", iostat=fstat) recin
-      if (fstat < 0) exit ! end of file
-      if (fstat > 0) then ! some other error
-         print *, "error reading dataset = ", fstat
-         stop
-      end if
+      if (.not. read_aoc_input(funitin, recin)) exit     ! read until end of file
 
       cntone = cntone + 1
 
@@ -97,24 +87,14 @@ program solution
    ! for part two, consider every three elves as a group. find the item in
    ! common in all three rucksacks and sum their priorities.
 
-   rewind (funitin, iostat=fstat)
-   if (fstat /= 0) then
-      print *, "error on rewind ", fstat
-      stop
-   end if
+   call rewind_aoc_input(funitin)
 
    readtwo: do
 
       call clear_set(first)
       call clear_set(second)
       call clear_set(third)
-
-      read (funitin, "(a)", iostat=fstat) recin
-      if (fstat < 0) exit ! end of file
-      if (fstat > 0) then ! some other error
-         print *, "error reading dataset = ", fstat
-         stop
-      end if
+      if (.not. read_aoc_input(funitin, recin)) exit     ! read until end of file
 
       cnttwo = cnttwo + 1
 
@@ -124,9 +104,8 @@ program solution
          call include_in_set(first, recin(item:item))
       end do
 
-      read (funitin, "(a)", iostat=fstat) recin
-      if (fstat /= 0) then ! end of file not allowed here
-         print *, "error reading dataset = ", fstat
+      if (.not. read_aoc_input(funitin, recin)) then ! end of file not allowed here
+         print *, "premature end of file on aoc dataset"
          stop
       end if
 
@@ -139,9 +118,8 @@ program solution
          call include_in_set(second, recin(item:item))
       end do
 
-      read (funitin, "(a)", iostat=fstat) recin
-      if (fstat /= 0) then ! end of file not allowed here
-         print *, "error reading dataset = ", fstat
+      if (.not. read_aoc_input(funitin, recin)) then ! end of file not allowed here
+         print *, "premature end of file on aoc dataset"
          stop
       end if
 
@@ -179,7 +157,7 @@ program solution
    print *, parttwo, " part two "
    print *
 
-   close (funitin)
+   call close_aoc_input(funitin)
 
 contains
 
