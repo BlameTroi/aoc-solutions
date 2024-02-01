@@ -1,4 +1,3 @@
-
 ! solution.f90 -- 2022 day ?? -- -- Troy Brumley blametroi@gmail.com
 
 ! a shell to fill in
@@ -9,38 +8,38 @@ program solution
 
    implicit none
 
-   integer, parameter            :: unitin = 10
+   integer, parameter            :: aocin = 10
    integer(kind=int64)           :: part_one, part_two  ! results
    integer(kind=int64)           :: i                   ! work
    integer(kind=int64)           :: reclen
-   character(len=max_aoc_reclen) :: recin
+   character(len=max_aoc_reclen) :: rec
 
    ! input file is argument 1
-   call open_aoc_input(unitin)
+   call open_aoc_input(aocin)
 
    ! initialize
    part_one = 0; part_two = 0
 
    read_one: do
 
-      if (.not. read_aoc_input(unitin, recin)) exit     ! read until end of file
+      if (.not. read_aoc_input(aocin, rec)) exit     ! read until end of file
 
       i = i + 1
 
-      reclen = len_trim(recin)
+      reclen = len_trim(rec)
       if (reclen < 1) cycle read_one
 
    end do read_one
 
-   call rewind_aoc_input(unitin)
+   call rewind_aoc_input(aocin)
 
    read_two: do
 
-      if (.not. read_aoc_input(unitin, recin)) exit     ! read until end of file
+      if (.not. read_aoc_input(aocin, rec)) exit     ! read until end of file
 
       i = i + 1
 
-      reclen = len_trim(recin)
+      reclen = len_trim(rec)
       if (reclen < 1) cycle read_two
 
    end do read_two
@@ -51,6 +50,6 @@ program solution
    print *, part_two, "part two"
    print *
 
-   call close_aoc_input(unitin)
+   call close_aoc_input(aocin)
 
 end program solution

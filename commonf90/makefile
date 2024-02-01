@@ -21,5 +21,8 @@ aocinput: aocinput.f90
 charset: charset.f90
 	$(COMPILE) charset.f90
 
+intset: intset.f90
+	$(COMPILE) intset.f90
+
 clean:
 	rm -rf *.mod *.o
