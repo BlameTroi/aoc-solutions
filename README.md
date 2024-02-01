@@ -48,6 +48,19 @@ The compiler is Free Pascal 3.22 in with runtime checks enabled, a limited numbe
 * `break` and `continue` are available in loops, `exit` is available for early exit from procedures and functions, but I steadfastly refuse to use `result`.
 * boolean evaluation short circuiting is disabled as it's non-standard in a way that is visible in the code.
 
+### Fortran
+
+About half way through the 2022 and 2023 I decided to switch to Fortran. I've been meaning give Fortran a try for a while and after seeing enough of the present state of the compilers and standards I feel they are superior to Pascal for my needs. I still love Pascal, but the direction of Delphi and Lazarus is heavy objects and forms based. I'm more comfortable at lower levels.
+
+The general approach is the same as with Pascal, but given the strong standards support I don't have to add cruft to get the language in what I consider proper shape.
+
+#### Compilers
+
+There are two compilers I am alternating between: gfortran 13.2 and lfortran. lfortran is still in a pre-beta state but as gfortran and lldb on MacOs don't work without jumping through hoops, I expect to use lfortran if I have to use a debugger.
+
+#### Editor/IDE
+
+I have relented and am using the fortran language module with lsp support enabled in Doom Emacs. I still find intellisense and autocompletion to be flow breaking, but they can be turned off or switched to 'on demand' once I am more familiar with the language.
 
 ## Licensing and copyright
 
