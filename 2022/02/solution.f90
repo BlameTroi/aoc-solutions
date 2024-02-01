@@ -1,4 +1,4 @@
-! solution.f90 -- 2022 day 02 -- rock paper scissors -- Troy Brumley blametroi@gmail.com
+! solution.f90 -- 2022 day 02 -- rock paper scissors -- troy brumley blametroi@gmail.com
 
 ! given a 'strategy guide' for rock paper scissors, find the score if you follow
 ! the strategy. for part one, you interpret the guide as 'opponent play' and
@@ -14,28 +14,25 @@
 
 program solution
 
-   use iso_fortran_env
-   use aocinput
+   use iso_fortran_env, only: int64
+   use aocinput, only: open_aoc_input, read_aoc_input, close_aoc_input, max_aoc_reclen, rewind_aoc_input
 
    implicit none
 
-   ! file io
-   integer, parameter  :: funitin = 10
-   character(len=1024) :: frecin
+   integer, parameter            :: AOCIN = 10
+   character(len=max_aoc_reclen) :: frecin
+   character(len=1)              :: opp, you, myou    ! input for opponent, you, and later morphed you
+   integer                       :: sopp, syou, smyou ! a-c and x-z as subscripts
+   integer(kind=int64)           :: i                 ! count
+   integer(kind=int64)           :: part_one, part_two
+   integer(kind=int64)           :: scores(3, 3)      ! map scores ax->cz
+   character(len=1)              :: morphplays(3, 3)  ! part two strategy changer
 
-   ! application
-   character(len=1)    :: opp, you, myou          ! input for opponent, you, and later morphed you
-   integer             :: sopp, syou, smyou       ! a-c and x-z as subscripts
-   integer(kind=int64) :: i                       ! count
-   integer(kind=int64) :: partone, parttwo        !
-   integer(kind=int64) :: scores(3, 3)             ! map scores ax->cz
-   character(len=1)    :: morphplays(3, 3)         ! part two strategy changer
-
-   call open_aoc_input(funitin)
+   call open_aoc_input(AOCIN)
 
    ! initialization
 
-   i = 0; partone = 0; parttwo = 0
+   i = 0; part_one = 0; part_two = 0
    call inittables(scores, morphplays)
 
    ! input is a series of instructions for a round of rock-paper-scissors.
@@ -56,7 +53,7 @@ program solution
 
       i = i + 1
 
-      if (.not. read_aoc_input(funitin, frecin)) exit ! read until end of file
+      if (.not. read_aoc_input(AOCIN, frecin)) exit ! read until end of file
 
       opp = frecin(1:1)
       you = frecin(3:3)
@@ -64,24 +61,24 @@ program solution
       ! part one uses your selection as the play
       sopp = ichar(opp) - ichar('A') + 1
       syou = ichar(you) - ichar('X') + 1
-      partone = partone + scores(sopp, syou)
+      part_one = part_one + scores(sopp, syou)
 
       ! part two uses your selection as outcome, convert to the
       ! right play to get the outcome and score as in part one.
       myou = morphplays(sopp, syou)
       smyou = ichar(myou) - ichar('X') + 1
-      parttwo = parttwo + scores(sopp, smyou)
+      part_two = part_two + scores(sopp, smyou)
 
    end do
 
    ! report and close
    print *
    print *, i, " records read "
-   print *, partone, " part one "
-   print *, parttwo, " part two "
+   print *, part_one, " part one "
+   print *, part_two, " part two "
    print *
 
-   call close_aoc_input(funitin)
+   call close_aoc_input(AOCIN)
 
 contains
 

@@ -25,37 +25,37 @@
 
 program solution
 
-   use iso_fortran_env
-   use charset
-   use aocinput
+   use iso_fortran_env, only: int64
+   use charset, only: clear_set, include_in_set, intersection_of_sets, size_of_set
+   use aocinput, only: open_aoc_input, read_aoc_input, rewind_aoc_input, close_aoc_input, max_aoc_reclen
 
    implicit none
 
    ! file io
-   integer, parameter  :: funitin = 10
+   integer, parameter  :: AOCIN = 10
 
    ! application
    integer(kind=int64) :: cntone, cnttwo          ! work
-   integer(kind=int64) :: partone, parttwo        ! results
+   integer(kind=int64) :: part_one, part_two      ! results
    integer             :: item                    ! work
    integer             :: reclen
-   character(len=1024) :: recin
+   character(len=max_aoc_reclen) :: recin
    logical             :: left(255), right(255)   ! a poor man's set of characters
    logical             :: first(255), second(255), third(255) ! for part two
    logical             :: dup12(255), dup23(255), dups(255)   ! ..
 
    ! input file is argument 1
-   call open_aoc_input(funitin)
+   call open_aoc_input(AOCIN)
 
    ! initialize
-   cntone = 0; cnttwo = 0; partone = 0; parttwo = 0
+   cntone = 0; cnttwo = 0; part_one = 0; part_two = 0
 
    ! for part one, identify the one item type that is duplicate in each rucksack
    ! and its priority value. sum these priorities and report the total.
 
    readone: do
 
-      if (.not. read_aoc_input(funitin, recin)) exit     ! read until end of file
+      if (.not. read_aoc_input(AOCIN, recin)) exit     ! read until end of file
 
       cntone = cntone + 1
 
@@ -77,7 +77,7 @@ program solution
 
       do item = 1, 255
          if (dups(item)) then
-            partone = partone + priorityvalue(achar(item))
+            part_one = part_one + priorityvalue(achar(item))
             cycle readone
          end if
       end do
@@ -87,14 +87,14 @@ program solution
    ! for part two, consider every three elves as a group. find the item in
    ! common in all three rucksacks and sum their priorities.
 
-   call rewind_aoc_input(funitin)
+   call rewind_aoc_input(AOCIN)
 
    readtwo: do
 
       call clear_set(first)
       call clear_set(second)
       call clear_set(third)
-      if (.not. read_aoc_input(funitin, recin)) exit     ! read until end of file
+      if (.not. read_aoc_input(AOCIN, recin)) exit     ! read until end of file
 
       cnttwo = cnttwo + 1
 
@@ -104,7 +104,7 @@ program solution
          call include_in_set(first, recin(item:item))
       end do
 
-      if (.not. read_aoc_input(funitin, recin)) then ! end of file not allowed here
+      if (.not. read_aoc_input(AOCIN, recin)) then ! end of file not allowed here
          print *, "premature end of file on aoc dataset"
          stop
       end if
@@ -118,7 +118,7 @@ program solution
          call include_in_set(second, recin(item:item))
       end do
 
-      if (.not. read_aoc_input(funitin, recin)) then ! end of file not allowed here
+      if (.not. read_aoc_input(AOCIN, recin)) then ! end of file not allowed here
          print *, "premature end of file on aoc dataset"
          stop
       end if
@@ -142,7 +142,7 @@ program solution
 
       do item = 1, 255
          if (dups(item)) then
-            parttwo = parttwo + priorityvalue(achar(item))
+            part_two = part_two + priorityvalue(achar(item))
             cycle readtwo
          end if
       end do
@@ -151,13 +151,11 @@ program solution
 
    ! report and close
    print *
-   print *, cntone, "records read"
-   print *, cnttwo, "groups read"
-   print *, partone, "part one"
-   print *, parttwo, "part two"
+   print *, part_one, "part one"
+   print *, part_two, "part two"
    print *
 
-   call close_aoc_input(funitin)
+   call close_aoc_input(AOCIN)
 
 contains
 

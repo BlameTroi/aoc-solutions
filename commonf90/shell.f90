@@ -1,4 +1,4 @@
-! solution.f90 -- 2022 day ?? -- -- Troy Brumley blametroi@gmail.com
+! solution.f90 -- 2022 day ?? -- -- troy brumley blametroi@gmail.com
 
 ! a shell to fill in
 program solution
@@ -8,21 +8,21 @@ program solution
 
    implicit none
 
-   integer, parameter            :: aocin = 10
+   integer, parameter            :: AOCIN = 10
    integer(kind=int64)           :: part_one, part_two  ! results
    integer(kind=int64)           :: i                   ! work
    integer(kind=int64)           :: reclen
    character(len=max_aoc_reclen) :: rec
 
    ! input file is argument 1
-   call open_aoc_input(aocin)
+   call open_aoc_input(AOCIN)
 
    ! initialize
    part_one = 0; part_two = 0
 
    read_one: do
 
-      if (.not. read_aoc_input(aocin, rec)) exit     ! read until end of file
+      if (.not. read_aoc_input(AOCIN, rec)) exit     ! read until end of file
 
       i = i + 1
 
@@ -31,11 +31,11 @@ program solution
 
    end do read_one
 
-   call rewind_aoc_input(aocin)
+   call rewind_aoc_input(AOCIN)
 
    read_two: do
 
-      if (.not. read_aoc_input(aocin, rec)) exit     ! read until end of file
+      if (.not. read_aoc_input(AOCIN, rec)) exit     ! read until end of file
 
       i = i + 1
 
@@ -50,6 +50,6 @@ program solution
    print *, part_two, "part two"
    print *
 
-   call close_aoc_input(aocin)
+   call close_aoc_input(AOCIN)
 
 end program solution

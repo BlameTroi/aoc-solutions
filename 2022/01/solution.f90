@@ -1,4 +1,4 @@
-! solution.f90 -- 2022 day 01 -- calorie hoarders -- Troy Brumley blametroi@gmail.com
+! solution.f90 -- 2022 day 01 -- calorie hoarders -- troy brumley blametroi@gmail.com
 
 ! as an experiment, can i translate (transliterate more likely) from pascal to
 ! fortran 90? and i quickly determine that this will go better starting from

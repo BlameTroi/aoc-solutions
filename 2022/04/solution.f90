@@ -1,4 +1,4 @@
-! solution.f90 -- 2022 day 04 -- camp cleanup -- Troy Brumley blametroi@gmail.com
+! solution.f90 -- 2022 day 04 -- camp cleanup -- troy brumley blametroi@gmail.com
 
 ! advent of code 2022 day 04 -- camp cleanup
 !
