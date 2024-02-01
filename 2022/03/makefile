@@ -15,13 +15,13 @@ COMPLINK=$(COMPILER) $(OPTIONS) $(INCLUDES) $(MODULES) $(MODDIR)/*.o
 
 default:
 
-solution: solution.f90
+build: solution.f90
 	$(COMPLINK) solution.f90 -o solution
 
-short:
+test:
 	./solution $(DATDIR)/2022/03/testone.txt
 
-full:
+run:
 	./solution $(DATDIR)/2022/03/dataset.txt
 
 clean:

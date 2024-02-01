@@ -6,6 +6,7 @@
 ! better, but this is simple and works well enough for now.
 
 module charset
+   use iso_fortran_env, only: int64
 
    implicit none
 
@@ -17,7 +18,7 @@ module charset
    public :: exclude_from_set
    public :: intersection_of_sets
    public :: union_of_sets
-   public :: print_set
+   public :: contains_set
 
    public :: charset_limit
 
@@ -81,17 +82,18 @@ contains
       end do
    end subroutine union_of_sets
 
-   ! debugging helper
-   subroutine print_set(s)
+   ! s1 <= s2
+   function contains_set(s1, s2)
       implicit none
-      logical, intent(in)          :: s(charset_limit)
-      character(len=charset_limit) :: str
-      integer                      :: i
-      str = ""
+      logical              :: contains_set
+      logical, intent(in)  :: s1(charset_limit), s2(charset_limit)
+      integer(kind=int64)  :: i
+      contains_set = .true.
       do i = 1, charset_limit
-         if (s(i)) str = trim(str)//achar(i)
+         if (.not. s2(i)) cycle
+         if (s2(i) .and. s1(i)) cycle
+         contains_set = .false.
+         exit
       end do
-      print *, str
-   end subroutine print_set
-
+   end function
 end module charset

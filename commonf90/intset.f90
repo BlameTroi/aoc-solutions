@@ -91,6 +91,7 @@ contains
       integer(kind=int64)  :: i
       contains_set = .true.
       do i = 0, intset_limit
+         if (.not. s2(i)) cycle
          if (s2(i) .and. s1(i)) cycle
          contains_set = .false.
          exit
