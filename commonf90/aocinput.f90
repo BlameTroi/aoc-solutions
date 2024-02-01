@@ -10,6 +10,7 @@
 ! recognized, print the status code and stop the program.
 
 module aocinput
+   use iso_fortran_env, only: iostat_end, error_unit
 
    implicit none
 
@@ -20,22 +21,24 @@ module aocinput
    public :: rewind_aoc_input
    public :: read_aoc_input
 
+   public :: max_aoc_reclen
+   integer, parameter  :: max_aoc_reclen = 1024
+
+   integer             :: ioerr
+   character(len=512)  :: iotxt
+
 contains
 
    ! the dataset name is the first command line argument. open that file for
    ! reading. prints whether or not the file was opened on stdout.
    subroutine open_aoc_input(u)
       implicit none
-      character(len=255)  :: fname = "./dataset.txt"
+      character(len=255)  :: fname
       integer, intent(in) :: u
-      integer             :: fstat
 
       call get_command_argument(1, fname)
-      open (unit=u, file=trim(fname), access="stream", form="formatted", status="old", iostat=fstat)
-      if (fstat /= 0) then ! ERROR
-         print *, "error opening aoc dataset '", trim(fname), "': ", fstat
-         stop
-      end if
+      open (unit=u, file=trim(fname), access="stream", form="formatted", status="old", iostat=ioerr, iomsg=iotxt)
+      if (ioerr /= 0) call report_aoc_error("openening "//trim(fname), ioerr, iotxt)
 
       print *, "aoc dataset '", trim(fname), "' opened for reading"
    end subroutine open_aoc_input
@@ -53,13 +56,9 @@ contains
    subroutine rewind_aoc_input(u)
       implicit none
       integer, intent(in) :: u
-      integer             :: fstat
 
-      rewind (u, iostat=fstat)
-      if (fstat /= 0) then
-         print *, "error on rewind of aoc dataset: ", fstat
-         stop
-      end if
+      rewind (u, iostat=ioerr, iomsg=iotxt)
+      if (ioerr /= 0) call report_aoc_error("rewind", ioerr, iotxt)
    end subroutine rewind_aoc_input
 
    ! read the next record/line from the aoc dataset on unit u into the character
@@ -67,18 +66,26 @@ contains
    ! .false. if at end of file.
    function read_aoc_input(u, r)
       implicit none
-      integer, intent(in) :: u
+      integer, intent(in)  :: u
       character(len=1024), intent(out) :: r
-      integer             :: fstat
-      logical             :: read_aoc_input
+      logical                          :: read_aoc_input
 
-      read (u, "(a)", iostat=fstat) r
-      if (fstat > 0) then ! some other error
-         print *, "error reading aoc dataset: ", fstat
-         stop
+      read (u, "(a)", iostat=ioerr, iomsg=iotxt) r
+      if (ioerr == iostat_end) then
+         read_aoc_input = .false.
+      else if (ioerr /= 0) then
+         call report_aoc_error("read", ioerr, iotxt)
+      else
+         read_aoc_input = .true.
       end if
-
-      read_aoc_input = fstat == 0
    end function read_aoc_input
+
+   subroutine report_aoc_error(func, err, msg)
+      implicit none
+      integer, intent(in)      :: err
+      character(*), intent(in) :: func, msg
+      write (error_unit, *) "error on ", trim(func), " iostat:", err, " iomsg: ", trim(msg)
+      stop 1
+   end subroutine report_aoc_error
 
 end module aocinput

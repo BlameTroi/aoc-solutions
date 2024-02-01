@@ -7,27 +7,24 @@
 ! group? part two: what is the sum of the values of the three largest groups?
 
 program solution
-   use iso_fortran_env
-   use aocinput
+   use iso_fortran_env, only: int64
+   use aocinput, only: open_aoc_input, close_aoc_input, read_aoc_input, rewind_aoc_input, max_aoc_reclen
 
    implicit none
 
-   ! file io
-   integer, parameter  :: funitin = 10
-   character(len=1024) :: frecin
-
-   ! application
-   logical             :: eof
-   integer(kind=int64) :: i, n                    ! count, work
-   integer(kind=int64) :: gtotal, stotal, mtotal  ! grand, sub, and max
-   integer(kind=int64) :: topthree(3)             ! top three subtotals
+   integer, parameter            :: funitin = 10
+   logical                       :: eof
+   character(len=max_aoc_reclen) :: recin
+   integer(kind=int64)           :: i, n                    ! count, work
+   integer(kind=int64)           :: gtotal, stotal, mtotal  ! grand, sub, and max
+   integer(kind=int64)           :: topthree(3)             ! top three subtotals
 
    call open_aoc_input(funitin)
 
    ! initialization
    eof = .false.
    i = 0; n = 0; gtotal = 0; stotal = 0; mtotal = 0
-   topthree = (/0, 0, 0/)
+   topthree = [0, 0, 0]
 
    ! input is a list of integers, one to a line, broken into groups by blank
    ! lines. find the grand total, the maximum single group total, and the sum of
@@ -36,11 +33,11 @@ program solution
 
       i = i + 1
 
-      eof = .not. read_aoc_input(funitin, frecin)
+      eof = .not. read_aoc_input(funitin, recin)
 
       ! if there's a better way to check for blank lines, i have yet to find it
-      if ((eof .eqv. .false.) .and. (len_trim(adjustl(frecin)) > 0)) then
-         read (frecin, *) n
+      if ((eof .eqv. .false.) .and. (len_trim(adjustl(recin)) > 0)) then
+         read (recin, *) n
          gtotal = gtotal + n
          stotal = stotal + n
          cycle
@@ -74,11 +71,11 @@ program solution
 
    ! report and close
    print *
-   print *, i, " records read "
-   print *, gtotal, " grand total "
-   print *, mtotal, " maximum single group subtotal "
+   print *, i, "records read"
+   print *, gtotal, "grand total"
+   print *, mtotal, "maximum single group subtotal"
    print *
-   print *, "the top three groups are "
+   print *, "the top three groups are"
    stotal = 0
    do i = 1, 3
       print *, topthree(i)

@@ -9,7 +9,7 @@ DATDIR=$(ROOTDIR)/projects/aoc/datasets
 INCLUDES=-I$(INCDIR)
 MODULES=-J$(MODDIR)
 COMPILER=gfortran
-OPTIONS=-g -Wall -fcheck=all
+OPTIONS=-Wall -fcheck=all
 COMPILE=$(COMPILER) -c $(OPTIONS) $(INCLUDES) $(MODULES)
 COMPLINK=$(COMPILER) $(OPTIONS) $(INCLUDES) $(MODULES) $(MODDIR)/*.o
 
