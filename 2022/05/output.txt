@@ -1,2 +1,7 @@
-part one answer : QMBMJDFTD
-part two answer : NBTVTJNFJ
+./solution /Users/troi/projects/aoc/datasets/2022/05/dataset.txt
+ aoc dataset '/Users/troi/projects/aoc/datasets/2022/05/dataset.txt' opened for reading
+
+ QMBMJDFTD part one
+ NBTVTJNFJ part two
+
+ aoc dataset closed

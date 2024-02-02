@@ -53,9 +53,9 @@ program solution
    integer, parameter         :: AOCIN = 10
    integer(kind=int64)        :: part_one, part_two  ! results
    integer                    :: i, j, k             ! work
-   integer                    :: reclen
    character(len=max_aoc_reclen) :: rec
    character(len=MAX_STACKS)  :: report_one, report_two
+
    call open_aoc_input(AOCIN)
 
    ! initialize
@@ -68,7 +68,6 @@ program solution
    do while (read_aoc_input(AOCIN, rec))
       if (len_trim(rec) == 0) exit     ! blank line is end of this section
       if (scan(rec, "[") == 0) cycle   ! ignore this line
-      print *, i, trim(rec)
       j = 0;
       do k = 1, len_trim(rec), 4       ! "[x] "
          j = j + 1
@@ -91,7 +90,6 @@ program solution
 
    ! report the top crates of each stack
    do i = 1, MAX_STACKS
-      print *, "stack", i, "depth", depth_stack(dock(i))
       if (peek_stack(dock(i)) == " ") then
          report_one = trim(report_one)//"-"
       else
@@ -99,18 +97,48 @@ program solution
       end if
    end do
 
-   ! call rewind_aoc_input(AOCIN)
-   ! read_two: do
-   !    if (.not. read_aoc_input(AOCIN, rec)) exit     ! read until end of file
-   !    i = i + 1
-   !    reclen = len_trim(rec)
-   !    if (reclen < 1) cycle read_two
-   ! end do read_two
+   ! reload and reprocess using the rules for part two
+   call rewind_aoc_input(AOCIN)
+   call clear_stacks
+   do while (read_aoc_input(AOCIN, rec))
+      if (len_trim(rec) == 0) exit     ! blank line is end of this section
+      if (scan(rec, "[") == 0) cycle   ! ignore this line
+      j = 0;
+      do k = 1, len_trim(rec), 4       ! "[x] "
+         j = j + 1
+         if (rec(k:k) == "[") then
+            call push_stack(dock(j), rec(k + 1:k + 1))
+         end if
+      end do
+   end do
+   call reverse_stacks
+
+   ! process moves under part two rules, last record read was the
+   ! blank line between the initial stack and the moves
+   do while (read_aoc_input(AOCIN, rec))
+      call sanitize(rec)
+      read (rec, *) to_move, from_stack, to_stack
+      do i = 1, to_move
+         call push_stack(buffer, pop_stack(dock(from_stack)))
+      end do
+      do i = 1, to_move
+         call push_stack(dock(to_stack), pop_stack(buffer))
+      end do
+   end do
+
+   ! report the top crates of each stack
+   do i = 1, MAX_STACKS
+      if (peek_stack(dock(i)) == " ") then
+         report_two = trim(report_two)//"-"
+      else
+         report_two = trim(report_two)//peek_stack(dock(i))
+      end if
+   end do
 
    ! report and close
    print *
-   print *, report_one, "part one"
-   print *, part_two, "part two"
+   print *, report_one, " part one"
+   print *, report_two, " part two"
    print *
 
    call close_aoc_input(AOCIN)
@@ -140,7 +168,7 @@ contains
 
    subroutine clear_stack(astk)
       implicit none
-      type(t_stack), intent(inout) :: astk
+      type(t_stack), intent(out) :: astk
       integer                 :: vi
       do vi = 1, MAX_DEPTH
          astk%crates(vi) = " "
@@ -153,11 +181,10 @@ contains
       implicit none
       type(t_stack), intent(in) :: astk
       character(len=1)        :: peek_stack
-      integer                 :: vi
       if (astk%depth /= 0) then
          peek_stack = astk%crates(astk%depth)
       else
-         peek_stack = ' '
+         peek_stack = " "
       end if
    end function peek_stack
 
@@ -174,9 +201,8 @@ contains
    function pop_stack(astk)
       implicit none
       type(t_stack), intent(inout) :: astk
-      integer                 :: vi
       character(len=1)        :: pop_stack
-      pop_stack = ' '
+      pop_stack = " "
       if (astk%depth > 0) then
          pop_stack = astk%crates(astk%depth)
          astk%crates(astk%depth) = " "
