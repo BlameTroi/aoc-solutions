@@ -13,23 +13,6 @@
 ! as they sit in one of the nine stacks, followed by a blank line, followed by
 ! instructions to move <count> from <stack> to <other stack>.
 !
-! there are a few different ways to approach reading the starting state. i've
-! decided to try to read backwards from the stack number line.
-!
-! the full dataset has nine stacks, and the smaller set only three, but that
-! won't cause any real problem.
-!
-! a sample of the input:
-!
-!     [S] [C]         [Z]
-! [F] [J] [P]         [T]     [N]
-! [G] [H] [G] [Q]     [G]     [D]
-! [V] [V] [D] [G] [F] [D]     [V]
-! [R] [B] [F] [N] [N] [Q] [L] [S]
-!  1   2   3   4   5   6   7   8   9
-!
-! move 3 from 4 to 6
-! move 1 from 5 to 8
 
 program solution
 
@@ -52,7 +35,7 @@ program solution
 
    integer, parameter         :: AOCIN = 10
    integer(kind=int64)        :: part_one, part_two  ! results
-   integer                    :: i, j, k             ! work
+   integer                    :: i                   ! work
    character(len=max_aoc_reclen) :: rec
    character(len=MAX_STACKS)  :: report_one, report_two
 
@@ -63,20 +46,7 @@ program solution
    report_one = ""; report_two = ""
 
    ! load initial stacks
-   call rewind_aoc_input(AOCIN)
-   call clear_stacks
-   do while (read_aoc_input(AOCIN, rec))
-      if (len_trim(rec) == 0) exit     ! blank line is end of this section
-      if (scan(rec, "[") == 0) cycle   ! ignore this line
-      j = 0;
-      do k = 1, len_trim(rec), 4       ! "[x] "
-         j = j + 1
-         if (rec(k:k) == "[") then
-            call push_stack(dock(j), rec(k + 1:k + 1))
-         end if
-      end do
-   end do
-   call reverse_stacks
+   call load_stacks
 
    ! process moves under part one rules, last record read was the
    ! blank line between the initial stack and the moves
@@ -89,29 +59,10 @@ program solution
    end do
 
    ! report the top crates of each stack
-   do i = 1, MAX_STACKS
-      if (peek_stack(dock(i)) == " ") then
-         report_one = trim(report_one)//"-"
-      else
-         report_one = trim(report_one)//peek_stack(dock(i))
-      end if
-   end do
+   call report_stacks(report_one)
 
    ! reload and reprocess using the rules for part two
-   call rewind_aoc_input(AOCIN)
-   call clear_stacks
-   do while (read_aoc_input(AOCIN, rec))
-      if (len_trim(rec) == 0) exit     ! blank line is end of this section
-      if (scan(rec, "[") == 0) cycle   ! ignore this line
-      j = 0;
-      do k = 1, len_trim(rec), 4       ! "[x] "
-         j = j + 1
-         if (rec(k:k) == "[") then
-            call push_stack(dock(j), rec(k + 1:k + 1))
-         end if
-      end do
-   end do
-   call reverse_stacks
+   call load_stacks
 
    ! process moves under part two rules, last record read was the
    ! blank line between the initial stack and the moves
@@ -127,13 +78,7 @@ program solution
    end do
 
    ! report the top crates of each stack
-   do i = 1, MAX_STACKS
-      if (peek_stack(dock(i)) == " ") then
-         report_two = trim(report_two)//"-"
-      else
-         report_two = trim(report_two)//peek_stack(dock(i))
-      end if
-   end do
+   call report_stacks(report_two)
 
    ! report and close
    print *
@@ -144,6 +89,81 @@ program solution
    call close_aoc_input(AOCIN)
 
 contains
+
+   ! load the crates onto the stacks on the dock. the input is a visual
+   ! representation and the some work needs to be done to get everything in the
+   ! right order.
+   !
+   !a sample of the input:
+   !
+   !     [S] [C]         [Z]
+   ! [F] [J] [P]         [T]     [N]
+   ! [G] [H] [G] [Q]     [G]     [D]
+   ! [V] [V] [D] [G] [F] [D]     [V]
+   ! [R] [B] [F] [N] [N] [Q] [L] [S]
+   !  1   2   3   4   5   6   7   8   9
+   !
+   ! move 3 from 4 to 6
+   ! move 1 from 5 to 8
+   !
+   ! once complete, the input stream is positioned so the next read will return
+   ! a move directive.
+   !
+   ! updates dock and buffer directly.
+   subroutine load_stacks
+      implicit none
+      integer                       :: vj, vk
+      character(len=max_aoc_reclen) :: vrec
+      call rewind_aoc_input(AOCIN)
+      call clear_stacks
+      do while (read_aoc_input(AOCIN, vrec))
+         if (len_trim(vrec) == 0) exit     ! blank line is end of this section
+         if (scan(vrec, "[") == 0) cycle   ! ignore this line
+         vj = 0; 
+         do vk = 1, len_trim(vrec), 4      ! "[x] "
+            vj = vj + 1
+            if (vrec(vk:vk) == "[") then
+               call push_stack(dock(vj), vrec(vk + 1:vk + 1))
+            end if
+         end do
+      end do
+      call reverse_stacks
+   end subroutine load_stacks
+
+   ! reset the stacks in the dock and buffer stack.
+   subroutine clear_stacks
+      implicit none
+      integer                 :: vi
+      do vi = 1, MAX_STACKS
+         call clear_stack(dock(vi))
+      end do
+      call clear_stack(buffer)
+   end subroutine
+
+   ! reverse the contents of the stacks in the dock in place.
+   subroutine reverse_stacks
+      implicit none
+      integer                 :: vi
+      do vi = 1, MAX_STACKS
+         call reverse_stack(dock(vi))
+      end do
+   end subroutine reverse_stacks
+
+   ! returns a string with the id of the top cargo crate of all the stacks on
+   ! the dock.
+   subroutine report_stacks(ar)
+      implicit none
+      character(len=MAX_STACKS), intent(out) :: ar
+      integer                   :: vi
+      ar = ""
+      do vi = 1, MAX_STACKS
+         if (peek_stack(dock(vi)) == " ") then
+            ar = trim(ar)//"-"
+         else
+            ar = trim(ar)//peek_stack(dock(vi))
+         end if
+      end do
+   end subroutine report_stacks
 
    ! remove non numerics from input record for easier unformatted read
    subroutine sanitize(ar)
@@ -156,16 +176,7 @@ contains
       end do
    end subroutine sanitize
 
-   ! empty what is full
-   subroutine clear_stacks
-      implicit none
-      integer                 :: vi
-      do vi = 1, MAX_STACKS
-         call clear_stack(dock(vi))
-      end do
-      call clear_stack(buffer)
-   end subroutine
-
+   ! make the stack empty
    subroutine clear_stack(astk)
       implicit none
       type(t_stack), intent(out) :: astk
@@ -176,7 +187,7 @@ contains
       astk%depth = 0
    end subroutine clear_stack
 
-   ! what item is on top, or a blank
+   ! returns a copy of the top item on the stack
    function peek_stack(astk)
       implicit none
       type(t_stack), intent(in) :: astk
@@ -219,15 +230,7 @@ contains
       astk%crates(astk%depth) = ac
    end subroutine push_stack
 
-   ! reverse the stack, helpful since the load comes in the wrong order.
-   subroutine reverse_stacks
-      implicit none
-      integer                 :: vi
-      do vi = 1, MAX_STACKS
-         call reverse_stack(dock(vi))
-      end do
-   end subroutine reverse_stacks
-
+   ! reverse the order of items on a stack in place
    subroutine reverse_stack(astk)
       implicit none
       type(t_stack), intent(inout) :: astk
@@ -241,193 +244,3 @@ contains
    end subroutine reverse_stack
 
 end program solution
-
-!   tMove = record
-!              count     : integer;
-!              fromstack : integer;
-!              tostack   : integer;
-!           end;
-!
-!
-!
-!! list the crates on a stack }
-!
-!function crates(stack : integer) : string;
-!
-!var
-!   i : integer;
-!
-!begin
-!   crates := '';
-!   for i := 1 to dock[stack].depth do
-!      crates := crates + dock[stack].crates[i];
-!end;
-!
-!
-!! invert a stack }
-!
-!procedure invert(stack : integer);
-!
-!var
-!   i : integer;
-!   s : string;
-!
-!begin
-!   s := crates(stack);
-!   empty(stack);
-!   i := 0;
-!   while length(s) - i > 0 do begin
-!      push(stack, s[length(s) - i]);
-!      i := i + 1;
-!   end;
-!end;
-!
-!
-!! list the top crates on all the live stacks }
-!
-!function report : string;
-!
-!var
-!   i : integer;
-!   c : char;
-!
-!begin
-!   report := '';
-!   for i := 1 to MAXSTACKS do begin
-!      c := peek(i);
-!      report := report + c
-!   end
-!end;
-!
-!
-!! initialize global variables to empty }
-!
-!procedure init;
-!
-!var
-!   i : integer;
-!
-!begin
-!   for i := 0 to MAXSTACKS do
-!      empty(i);
-!   for i := 1 to MAXMOVES do begin
-!      moves[i].count := 0;
-!      moves[i].fromstack := 0;
-!      moves[i].tostack := 0;
-!   end;
-!   nummoves := 0;
-!end;
-!
-!
-!! load and parse the dataset }
-!
-!procedure load;
-!
-!var
-!   i, j, k : integer;
-!   s       : string;
-!
-!begin
-!   init;
-!   aocrewind;
-!
-!   ! load stacks }
-!   ! crates are enclosed in [ ], a line without means the stacks are
-!     loaded. stack number is identified by position on the line. }
-!   i := 0;
-!   while not aoceof do begin
-!      s := aocread;
-!      if strindex(s, '[') < 1 then
-!         break;
-!      i := i + 1;
-!      j := 0;
-!      while j < length(s) do begin
-!         j := j + 1;
-!         if s[j] in [' ', '[', ']'] then
-!            continue;
-!         push((j div 4) + 1, s[j]);
-!      end;
-!   end; ! while not eof }
-!
-!   ! the load pushed the crates on upside down, flip them. }
-!   for i := 1 to MAXSTACKS do
-!      invert(i);
-!
-!   ! load moves }
-!   ! format is 'move <count> from <stack> to <stack>' }
-!   i := 0;
-!   while not eof(input) do begin
-!      s := aocread;
-!      if s = '' then
-!         continue;
-!      i := i + 1;
-!      k := 6;       ! past 'move ' }
-!      moves[i].count := str2int(s, k);
-!      k := k + 6;   ! past ' from ' }
-!      moves[i].fromstack := str2int(s, k);
-!      k := k + 4;   ! past ' to ' }
-!      moves[i].tostack := str2int(s, k);
-!   end; ! while not eof }
-!   nummoves := i;
-!end;
-!
-!
-!! perform the moves and report which crate is on top of each stack
-!  when all the moves are complete. push the pop, repeatedly. }
-!
-!function partone : string;
-!
-!var
-!   i, j : integer;
-!
-!begin
-!   load;
-!   for i := 1 to nummoves do
-!      for j := 1 to moves[i].count do
-!         push(moves[i].tostack, pop(moves[i].fromstack));
-!   partone := report;
-!end;
-!
-!
-!! for part two we learn that the moves (pop-push) are multi-crate.
-!  since the push-pop already works, i'll just use a temporary holding
-!  stack to preserve ordering. }
-!
-!function partTwo : string;
-!
-!var
-!   i, j :  integer;
-!
-!begin
-!   load;
-!   for i := 1 to nummoves do begin
-!      for j := 1 to moves[i].count do
-!         push(0, pop(moves[i].fromstack));
-!      while depth(0) > 0 do
-!         push(moves[i].tostack, pop(0));
-!   end;
-!   partTwo := report;
-!end;
-!
-!
-!! the mainline driver for a day's solution. }
-!
-!procedure mainline;
-!
-!var
-!   s : string;
-!
-!begin
-!   aocopen;
-!   s := partone;
-!   writeln('part one answer : ', s);
-!   s := parttwo;
-!   writeln('part two answer : ', s);
-!   aocclose;
-!end;
-!
-!! minimal boot to mainline }
-!
-!begin
-!  mainline;
-!end.

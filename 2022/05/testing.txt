@@ -1,19 +1,7 @@
-starting part one...
+./solution /Users/troi/projects/aoc/datasets/2022/05/testone.txt
+ aoc dataset '/Users/troi/projects/aoc/datasets/2022/05/testone.txt' opened for reading
 
-beginning load ... 
-deepest stack is 3 crates
-there are 4 moves
+ CMZ------ part one
+ MCD------ part two
 
-completed...
-ending state: CMZ      
-starting part two...
-
-beginning load ... 
-deepest stack is 3 crates
-there are 4 moves
-
-completed...
-ending state: MCD      
-
-part one answer : CMZ      
-part two answer : MCD      
+ aoc dataset closed
