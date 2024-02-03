@@ -32,11 +32,20 @@ type
                 tydist : integer;       { would x, ty be in range? }
                 tyminx : integer;       { x crosses target y at min }
                 tymaxx : integer;       { and max }
+                nx, ny : integer;       { coordinates of 'diamond' points at range+1 }
+                ex, ey : integer;       { yes, some redundancy in the data }
+                sx, sy : integer;       { but the target point must be at the }
+                wx, wy : integer;       { intersection of two of these lines }
              end;
-   trange = record
-               lo : integer;
-               hi : integer;
-            end;
+   trange  = record
+                lo : integer;
+                hi : integer;
+             end;
+   tline   = record
+                m : integer;            { y = m*x + b, in this problem m is + or - 1 }
+                x : integer;
+                b : integer;
+             end;
 
 var
    sensor  : array [0..MAXDIM] of tsensor;
@@ -48,8 +57,9 @@ var
    targety : integer;
    mintyx  : integer;
    maxtyx  : integer;
-   range   : array[0..MAXDIM] of trange;
+   range   : array [0..MAXDIM] of trange;
    ranges  : integer;
+   line    : array [0..MAXDIM*4] of tline;
 
 {========================================================================}
 { forward definitions and common code includes                           }
@@ -79,6 +89,16 @@ function mergeranges : boolean; forward;
 function calcdistance(x1, y1, x2, y2 : integer) : integer; forward;
 function pointstr(x, y : integer) : string; forward;
 function base36(i : integer) : char; forward;
+
+procedure slopeintercept(var m      : integer;           { slope }
+                         var b      : integer;           { constant }
+                             xa, ya,
+                             xb, yb : integer); forward;
+
+procedure intersection(var x              : integer;     { intersection coordinates }
+                       var y              : integer;     { of the lines a-b and c-d }
+                           xa, ya, xb, yb,
+                           xc, yc, xd, yd : integer); forward;
 
 
 {========================================================================}
@@ -321,12 +341,113 @@ end;
 {                                                                        }
 { in the small test data, the location is x=14 y=11 for a frequency of   }
 { 56000011.                                                              }
+{ a brute force scan is feasible but will take forever. i'm trying to    }
+{ visualize finding gaps but it isn't coming clear to me yet. one idea   }
+{ to play with is sampling, just to keep me in the problem space and see }
+{ what i might learn.                                                    }
+{                                                                        }
+{ as i think about it, unlike circles the manhattan distance gives us    }
+{ diamond shapes. so there won't be the same sort of gap shapes that     }
+{ exist when working with cartesian coordinates. gaps will be along      }
+{ parallel diagonal or cardinal lines.                                   }
+{                                                                        }
+{ i spent too much time trying to find a way to rotate the whole graph   }
+{ so i could workd with rectangles instead of diamonds, but actually the }
+{ diamond shape is fine. since we know there is only one point that is   }
+{ not covered by the sensors, it must be on a line that runs along one   }
+{ of the four edges of the coverage diamond at range+1.                  }
+{                                                                        }
+{ the lines all have slopes of |1| so it's easy to figure out the        }
+{ intersections.                                                         }
+{                                                                        }
 {========================================================================}
 
-
 function parttwo : integer;
+var
+   i    : integer;
+   j    : integer;
+   x, y : integer;
+
 begin
+   x := 0; y := 0;
    parttwo := -1;
+
+   { determine the end points of the open lines. all the lines have a slope of |1|. }
+
+   { n-e, w-s, w-n, s-e are the lines }
+   { n-e checks against all w-n s-e }
+   { w-s checks against all w-n and w-e }
+   j := 0;
+   for i := 0 to sensors - 1 do
+      with sensor[i] do begin
+         nx := x; ny := y - dist - 1;
+         ex := x + dist + 1; ey := y;
+         sx := x; sy := y + dist + 1;
+         wx := x - dist - 1; wy := y;
+         writeln;
+         writeln('sensor ', i:2);
+         writeln;
+         writeln('  negative slope:');
+         writeln('    line n-e : ', pointstr(nx, ny), '-', pointstr(ex, ey));
+         writeln('    line w-s : ', pointstr(wx, wy), '-', pointstr(sx, sy));
+         writeln('  positive slope:');
+         writeln('    line s-e : ', pointstr(sx, sy), '-', pointstr(ex, ey));
+         writeln('    line w-n : ', pointstr(wx, wy), '-', pointstr(nx, ny));
+         intersection(x, y, nx, ny, ex, ey, wx, wy, nx, ny);
+         writeln('intersection should be ', pointstr(nx, ny), ' and is ', pointstr(x, y));
+
+      end;
+   writeln;
+end;
+
+
+{========================================================================}
+{ given points on lines a-b and c-d, find their interesection. find the  }
+{ y=m*x+b equation (slope intercept form) for each line and then work    }
+{ from those to find the x and y coordinates of their intersection. the  }
+{ data in this problem gives us lines at 45 degrees from the axis (slope }
+{ |1|) so calculations can all be done with integers. i lifted the code  }
+{ from a more general solution on rosetta code that used floating point  }
+{ and changed the data types.                                            }
+{                                                                        }
+{ there is no real error checking here. the data we are given is clean.  }
+{ i do double (or triple) dispatch as needed to make sure that all the   }
+{ segments are given from lower x to higher x.                           }
+{========================================================================}
+
+procedure slopeintercept(var m      : integer;
+                         var b      : integer;
+                             xa, ya,
+                             xb, yb : integer);
+begin
+   m := (yb - ya) div (xb - xa);
+   b := ya - xa * m;
+end;
+
+procedure intersection(var x              : integer;
+                       var y              : integer;
+                           xa, ya, xb, yb,
+                           xc, yc, xd, yd : integer);
+
+var
+   mab, mcd : integer; { slopes }
+   bab, bcd : integer; { intercepts }
+
+begin
+   if xa > xb then
+      { lean consistently }
+      intersection(x, y, xb, yb, xa, ya, xc, yc, xd, yd)
+   else if xc > xd then
+      { lean consistently }
+      intersection(x, y, xa, ya, xb, yb, xd, yd, xc, yc)
+   else begin
+      { find m and b for y = m*x + b form }
+      slopeintercept(mab, bab, xa, ya, xb, yb);
+      slopeintercept(mcd, bcd, xc, yc, xd, yd);
+      { find intersection }
+      x := (bcd - bab) div (mab - mcd);
+      y := ya - xa*mab + x*mab;
+   end;
 end;
 
 
