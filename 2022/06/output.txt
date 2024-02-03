@@ -1,2 +1,7 @@
-part one answer : 1538
-part two answer : 2315
+./solution /Users/troi/projects/aoc/datasets/2022/06/dataset.txt
+ aoc dataset '/Users/troi/projects/aoc/datasets/2022/06/dataset.txt' opened for reading
+
+                 1538 part one
+                 2315 part two
+
+ aoc dataset closed
