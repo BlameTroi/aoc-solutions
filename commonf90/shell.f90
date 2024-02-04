@@ -10,11 +10,11 @@ program solution
 
    integer, parameter            :: AOCIN = 10
    integer(kind=int64)           :: part_one, part_two  ! results
-   integer(kind=int64)           :: i                   ! work
-   integer(kind=int64)           :: reclen
+   integer                       :: reclen
    character(len=max_aoc_reclen) :: rec
 
    ! input file is argument 1
+   rec = ""
    call open_aoc_input(AOCIN)
 
    ! initialize
@@ -23,8 +23,6 @@ program solution
    read_one: do
 
       if (.not. read_aoc_input(AOCIN, rec)) exit     ! read until end of file
-
-      i = i + 1
 
       reclen = len_trim(rec)
       if (reclen < 1) cycle read_one
@@ -36,8 +34,6 @@ program solution
    read_two: do
 
       if (.not. read_aoc_input(AOCIN, rec)) exit     ! read until end of file
-
-      i = i + 1
 
       reclen = len_trim(rec)
       if (reclen < 1) cycle read_two
