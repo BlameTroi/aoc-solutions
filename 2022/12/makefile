@@ -1,30 +1,28 @@
-# fpc makefile for advent of code
-# -O3 will sometimes throw "variable does not appear to be
-# initialized" even when the code is OK. I haven't determined the
-# pattern.
+# shell or sample makefile for gfortran
+# see https://bytes.usc.edu/cs104/wiki/makefile/ for a quick reference
+# attempting to do the include paths cleanly
+ROOTDIR=$(HOME)
+PROJDIR=$(ROOTDIR)/projects/aoc/solutions
+COMPILER=gfortran
+OPTIONS=-Wall -fcheck=all
+INCDIR=$(PROJDIR)/commonf90
+MODDIR=$(PROJDIR)/commonf90
+DATDIR=$(ROOTDIR)/projects/aoc/datasets
+INCLUDES=-I$(INCDIR)
+MODULES=-J$(MODDIR)
+COMPILE=$(COMPILER) -c $(OPTIONS) $(INCLUDES) $(MODULES)
+COMPLINK=$(COMPILER) $(OPTIONS) $(INCLUDES) $(MODULES) $(MODDIR)/*.o
 
-COMPILER=fpc
-OPTIONS=-glw3 -Ciort -ap -Sgix -Sh- -vewnlb
-ROPTIONS=-g- -ap -Sgix -Sh- -O3 -vewnlb
-INCLUDES=-Fi../../common/
-UNITS=
-COMPILE=$(COMPILER) $(OPTIONS) $(INCLUDES) $(UNITS)
-RCOMPILE=$(COMPILER) $(ROPTIONS) $(INCLUDES) $(UNITS)
+default:
 
-all: program
-
-program: solution.pas
-	$(COMPILE) solution
-
-release:
-	$(RCOMPILE) solution
-
-run:
-	./solution ../../../datasets/2022/12/dataset.txt >output.txt
+build: solution.f90
+	$(COMPLINK) solution.f90 -o solution
 
 test:
-	./solution ../../../datasets/2022/12/testone.txt >testing.txt
+	./solution $(DATDIR)/2022/12/testone.txt
 
-# Delete the build directory and program
+run:
+	./solution $(DATDIR)/2022/12/dataset.txt
+
 clean:
-	rm -rf solution aoc-log *.o
+	rm -rf *.mod *.o

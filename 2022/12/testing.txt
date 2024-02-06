@@ -1,2 +1,7 @@
-part one answer : 31
-part two answer : 29
+./solution /Users/troi/projects/aoc/datasets/2022/12/testone.txt
+ aoc dataset '/Users/troi/projects/aoc/datasets/2022/12/testone.txt' opened for reading
+
+                   31 part one
+                   29 part two
+
+ aoc dataset closed
