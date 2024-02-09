@@ -2,8 +2,8 @@
 
 ! advent of code 2022 day 14 -- regolith reservoir -- falling sand will trap you!
 !
-! sand is falling down from a hole in the wall.the wall is hollow but has rock
-! structures(ledges and vertical runs) that slow, divert, and accumulate the
+! sand is falling down from a hole in the wall. the wall is hollow but has rock
+! structures (ledges and vertical runs) that slow, divert, and accumulate the
 ! sand.
 !
 ! for part one, how much sand falls before no more can accumulate?
@@ -40,6 +40,9 @@
 ! * if attempt fails, sand is at rest.
 !
 ! once sand is past the lowest bound point (maximum y value) the overflow has begun.
+!
+! for part two, the abyss becomes a floor, and we need to know how much sand can fall
+! before the opening at 500,0 is blocked.
 
 program solution
 
@@ -165,61 +168,61 @@ contains
 
    end function dopartone
 
+   ! part two changes the problem so that there is a floor instead of an
+   ! abyss. how many units of sand fall until the opening at 500,0 is
+   ! blocked by sand?
+
    function doparttwo() result(res)
       implicit none
       integer :: res
-      res = -1
+      logical :: done, falling
+      integer :: x, y
 
-      !=========================================================================
-      !part two changes the problem so that there is a floor instead of an
-      !abyss.how many units of sand fall until the opening at 500, 0 is
-      !blocked by sand.
-      !=========================================================================
-      !
-      !function parttwo:integer
-      !var
-      !done:boolean; true if a grain has entered the abyss
-      !falling:boolean; loop control flag for the fall
-      !x, y:integer
-      !begin
-      !parttwo= 0; start from 0 for part two
-      !done= false
-      !lay down a floor for part two, there is no abyss
-      !
-      !while not done do begin
-      !
-      !a new grain starts to fall
-      !parttwo= parttwo + 1
-      !x= ORIGINX; y= ORIGINY
-      !falling= true
-      !while falling do begin
-      !
-      !fall straight down if there is room
-      !if grid[x, y + 1] = AIR then begin
-      !y= y + 1
-      !continue
-      !end
-      !can we fall to the left side?
-      !if grid[x - 1, y + 1] = AIR then begin
-      !x= x - 1
-      !y= y + 1
-      !continue
-      !end
-      !well then how about to the right side?
-      !if grid[x + 1, y + 1] = AIR then begin
-      !x= x + 1
-      !y= y + 1
-      !continue
-      !end
-      !mark the grid occupied by sand and let's drop another
-      !falling= false
-      !grid[x, y]= SAND
-      !end
-      !grid[x, y]= SAND
-      !done= (x=ORIGINX) and(y=ORIGINY)
-      !end
-      !displaygrid
-      !end
+      ! you've got to read the instructions for each part. here we start from
+      ! zero and not negative one.
+      res = 0
+      done = .false.
+
+      ! lay down a floor for part two, the abyss says "talk to the floor"
+
+      grainy: do while (.not. done)
+
+         ! a new grain starts to fall
+
+         res = res + 1
+         x = ORIGINX; y = ORIGINY
+         falling = .true.
+
+         freefall: do while (falling)
+            ! this is pretty much the same as part one, except all falling grains
+            ! are eventually blocked at the floor
+            if (grid(x, y + 1) == AIR) then
+               y = y + 1
+               cycle freefall
+            end if
+
+            ! blocked. can we fall to the left?
+            if (grid(x - 1, y + 1) == AIR) then
+               x = x - 1
+               y = y + 1
+               cycle freefall
+            end if
+
+            ! how about right?
+            if (grid(x + 1, y + 1) == AIR) then
+               x = x + 1
+               y = y + 1
+               cycle freefall
+            end if
+
+            ! mark the grid as blocked and let's drop another grain
+            falling = .false.
+            grid(x, y) = SAND
+         end do freefall
+         grid(x, y) = sand
+         done = x == ORIGINX .and. y == ORIGINY
+      end do grainy
+      call displaygrid
 
    end function doparttwo
 
@@ -247,7 +250,6 @@ contains
       integer :: pos
       type(point_t) :: currp, nextp
 
-      print *, "begin load"
       ! load, track extents, and render the ledges
       reader: do while (read_aoc_input(AOCIN, rec))
          if (len_trim(rec) == 0) cycle reader ! skip blank lines
@@ -421,7 +423,11 @@ contains
       ! this won't work if coordinates go negative
       allocate (character(len=9*2 + 2*2 + xrange(1) - xrange(0)) :: str)
       str = repeat(" ", 9 * 2 + 2 * 2 + xrange(1) - xrange(0))
-      print *
+
+      ! instead of concatenation, view the str buffer as an array and
+      ! write over it
+
+      ! print *
       ! display (500,0), the source of the sand...
       p % x = xrange(0); p % y = 0
       str = pointstr(p)//": "
@@ -434,7 +440,7 @@ contains
       end do
       p % x = xrange(1)
       str = trim(str)//" :"//pointstr(p)
-      print *, str
+      ! print *, str
 
       ! now display the active grid area and border...
       do y = 1, yrange(1)
@@ -445,9 +451,9 @@ contains
          end do
          p % x = xrange(1)
          str = trim(str)//" :"//pointstr(p)
-         print *, str
+         ! print *, str
       end do
-      print *
+      ! print *
    end subroutine displaygrid
 
 end program solution
