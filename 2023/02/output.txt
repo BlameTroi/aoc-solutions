@@ -1,2 +1,7 @@
-part one: 2716
-part two: 72227
+./solution /Users/troi/projects/aoc/datasets/2023/02/dataset.txt
+ aoc dataset '/Users/troi/projects/aoc/datasets/2023/02/dataset.txt' opened for reading
+
+                 2716 part one
+                72227 part two
+
+ aoc dataset closed
