@@ -26,7 +26,7 @@
 program solution
 
    use iso_fortran_env, only: int64
-   use charset, only: clear_set, include_in_set, intersection_of_sets, size_of_set
+   use charset, only: clear_set, include_in_set, intersection_of_sets, size_of_set, charset_limit
    use aocinput, only: open_aoc_input, read_aoc_input, rewind_aoc_input, close_aoc_input, max_aoc_reclen
 
    implicit none
@@ -39,43 +39,42 @@ program solution
    integer(kind=int64) :: part_one, part_two      ! results
    integer             :: item                    ! work
    integer             :: reclen
-   character(len=max_aoc_reclen) :: recin
-   logical             :: left(255), right(255)   ! a poor man's set of characters
-   logical             :: first(255), second(255), third(255) ! for part two
-   logical             :: dup12(255), dup23(255), dups(255)   ! ..
-
-   ! input file is argument 1
-   call open_aoc_input(AOCIN)
+   character(len=max_aoc_reclen) :: rec
+   logical             :: left(charset_limit), right(charset_limit)   ! a poor man's set of characters
+   logical             :: first(charset_limit), second(charset_limit), third(charset_limit) ! for part two
+   logical             :: dup12(charset_limit), dup23(charset_limit), dups(charset_limit)   ! ..
 
    ! initialize
    cntone = 0; cnttwo = 0; part_one = 0; part_two = 0
+   rec = ""
+   call open_aoc_input(AOCIN)
 
    ! for part one, identify the one item type that is duplicate in each rucksack
    ! and its priority value. sum these priorities and report the total.
 
    readone: do
 
-      if (.not. read_aoc_input(AOCIN, recin)) exit     ! read until end of file
+      if (.not. read_aoc_input(AOCIN, rec)) exit     ! read until end of file
 
       cntone = cntone + 1
 
-      reclen = len_trim(recin)
+      reclen = len_trim(rec)
       if (reclen < 1) cycle readone
 
       call clear_set(left)
       call clear_set(right)
-      do item = 1, reclen/2
-         call include_in_set(left, recin(item:item))
-         call include_in_set(right, recin((item + reclen/2):(item + reclen/2)))
+      do item = 1, reclen / 2
+         call include_in_set(left, rec(item:item))
+         call include_in_set(right, rec((item + reclen / 2):(item + reclen / 2)))
       end do
 
       call intersection_of_sets(left, right, dups)
       if (size_of_set(dups) /= 1) then
-         print *, "error wrong number of dups found in record ", cntone, " [", trim(recin), "]"
+         print *, "error wrong number of dups found in record ", cntone, " [", trim(rec), "]"
          stop
       end if
 
-      do item = 1, 255
+      do item = 1, charset_limit
          if (dups(item)) then
             part_one = part_one + priorityvalue(achar(item))
             cycle readone
@@ -94,53 +93,53 @@ program solution
       call clear_set(first)
       call clear_set(second)
       call clear_set(third)
-      if (.not. read_aoc_input(AOCIN, recin)) exit     ! read until end of file
+      if (.not. read_aoc_input(AOCIN, rec)) exit     ! read until end of file
 
       cnttwo = cnttwo + 1
 
-      reclen = len_trim(recin)
+      reclen = len_trim(rec)
       if (reclen < 1) cycle readtwo
       do item = 1, reclen
-         call include_in_set(first, recin(item:item))
+         call include_in_set(first, rec(item:item))
       end do
 
-      if (.not. read_aoc_input(AOCIN, recin)) then ! end of file not allowed here
+      if (.not. read_aoc_input(AOCIN, rec)) then ! end of file not allowed here
          print *, "premature end of file on aoc dataset"
          stop
       end if
 
-      reclen = len_trim(recin)
+      reclen = len_trim(rec)
       if (reclen < 1) then
          print *, "error blank record found"
          stop
       end if
       do item = 1, reclen
-         call include_in_set(second, recin(item:item))
+         call include_in_set(second, rec(item:item))
       end do
 
-      if (.not. read_aoc_input(AOCIN, recin)) then ! end of file not allowed here
+      if (.not. read_aoc_input(AOCIN, rec)) then ! end of file not allowed here
          print *, "premature end of file on aoc dataset"
          stop
       end if
 
-      reclen = len_trim(recin)
+      reclen = len_trim(rec)
       if (reclen < 1) then
          print *, "error blank record found"
          stop
       end if
       do item = 1, reclen
-         call include_in_set(third, recin(item:item))
+         call include_in_set(third, rec(item:item))
       end do
 
       call intersection_of_sets(first, second, dup12)
       call intersection_of_sets(second, third, dup23)
       call intersection_of_sets(dup12, dup23, dups)
       if (size_of_set(dups) /= 1) then
-         print *, "error wrong number of dups found in group ", cnttwo, " [", trim(recin), "]"
+         print *, "error wrong number of dups found in group ", cnttwo, " [", trim(rec), "]"
          stop
       end if
 
-      do item = 1, 255
+      do item = 1, charset_limit
          if (dups(item)) then
             part_two = part_two + priorityvalue(achar(item))
             cycle readtwo
@@ -150,6 +149,7 @@ program solution
    end do readtwo
 
    ! report and close
+
    print *
    print *, part_one, "part one"
    print *, part_two, "part two"

@@ -12,14 +12,16 @@ program solution
 
    implicit none
 
-   integer, parameter            :: funitin = 10
+   integer, parameter            :: AOCIN = 10
    logical                       :: eof
-   character(len=max_aoc_reclen) :: recin
-   integer(kind=int64)           :: i, n                    ! count, work
+   character(len=max_aoc_reclen) :: rec
+   integer                       :: i
+   integer(kind=int64)           :: n                    ! count, work
    integer(kind=int64)           :: gtotal, stotal, mtotal  ! grand, sub, and max
    integer(kind=int64)           :: topthree(3)             ! top three subtotals
 
-   call open_aoc_input(funitin)
+   rec = ""
+   call open_aoc_input(AOCIN)
 
    ! initialization
    eof = .false.
@@ -33,11 +35,11 @@ program solution
 
       i = i + 1
 
-      eof = .not. read_aoc_input(funitin, recin)
+      eof = .not. read_aoc_input(AOCIN, rec)
 
       ! if there's a better way to check for blank lines, i have yet to find it
-      if ((eof .eqv. .false.) .and. (len_trim(adjustl(recin)) > 0)) then
-         read (recin, *) n
+      if ((eof .eqv. .false.) .and. (len_trim(adjustl(rec)) > 0)) then
+         read (rec, *) n
          gtotal = gtotal + n
          stotal = stotal + n
          cycle
@@ -84,5 +86,5 @@ program solution
    print *, stotal, " sum of top three groups "
    print *
 
-   call close_aoc_input(funitin)
+   call close_aoc_input(AOCIN)
 end program solution

@@ -24,7 +24,7 @@ program solution
 
    integer, parameter            :: AOCIN = 10
    integer(kind=int64)           :: part_one, part_two  ! results
-   integer(kind=int64)           :: i                   ! work
+   integer                       :: i                   ! work
    logical                       :: one(0:intset_limit), two(0:intset_limit), onetwo(0:intset_limit)
    integer                       :: onelo, onehi, twolo, twohi ! range endpoints
    character(len=max_aoc_reclen) :: rec

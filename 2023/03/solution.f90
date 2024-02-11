@@ -22,7 +22,7 @@
 ! by examination there are ~1250 numbers found on the grid without considering
 ! if they are part numbers, and the largest run of digits appears to be 3. i did
 ! a frequency count and there are about 370 "*" characters.
-!
+
 program solution
 
    use iso_fortran_env, only: int64
@@ -40,10 +40,9 @@ program solution
    integer, parameter :: GRID_END = 140
    integer, parameter :: GRID_MAX = 141
 
-   ! our character set
-   character(len=1), parameter :: DIGITS(10) = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+   ! our character set, digits and ...
    character(len=1), parameter :: EMPTY = "."
-   character(len=1), parameter :: SYMBOLS(10) = ["#", "$", "%", "&", "*", "+", "/", "-", "@", "="]
+   character(len=*), parameter :: SYMBOLS = "#$%&*+/-@="
    character(len=1), parameter :: GEAR = "*"
 
    ! array sizes
@@ -69,7 +68,7 @@ program solution
    ! a gear we've found
    type gear_t
       integer :: row, col
-      logical :: adj
+      integer :: adj
       integer :: pix(1:8)
    end type gear_t
 
@@ -85,6 +84,7 @@ program solution
 
    call load
    part_one = dopartone()
+   part_two = doparttwo()
 
    ! report and close
 
@@ -107,8 +107,8 @@ contains
       character(len=1), intent(in) :: c
       integer :: i
       res = .true.
-      do i = 1, size(SYMBOLS)
-         if (c == SYMBOLS(i)) return
+      do i = 1, len(SYMBOLS)
+         if (c == SYMBOLS(i:i)) return
       end do
       res = .false.
    end function is_symbol
@@ -176,7 +176,7 @@ contains
 
       do i = 1, size(gears)
          gears(i) % row = GRID_MIN; gears(i) % col = GRID_MIN
-         gears(i) % adj = .false.
+         gears(i) % adj = 0
          gears(i) % pix = 0
       end do
 
@@ -190,8 +190,8 @@ contains
 
    function dopartone() result(res)
       implicit none
-      integer :: res
-      integer :: i, j, r, c
+      integer(kind=int64) :: res
+      integer             :: i, j, r, c
 
       res = 0
 
@@ -227,134 +227,151 @@ contains
          if (numbers(j) % adj) res = res + numbers(j) % val
       end do
    end function dopartone
+
+   ! are any of the adjacent grid cells holding a part number? count the grid
+   ! cells that could.
+
+   function adjparts(r, c) result(res)
+      implicit none
+      integer, intent(in) :: r, c
+      integer             :: res
+      res = 0
+      if (is_digit(grid(r - 1, c - 1))) res = res + 1
+      if (is_digit(grid(r - 1, c - 0))) res = res + 1
+      if (is_digit(grid(r - 1, c + 1))) res = res + 1
+      if (is_digit(grid(r - 0, c - 1))) res = res + 1
+      !                     r, c doesn't count obviously
+      !                          if i did check, it'd be false
+      if (is_digit(grid(r - 0, c + 1))) res = res + 1
+      if (is_digit(grid(r + 1, c - 1))) res = res + 1
+      if (is_digit(grid(r + 1, c - 0))) res = res + 1
+      if (is_digit(grid(r + 1, c + 1))) res = res + 1
+   end function adjparts
+
+   ! we've been given a grid cell and want to know if it is part of a part
+   ! number. implementated as a function but i turned out to not use the
+   ! boolean result.
+
+   function partingrid(r, c, ix) result(res)
+      implicit none
+      integer, intent(in)    :: r, c
+      integer, intent(inout) :: ix    ! index of part number in numbers()
+      logical                :: res
+      integer                :: i
+
+      ! assume this grid cell is not in a part number
+      ix = 0
+      res = .false.
+
+      ! if we're not pointing at a digit, it's not a number
+      if (.not. is_digit(grid(r, c))) return
+
+      ! is there a part number with digits that span this row, column?
+      ! no assumptions about the order of numbers and their location
+      ! in the grid are made. scan the whole list of numbers.
+      do i = 1, MAX_NUMBERS
+         if (.not. numbers(i) % adj) cycle
+         if (numbers(i) % row /= r) cycle
+         if (c < numbers(i) % col) cycle
+         if (c > numbers(i) % col + numbers(i) % len) cycle
+         ! ok, this location is inside a part number
+         ix = i
+         res = .true.
+         return
+      end do
+
+      ! none found, failing result already set during init
+   end function partingrid
+
+   ! for part two all gears must be found. a gear is a '*' symbol adjacent to
+   ! exactly two parts. sum the part numbers of those parts.
+
+   function doparttwo() result(res)
+      implicit none
+      integer(kind=int64) :: res
+      integer             :: i, j, k, r, c, pn1, pn2, pn3
+      logical             :: b ! throw away a function return i'm not using
+
+      res = 0
+
+      ! scan the grid, find potential gears. a gear is a '*' grid cell adjacent
+      ! to exactly two part numbers. first check is just for any possible
+      ! numbers. a second pass will be made to finalize the choices.
+
+      i = 0
+      do r = GRID_BEG, GRID_END
+         c = GRID_MIN ! again, not grid_beg
+         do while (c < GRID_MAX)
+            c = c + 1
+            if (grid(r, c) /= GEAR) cycle
+            ! found a potential gear, remember it and the count of surrounding
+            ! cells that could hold part numbers.
+            i = i + 1
+            gears(i) % row = r; gears(i) % col = c
+            gears(i) % adj = adjparts(r, c)
+         end do
+      end do
+
+      ! now, for each potential gear found, if there are at least two possible
+      ! part numbers, check all the surrounding cells to find out if these are
+      ! really part numbers, and if so how many there are
+
+      do j = 1, i
+         if (gears(j) % adj < 2) cycle
+
+         ! check each adjacent cell and if it holds a number, get the index of
+         ! that part number in the numbers list. there can be adjacent cells,
+         ! say upper left and upper, that are in the same single part number.
+         ! after we get the indices, we need two and only two unique part
+         ! numbers to identify this as an actual gear.
+
+         r = gears(j) % row; c = gears(j) % col
+         b = partingrid(r - 1, c - 1, gears(j) % pix(1)) ! the function result is not used
+         b = partingrid(r - 1, c - 0, gears(j) % pix(2)) ! just the index into part numbers
+         b = partingrid(r - 1, c + 1, gears(j) % pix(3)) ! that is an inout in the function
+         b = partingrid(r - 0, c - 1, gears(j) % pix(4)) ! arguments
+         ! and of course, r,c isn't checked
+         b = partingrid(r - 0, c + 1, gears(j) % pix(5))
+         b = partingrid(r + 1, c - 1, gears(j) % pix(6))
+         b = partingrid(r + 1, c - 0, gears(j) % pix(7))
+         b = partingrid(r + 1, c + 1, gears(j) % pix(8))
+
+         ! now how many unique part numbers are there? exactly two are needed
+         ! for this to be an actual gear.
+
+         pn1 = 0; pn2 = 0; pn3 = 0 ! none found yet
+         ! find first possible part number
+         do k = 1, 8
+            if (gears(j) % pix(k) /= 0) then
+               pn1 = gears(j) % pix(k)
+               exit
+            end if
+         end do
+         if (pn1 == 0) cycle
+         ! find second possible part number
+         do k = 1, 8
+            if (gears(j) % pix(k) /= 0 .and. gears(j) % pix(k) /= pn1) then
+               pn2 = gears(j) % pix(k)
+               exit
+            end if
+         end do
+         ! if we didn't find two, try again
+         if (pn2 == 0) cycle
+         ! got two, but is there a third?
+         do k = 1, 8
+            if (gears(j) % pix(k) /= 0 .and. gears(j) % pix(k) /= pn1 .and. gears(j) % pix(k) /= pn2) then
+               pn3 = gears(j) % pix(k)
+               exit
+            end if
+         end do
+         ! a third is a deal breaker.
+         if (pn3 /= 0) cycle
+
+         ! add the product of the part numbers to the result for part two
+         pn1 = numbers(pn1) % val
+         pn2 = numbers(pn2) % val
+         res = res + (pn1 * pn2)
+      end do
+   end function doparttwo
+
 end program solution
-!
-!
-!{ are any of the adjacent grid cells holding a part number? count
-!  the grid cells. }
-!function adjparts(g : tGrid;
-!                  r : integer;
-!                  c : integer) : integer;
-!begin
-!   adjparts = 0;
-!   if g(r-1, c-1) in DIGITS then
-!      adjparts = adjparts + 1;
-!   if g(r-1,   c) in DIGITS then
-!      adjparts = adjparts + 1;
-!   if g(r-1, c+1) in DIGITS then
-!      adjparts = adjparts + 1;
-!   if g(  r, c-1) in DIGITS then
-!      adjparts = adjparts + 1;
-!   if g(  r, c+1) in DIGITS then
-!      adjparts = adjparts + 1;
-!   if g(r+1, c-1) in DIGITS then
-!      adjparts = adjparts + 1;
-!   if g(r+1,   c) in DIGITS then
-!      adjparts = adjparts + 1;
-!   if g(r+1, c+1) in DIGITS then
-!      adjparts = adjparts + 1;
-!end;
-!
-!
-!function partingrid(    g  : tGrid;
-!                        r  : integer;
-!                        c  : integer;
-!                        n  : tNumbers;
-!                    var ix : integer  { index of part no }
-!                        ) : boolean;
-!var
-!   i : integer;
-!
-!begin
-!   if not (g(r,c) in DIGITS) then begin
-!      ix = 0;
-!      partingrid = false;
-!      exit
-!   end;
-!   for i = low(n) to high(n) do
-!      with n(i) do begin
-!         if row <> r then
-!            cycle;
-!         if c < col then
-!            cycle;
-!         if c > col+len then
-!            cycle;
-!         partingrid = true;
-!         ix = i;
-!         break;
-!      end;
-!end;
-!
-!
-!{ for part two all gears must be found. a gear is a '*' symbol
-!  adjacent to exactly two parts. sum the part numbers of those
-!  parts. }
-!
-!function parttwo(var g  : tGrid;
-!                 var n  : tNumbers;
-!                 var x  : tGears) : integer;
-!var
-!   i, j, k, r, c, pn1, pn2, pn3 : integer;
-!
-!begin
-!   parttwo = 0;
-!
-!   { scan the grid, find potential gears. a gear is a '*' grid
-!     cell adjacent to exactly two part numbers. first check is
-!     just for any possible numbers. a second pass will be made
-!     to finalize the choices. }
-!   i = 0;
-!   for r = GRIDBEG to GRIDEND do begin
-!      c = GRIDMIN; { not gridbeg }
-!      while c < GRIDMAX do begin
-!         c = c + 1;
-!         if g(r, c) <> GEAR then
-!            cycle;
-!         i = i + 1; { log the number }
-!         with x(i) do begin
-!            row = r;
-!            col = c;
-!            adj = adjparts(g, r, c);
-!         end;
-!      end; { while c }
-!   end; { for }
-!
-!   for j = 1 to i do
-!      with x(j) do begin
-!         if adj > 1 then begin
-!            partingrid(g, row-1, col-1, n, pix(1));
-!            partingrid(g, row-1, col  , n, pix(2));
-!            partingrid(g, row-1, col+1, n, pix(3));
-!            partingrid(g, row  , col-1, n, pix(4));
-!            partingrid(g, row  , col+1, n, pix(5));
-!            partingrid(g, row+1, col-1, n, pix(6));
-!            partingrid(g, row+1, col  , n, pix(7));
-!            partingrid(g, row+1, col+1, n, pix(8));
-!            pn1 = 0; pn2 = 0; pn3 = 0;
-!            for k = 1 to 8 do
-!               if pix(k) <> 0 then begin
-!                  pn1 = pix(k);
-!                  break;
-!               end;
-!            for k = 1 to 8 do
-!               if (pix(k) <> 0) and (pix(k) <> pn1) then begin
-!                  pn2 = pix(k);
-!                  break;
-!               end;
-!            if pn2 == 0 then
-!               continue;
-!            for k = 1 to 8 do
-!               if (pix(k) <> 0) and (pix(k) <> pn1) and (pix(k) <> pn2) then begin
-!                  pn3 = pix(k);
-!                  break;
-!               end;
-!            if pn3 <> 0 then begin
-!               { more than two parts found }
-!               continue;
-!            end;
-!            pn1 = n(pn1).val;
-!            pn2 = n(pn2).val;
-!            parttwo = parttwo + (pn1 * pn2);
-!         end
-!      end;
-!end;

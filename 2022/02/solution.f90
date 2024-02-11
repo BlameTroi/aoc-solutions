@@ -20,7 +20,7 @@ program solution
    implicit none
 
    integer, parameter            :: AOCIN = 10
-   character(len=max_aoc_reclen) :: frecin
+   character(len=max_aoc_reclen) :: rec
    character(len=1)              :: opp, you, myou    ! input for opponent, you, and later morphed you
    integer                       :: sopp, syou, smyou ! a-c and x-z as subscripts
    integer(kind=int64)           :: i                 ! count
@@ -28,6 +28,7 @@ program solution
    integer(kind=int64)           :: scores(3, 3)      ! map scores ax->cz
    character(len=1)              :: morphplays(3, 3)  ! part two strategy changer
 
+   rec = ""
    call open_aoc_input(AOCIN)
 
    ! initialization
@@ -53,10 +54,10 @@ program solution
 
       i = i + 1
 
-      if (.not. read_aoc_input(AOCIN, frecin)) exit ! read until end of file
+      if (.not. read_aoc_input(AOCIN, rec)) exit ! read until end of file
 
-      opp = frecin(1:1)
-      you = frecin(3:3)
+      opp = rec(1:1)
+      you = rec(3:3)
 
       ! part one uses your selection as the play
       sopp = ichar(opp) - ichar('A') + 1

@@ -39,6 +39,7 @@ program solution
    character(len=max_aoc_reclen) :: rec
    character(len=MAX_STACKS)  :: report_one, report_two
 
+   rec = ""
    call open_aoc_input(AOCIN)
 
    ! initialize
@@ -114,12 +115,13 @@ contains
       implicit none
       integer                       :: vj, vk
       character(len=max_aoc_reclen) :: vrec
+      vrec = ""
       call rewind_aoc_input(AOCIN)
       call clear_stacks
       do while (read_aoc_input(AOCIN, vrec))
          if (len_trim(vrec) == 0) exit     ! blank line is end of this section
          if (scan(vrec, "[") == 0) cycle   ! ignore this line
-         vj = 0; 
+         vj = 0;
          do vk = 1, len_trim(vrec), 4      ! "[x] "
             vj = vj + 1
             if (vrec(vk:vk) == "[") then
@@ -182,9 +184,9 @@ contains
       type(t_stack), intent(out) :: astk
       integer                 :: vi
       do vi = 1, MAX_DEPTH
-         astk%crates(vi) = " "
+         astk % crates(vi) = " "
       end do
-      astk%depth = 0
+      astk % depth = 0
    end subroutine clear_stack
 
    ! returns a copy of the top item on the stack
@@ -192,8 +194,8 @@ contains
       implicit none
       type(t_stack), intent(in) :: astk
       character(len=1)        :: peek_stack
-      if (astk%depth /= 0) then
-         peek_stack = astk%crates(astk%depth)
+      if (astk % depth /= 0) then
+         peek_stack = astk % crates(astk % depth)
       else
          peek_stack = " "
       end if
@@ -204,7 +206,7 @@ contains
       implicit none
       type(t_stack), intent(in) :: astk
       integer                 :: depth_stack
-      depth_stack = astk%depth
+      depth_stack = astk % depth
    end function depth_stack
 
    ! remove and return the id of the top of the stack, or blank if empty
@@ -214,10 +216,10 @@ contains
       type(t_stack), intent(inout) :: astk
       character(len=1)        :: pop_stack
       pop_stack = " "
-      if (astk%depth > 0) then
-         pop_stack = astk%crates(astk%depth)
-         astk%crates(astk%depth) = " "
-         astk%depth = astk%depth - 1
+      if (astk % depth > 0) then
+         pop_stack = astk % crates(astk % depth)
+         astk % crates(astk % depth) = " "
+         astk % depth = astk % depth - 1
       end if
    end function pop_stack
 
@@ -226,8 +228,8 @@ contains
       implicit none
       type(t_stack), intent(inout) :: astk
       character(len=1), intent(in) :: ac
-      astk%depth = astk%depth + 1
-      astk%crates(astk%depth) = ac
+      astk % depth = astk % depth + 1
+      astk % crates(astk % depth) = ac
    end subroutine push_stack
 
    ! reverse the order of items on a stack in place
@@ -236,10 +238,10 @@ contains
       type(t_stack), intent(inout) :: astk
       character(len=1)        :: vc
       integer                 :: vi
-      do vi = 1, astk%depth/2
-         vc = astk%crates(vi)
-         astk%crates(vi) = astk%crates(astk%depth + 1 - vi)
-         astk%crates(astk%depth + 1 - vi) = vc
+      do vi = 1, astk % depth / 2
+         vc = astk % crates(vi)
+         astk % crates(vi) = astk % crates(astk % depth + 1 - vi)
+         astk % crates(astk % depth + 1 - vi) = vc
       end do
    end subroutine reverse_stack
 
