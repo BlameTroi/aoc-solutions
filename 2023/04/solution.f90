@@ -1,46 +1,64 @@
-! solution.f90 -- 2022 day ?? -- -- troy brumley blametroi@gmail.com
+! solution.f90 -- 2022 day 04 -- scratch cards -- troy brumley blametroi@gmail.com
 
-! a shell to fill in
+! advent of code 2023 day 4 -- scratch cards
+!
+! given a listing of scratch off cards and possible winners, score the cards and
+! report the total. you later realize that the score actually just awards more
+! cards to play. report the total number of scratch cards won under the rules. }
+
 program solution
 
    use iso_fortran_env, only: int64
    use aocinput, only: open_aoc_input, read_aoc_input, close_aoc_input, max_aoc_reclen, rewind_aoc_input
+   use intset, only: size_of_set, clear_set, include_in_set, exclude_from_set, intersection_of_sets, &
+                     union_of_sets, intset_limit, contains_set, is_in_set
 
    implicit none
 
    integer, parameter            :: AOCIN = 10
    integer(kind=int64)           :: part_one, part_two  ! results
-   integer                       :: reclen
    character(len=max_aoc_reclen) :: rec
 
-   ! input file is argument 1
-   rec = ""
-   call open_aoc_input(AOCIN)
+   ! test data has few winning numbers and draws, 5 and 8 instead of 10 and 25
+   ! allocate for full data and just pay attention to the actual data read.
+
+   integer, parameter :: MAX_CARDS = 219    ! 10 in small set
+   integer, parameter :: MAX_WNOS = 10      ! 5 in small set
+   integer, parameter :: MAX_DNOS = 25      ! 8 in small set
+
+   ! the input format is "Card #: ww ww ww ... | dd dd dd ..."
+   character(len=1), parameter :: SPACE = " "
+   character(len=1), parameter :: COLON = ":"         ! end of card number
+   character(len=2), parameter :: BREAKER = " |"      ! separates winners from draws
+   character(len=5), parameter :: CARDPFX = "Card "   ! input marker
+
+   ! draw numbers range from 0 to 99
+
+   type card_t
+      integer :: cno
+      integer :: wno(1:MAX_WNOS)  ! winning numbers
+      integer :: dno(1:MAX_DNOS)  ! drawn numbers
+      integer :: win              ! wins in draws
+      integer :: pts              ! points
+      integer(kind=int64) :: cpy  ! copies of card 1+
+   end type card_t
+
+   type(card_t) :: deck(1:MAX_CARDS)
+
+   integer :: numcards, numwno, numdno ! our data geometry
 
    ! initialize
    part_one = 0; part_two = 0
+   rec = ""
+   call open_aoc_input(AOCIN)
 
-   read_one: do
+   call init
+   call load
 
-      if (.not. read_aoc_input(AOCIN, rec)) exit     ! read until end of file
-
-      reclen = len_trim(rec)
-      if (reclen < 1) cycle read_one
-
-   end do read_one
-
-   call rewind_aoc_input(AOCIN)
-
-   read_two: do
-
-      if (.not. read_aoc_input(AOCIN, rec)) exit     ! read until end of file
-
-      reclen = len_trim(rec)
-      if (reclen < 1) cycle read_two
-
-   end do read_two
+   call score
 
    ! report and close
+
    print *
    print *, part_one, "part one"
    print *, part_two, "part two"
@@ -48,231 +66,203 @@ program solution
 
    call close_aoc_input(AOCIN)
 
+contains
+
+   ! zero/invalidate the deck
+   subroutine init
+      implicit none
+
+      numcards = -1
+      numwno = -1
+      numdno = -1
+
+   end subroutine init
+
+   subroutine load
+      implicit none
+      integer :: i
+      i = 0
+      do while (read_aoc_input(AOCIN, rec))
+         if (len_trim(rec) < 1) cycle
+         i = i + 1
+         deck(i) = parsecard(trim(rec)//" ")
+      end do
+      numcards = i
+   end subroutine load
+
+   function is_digit(c) result(res)
+      implicit none
+      character(len=1), intent(in) :: c
+      logical                      :: res
+      res = c <= "9" .and. c >= "0"
+   end function is_digit
+
+   function char_int(c) result(res)
+      implicit none
+      character(len=1), intent(in) :: c
+      integer                      :: res
+      res = -1
+      if (is_digit(c)) res = ichar(c) - ichar("0")
+   end function char_int
+
+   ! parse the input card. the interesting data is in two arrays, the first for
+   ! winning numbers and the second for numbers drawn. the extent of each array
+   ! is different between the small test data and the run data. the extent will
+   ! be discovered on the first card and then is expected to stay constant
+   ! throughout a run.
+   !
+   ! the input record is expected to be trimmed such that it has only one
+   ! trailing blank.
+   !
+   ! given the nature of the data and problem, there aren't many safety checks
+   ! here. if running past the end of input causes an access violation, that's
+   ! ok.
+
+   function parsecard(s) result(res)
+      implicit none
+      character(len=*), intent(in) :: s
+      type(card_t)                 :: res
+      integer                      :: i        ! work/subscripts
+      integer                      :: n        ! work/convert string to int
+      integer                      :: p        ! position in rec
+
+      if (.not. s(1:len(CARDPFX)) == CARDPFX) then
+         print *, "*** error in input, missing marker '", CARDPFX, "'"
+         stop 1
+      end if
+
+      res % cno = 0 ! fill the shell
+      res % wno = 0
+      res % dno = 0
+      res % win = 0
+      res % pts = 0
+      res % cpy = 1 ! not zero
+
+      ! set up to start parse at first digit of cno
+      p = len(CARDPFX) + 1
+
+      n = 0
+      do while (s(p:p) /= COLON)
+         if (is_digit(s(p:p))) n = n * 10 + char_int(s(p:p))
+         p = p + 1
+      end do
+      res % cno = n
+
+      ! skip past colon to " ##"
+      p = p + 1
+
+      ! everything up to " |", the break marker between wins and draws,
+      ! gets put in wno().
+
+      i = 0
+      do while (s(p:p + len(BREAKER) - 1) /= BREAKER)
+         p = p + 1
+         if (s(p:p) == SPACE) cycle
+         i = i + 1
+         n = 0
+         do while (is_digit(s(p:p)))
+            n = n * 10 + char_int(s(p:p))
+            p = p + 1
+         end do
+         res % wno(i) = n
+      end do
+
+      ! remember extent of wno if this is first time through
+
+      if (numwno < 0) then
+         numwno = i
+      else if (numwno /= i) then
+         print *, "*** error *** differing wno counts, expected", numwno, "but got", i
+         stop 1
+      end if
+
+      ! advance to " ##"
+      p = p + len(BREAKER)
+
+      ! and everything up to the end of the record gets put into dno.
+
+      i = 0
+      do while (p < len(s))
+         p = p + 1
+         if (s(p:p) == SPACE) cycle
+         i = i + 1
+         n = 0
+         do while (is_digit(s(p:p)))
+            n = n * 10 + char_int(s(p:p))
+            p = p + 1
+         end do
+         res % dno(i) = n
+      end do
+
+      ! remember extent of dno if this is first time through
+
+      if (numdno < 0) then
+         numdno = i
+      else if (numdno /= i) then
+         print *, "*** error *** differing dno counts, expected", numdno, "but got", i
+         stop 1
+      end if
+   end function parsecard
+
+   subroutine scorecardone(c)
+      implicit none
+      type(card_t), intent(inout) :: c
+      integer                     :: i
+      logical                     :: s(0:intset_limit)
+
+      ! a set is quicker than repeated sequential scans, even though in my
+      ! implementation, it is a repeated sequential scan ... at least it
+      ! reads a little better.
+
+      call clear_set(s)
+      do i = 1, numwno
+         call include_in_set(s, c % wno(i))
+      end do
+
+      c % win = 0
+      c % pts = 0
+      do i = 1, numdno
+         if (is_in_set(c % dno(i), s)) then
+            c % win = c % win + 1
+         end if
+      end do
+
+      if (c % win > 0) then
+         c % pts = shiftl(1, c % win - 1)
+      end if
+      call flush
+
+   end subroutine scorecardone
+
+   ! score all the cards in the deck for part two
+
+   subroutine scorecardtwo
+      implicit none
+      integer(kind=int64) :: i, j, k
+      do i = 1, numcards
+         do j = 1, deck(i) % cpy
+            do k = i + 1, min(numcards, i + deck(i) % win)
+               deck(k) % cpy = deck(k) % cpy + 1
+            end do
+         end do
+      end do
+   end subroutine scorecardtwo
+
+   subroutine score
+      implicit none
+      integer :: i
+
+      do i = 1, numcards
+         call scorecardone(deck(i))
+      end do
+
+      call scorecardtwo
+
+      do i = 1, numcards
+         part_one = part_one + deck(i) % pts
+         part_two = part_two + deck(i) % cpy
+      end do
+
+   end subroutine score
+
 end program solution
-{ solution.pas -- scratch cards  -- Troy Brumley BlameTroi@gmail.com }
-
-program solution;
-
-{ expects to be compiled with the following two mode flags and command
-line/fpc.cfg options of -Ciort -Sgix -Sh- for full checks, allowing
-exceptions, goto, inlining, and prefer classic strings. }
-{$longstrings off}            { to be sure, use AnsiString or pchar explicitly }
-{$booleval on}                { standard pascal expects this }
-
-type
-   integer = int64;            { by default ints are 64 bits this decade}
-
-{ advent of code 2023 day 4 -- scratch cards
-
-  given a listing of scratch off cards and possible winners, score the
-  cards and report the total. you later realize that the score actually
-  just awards more cards to play. report the total number of scratch
-  cards won under the rules. }
-
-
-const
-{$define xxxTESTING }
-{$ifdef TESTING }
-   MAXCARDS = 10;
-   MAXWNOS = 5;
-   MAXDNOS = 8;
-{$else}
-   MAXCARDS = 219;
-   MAXWNOS = 10;
-   MAXDNOS = 25;
-{$endif}
-   { input format: 'Card 9: ww ww ww ... | dd dd dd ...' }
-   SPACE = ' ';
-   COLON = ':';         { end of card number }
-   BREAKER = ' |';      { separates winners from draws }
-   CARDPFX = 'Card ';   { input marker }
-
-type
-   tDraw = 0 .. 99;      { null and 1-99 }
-   tCard = record
-              cno : integer;
-              wno : array[1..MAXWNOS] of tDraw;
-              dno : array[1..MAXDNOS] of tDraw;
-              win : integer;      { wins in draws }
-              pts : integer;      { points }
-              cpy : integer;      { copies of card 1+ }
-           end;
-   tDeck = array[1..MAXCARDS] of tCard;
-
-
-{$I aocinput.p }
-{$I strbegins.p }
-{$I str2int.p }
-{$I substr.p }
-
-
-{ initializers }
-procedure initcard(var card : tCard);
-
-var
-   i : integer;
-
-begin
-   with card do begin
-      cno := -1; { illegal cno means bad parse }
-      for i := low(wno) to high(wno) do
-         wno[i] := 0;
-      for i := low(dno) to high(dno) do
-         dno[i] := 0;
-      win := 0;
-      pts := 0;
-      cpy := 1;           { not zero }
-   end;
-end;
-
-
-procedure initdeck(var deck : tDeck);
-
-var
-   i : integer;
-
-begin
-   for i := 1 to MAXCARDS do
-      initcard(deck[i]);
-end;
-
-
-{ parse the input card. two arrays, the first for winning numbers
-  and the second for numbers drawn. }
-
-procedure parsecard(s        : string;
-                    var card : tCard);
-var
-   i, j : integer;       { subscripts }
-   len  : integer;       { length of input }
-   p    : integer;       { position }
-
-begin
-   with card do begin
-
-      if not strbegins(s, CARDPFX) then
-         exit;
-
-      p := length(CARDPFX) + 1; { first digit cno }
-      len := length(s);
-
-      cno := 0;
-      while (s[p] <> COLON) and (p < len) do begin
-         if s[p] in ['0' .. '9'] then
-            cno := cno * 10 + ord(s[p]) - ord('0');
-         p := p + 1;
-      end;
-
-      p := p + 1;         { skip past colon to ' ##' }
-      for i := low(wno) to high(wno) do begin
-         if strbegins(substr(s, p, p + 3), BREAKER) then
-            break;
-         j := p + 1;
-         if s[j] = SPACE then
-            j := j + 1;
-         wno[i] := str2int(s, j);
-         p := p + 3;
-      end; { for }
-
-      p := p + length(BREAKER);     { skip to ' ##' }
-      for i := low(dno) to high(dno) do begin
-         if p >= len then
-            break;
-         j := p + 1;
-         if s[j] = SPACE then
-            j := j + 1;
-         dno[i] := str2int(s, j);
-         p := p + 3;
-      end; { for }
-
-   end; { with }
-end; { parsecard }
-
-
-{ score a card for part one: how many of the draws are in the winners?
-  the score is 2 ** numwins-1. }
-
-procedure scorecardone(var card : tCard);
-
-var
-   i : integer;
-   s : set of tDraw;
-
-begin
-   with card do begin
-
-      { a set is much quicker than repeated sequential
-        scans }
-      s := [];
-      for i := low(wno) to high(wno) do
-         include(s, wno[i]);
-
-      { check draws }
-      win := 0;
-      pts := 0;
-      for i := low(dno) to high(dno) do
-         if dno[i] in s then
-            win := win + 1;
-
-      { and score }
-      if win > 0 then
-         pts := 1 shl (win - 1);
-
-   end;
-end;
-
-
-{ score all the cards in the deck for part two }
-
-procedure scorecardtwo(var deck : tDeck);
-
-var
-   i, j, k : integer;
-
-begin
-   for i := 1 to MAXCARDS do
-      for j := 1 to deck[i].cpy do
-         for k := i + 1 to i + deck[i].win do
-            if k > MAXCARDS then
-               break
-            else
-               deck[k].cpy := deck[k].cpy + 1;
-end;
-
-
-{ mainline -- this was done differently from prior aoc solutions. }
-
-var
-   i, j   : integer;
-   deck   : array [1..MAXCARDS] of tCard;
-   p1, p2 : integer;
-   s      : string;
-
-begin
-   aocopen;
-   initdeck(deck);
-
-   { read deck, parse cards, and calculate score in part one }
-   i := 0;
-   while not aoceof do begin
-      s := aocread;
-      i := i + 1;
-      parsecard(s, deck[i]);
-      scorecardone(deck[i]);
-   end;
-
-   { cards are already parsed, calculate score in part two }
-   scorecardtwo(deck);
-
-   { calculate totals }
-   p1 := 0; p2 := 0;
-   for j := 1 to i do begin
-      p1 := p1 + deck[j].pts;
-      p2 := p2 + deck[j].cpy;
-   end;
-
-   writeln('part one: ', p1);
-   writeln('part two: ', p2);
-   aocclose;
-end.
-
