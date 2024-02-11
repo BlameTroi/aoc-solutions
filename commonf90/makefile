@@ -24,5 +24,8 @@ charset: charset.f90
 intset: intset.f90
 	$(COMPILE) intset.f90
 
+aochelpers: aochelpers.f90
+	$(COMPILE) aochelpers.f90
+
 clean:
 	rm -rf *.mod *.o

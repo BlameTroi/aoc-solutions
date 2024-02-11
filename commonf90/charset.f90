@@ -6,7 +6,6 @@
 ! better, but this is simple and works well enough for now.
 
 module charset
-   use iso_fortran_env, only: int64
 
    implicit none
 
@@ -87,7 +86,7 @@ contains
       implicit none
       logical              :: contains_set
       logical, intent(in)  :: s1(charset_limit), s2(charset_limit)
-      integer(kind=int64)  :: i
+      integer              :: i
       contains_set = .true.
       do i = 1, charset_limit
          if (.not. s2(i)) cycle

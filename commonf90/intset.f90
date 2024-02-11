@@ -4,10 +4,11 @@
 ! instead i'm rolling my own support for a set of integers (0-intset_limit)
 ! using an array of booleans. fortran has bit operations that can probably do
 ! this better, but this is simple and works well enough for now.
+!
+! as this is for advent of code, i'm not really doing much in the way of
+! error checking or validation.
 
 module intset
-
-   use iso_fortran_env, only: int64
 
    implicit none
 
@@ -20,6 +21,7 @@ module intset
    public :: intersection_of_sets
    public :: union_of_sets
    public :: contains_set
+   public :: is_in_set
 
    public :: intset_limit
 
@@ -27,14 +29,23 @@ module intset
 
 contains
 
+   ! i in s
+   function is_in_set(i, s) result(res)
+      implicit none
+      integer, intent(in) :: i
+      logical, intent(in) :: s(0:intset_limit)
+      logical             :: res
+      res = s(i)
+   end function is_in_set
+
    ! count s
-   function size_of_set(s)
+   function size_of_set(s) result(res)
       implicit none
       logical, intent(in) :: s(0:intset_limit)
-      integer             :: i, size_of_set
-      size_of_set = 0
+      integer             :: i, res
+      res = 0
       do i = 0, intset_limit
-         if (s(i)) size_of_set = size_of_set + 1
+         if (s(i)) res = res + 1
       end do
    end function size_of_set
 
@@ -49,7 +60,7 @@ contains
    subroutine include_in_set(s, i)
       implicit none
       logical, intent(inout)          :: s(0:intset_limit)
-      integer(kind=int64), intent(in) :: i
+      integer, intent(in)             :: i
       s(i) = .true.
    end subroutine include_in_set
 
@@ -57,7 +68,7 @@ contains
    subroutine exclude_from_set(s, i)
       implicit none
       logical, intent(inout)          :: s(0:intset_limit)
-      integer(kind=int64), intent(in) :: i
+      integer, intent(in)             :: i
       s(i) = .false.
    end subroutine exclude_from_set
 
@@ -66,7 +77,7 @@ contains
       implicit none
       logical, intent(in)    :: s1(0:intset_limit), s2(0:intset_limit)
       logical, intent(inout) :: res(0:intset_limit)
-      integer(kind=int64)    :: i
+      integer                :: i
       do i = 0, intset_limit
          res(i) = s1(i) .and. s2(i)
       end do
@@ -77,24 +88,25 @@ contains
       implicit none
       logical, intent(in)    :: s1(0:intset_limit), s2(0:intset_limit)
       logical, intent(inout) :: res(0:intset_limit)
-      integer(kind=int64)    :: i
+      integer                :: i
       do i = 0, intset_limit
          res(i) = s1(i) .or. s2(i)
       end do
    end subroutine union_of_sets
 
    ! s1 <= s2
-   function contains_set(s1, s2)
+   function contains_set(s1, s2) result(res)
       implicit none
-      logical              :: contains_set
       logical, intent(in)  :: s1(0:intset_limit), s2(0:intset_limit)
-      integer(kind=int64)  :: i
-      contains_set = .true.
+      logical              :: res
+      integer              :: i
+      res = .true.
       do i = 0, intset_limit
          if (.not. s2(i)) cycle
          if (s2(i) .and. s1(i)) cycle
-         contains_set = .false.
-         exit
+         res = .false.
+         return
       end do
-   end function
+   end function contains_set
+
 end module intset
