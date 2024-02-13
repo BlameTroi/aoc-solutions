@@ -15,6 +15,9 @@ COMPLINK=$(COMPILER) $(OPTIONS) $(INCLUDES) $(MODULES) $(MODDIR)/*.o
 
 default:
 
+testhelpers: testhelpers.f90 aochelpers.*
+	$(COMPLINK) testhelpers.f90
+
 aocinput: aocinput.f90
 	$(COMPILE) aocinput.f90
 
