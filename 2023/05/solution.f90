@@ -7,12 +7,34 @@
 ! 'dest'. then cycle dest as the new source and keep going until the last map is
 ! processed.
 !
+! for part one, walk the maps and report the lowest location where a seed should be
+! planted.
+!
+! for part two, we change the problem by decreeing the input for seeds is now a pair.
+! instead of "seed seed seed seed" we get "seed count seed count" and have to walk
+! all the seeds thorugh the maps. Determine the location that corresponds to any of
+! the starting seed numbers.
+!
+! i'd originally split this into two separate programs but i'm going to put them
+! back together in this conversion to fortran. i may also work on finding a better
+! approach that the brute force method. it runs, albeit slowly, in pascal on the
+! old windows laptop. it should be faster on the mac m2 but it's still a slow
+! approach for part two.
+!
+! i know that i could check boundary conditions or even binary search the part
+! two lookups to avoid needdless checks, but i haven't taken the time to figure
+! out. the rules for exhausting a lookup and bouncing through seven maps are
+! left for another time. instead of looking at the seeds individually, they need
+! to be considered as a block.
+!
+! but for now, brute force delivers the right answer in a feasible amount of
+! time. i can do the dishes while this runs.
+
 program solution
 
    use iso_fortran_env, only: int64
    use aocinput, only: open_aoc_input, read_aoc_input, close_aoc_input, max_aoc_reclen, rewind_aoc_input
-   !use intset, only: size_of_set, clear_set, include_in_set, exclude_from_set, intersection_of_sets, &
-   use aochelpers, only: is_digit, char_int
+   use aochelpers, only: is_digit, char_int, int64_str, str_int64, is_letter
 
    implicit none
 
@@ -29,30 +51,43 @@ program solution
    integer, parameter          :: NULLVAL = -1        ! dead cell marker
 
    ! walk seed through a map
+
    type seed_location_t
       integer(kind=int64) :: seed        ! as originally entered
       integer(kind=int64) :: dest        ! result from map
       integer(kind=int64) :: src         ! passed through map
    end type seed_location_t
 
+   ! for part two, the input becomes seed/count pairs
+
+   type seed_count_t
+      integer(kind=int64) :: seed
+      integer(kind=int64) :: count
+   end type seed_count_t
+
    ! range translation, source to destination
+
    type range_t
       integer(kind=int64) :: begdest     ! first slot in dest
       integer(kind=int64) :: begsrc      ! first slot in source
       integer(kind=int64) :: leng        ! length of each
    end type range_t
 
-   ! the mape or index or lookup, pick your word. find the range that holds a number
-   ! in source and its equivalent in destination. that number is the input to the
-   ! next map.
+   ! the mape or index or lookup, pick your word. find the range that holds a
+   ! number in source and its equivalent in destination. that number is the
+   ! input to the next map.
+
    type map_t
-      character(len=32) :: tag
+      character(len=64) :: tag
       type(range_t)     :: xrange(1:MAXRANGES)
       integer           :: numranges
    end type map_t
 
-   type(seed_location_t) :: seed(1:MAXSEEDS)
-   integer               :: numseeds
+   type(seed_location_t) :: seedloc(1:MAXSEEDS)
+   integer               :: numseeds1
+   type(seed_count_t)    :: seedcnt(1:MAXSEEDS / 2)
+   integer               :: numseeds2
+
    type(map_t)           :: xmap(1:MAXMAPS)
    integer               :: nummaps
 
@@ -64,10 +99,13 @@ program solution
 
    call init
 
+   ! load using part one structures
    call loadseeds
    call loadmaps
 
    part_one = dopartone()
+
+   part_two = doparttwo()
 
    ! report and close
 
@@ -83,26 +121,41 @@ contains
    subroutine init
       implicit none
       integer :: i, j
+
       do i = 1, MAXSEEDS
-         seed(i) % seed = NULLVAL
-         seed(i) % dest = NULLVAL
-         seed(i) % src = NULLVAL
+         seedloc(i) % seed = NULLVAL
+         seedloc(i) % dest = NULLVAL
+         seedloc(i) % src = NULLVAL
       end do
-      numseeds = 0
+      numseeds1 = 0
+
+      do i = 1, MAXSEEDS / 2
+         seedcnt(i) % seed = NULLVAL
+         seedcnt(i) % count = NULLVAL
+      end do
+      numseeds2 = 0
+
       do i = 1, MAXMAPS
          xmap(i) % tag = "NULL"
          do j = 1, MAXRANGES
-            xmap(i) % xrange(j) % begdest = NULLVAL
-            xmap(i) % xrange(j) % begsrc = NULLVAL
-            xmap(i) % xrange(j) % leng = NULLVAL
+            associate (xmr => xmap(i) % xrange(j))
+               xmr % begdest = NULLVAL
+               xmr % begsrc = NULLVAL
+               xmr % leng = NULLVAL
+            end associate
          end do
          xmap(i) % numranges = 0
       end do
       nummaps = 0
+
    end subroutine init
 
-! read the seed numbers. they are all one one input record, preceded
-! by 'seed:', space delimited integers.
+   ! read the seed numbers. they are all one one input record, preceded by
+   ! 'seed:', space delimited integers.
+   !
+   ! for part one, each integer is a seed.
+   !
+   ! for part two, pairs of integers denote a seed and count.
 
    subroutine loadseeds
       implicit none
@@ -114,44 +167,42 @@ contains
          print *, "*** error *** missing seeds marker"
          stop 1
       end if
+
+      ! parse as part one seed numbers
+
       p = len(CSEEDS) + 1 ! space after marker
-      numseeds = 0
+      numseeds1 = 0
       do while (p < len_trim(rec))
-         numseeds = numseeds + 1
+         numseeds1 = numseeds1 + 1
          if (rec(p:p) == " ") p = p + 1
-         seed(numseeds) % seed = str_int64(rec, p) ! p will be on first non digit
-         seed(numseeds) % dest = NULLVAL
-         seed(numseeds) % src = NULLVAL
+         associate (slc => seedloc(numseeds1))
+            slc % seed = str_int64(rec, p) ! p will be on first non digit
+            slc % dest = NULLVAL
+            slc % src = NULLVAL
+         end associate
+      end do
+
+      ! parse as part two seed/count pairs
+
+      p = len(CSEEDS) + 1 ! space after marker
+      numseeds2 = 0
+      do while (p < len_trim(rec))
+         numseeds2 = numseeds2 + 1
+         if (rec(p:p) == " ") p = p + 1
+         seedcnt(numseeds2) % seed = str_int64(rec, p) ! p will be on first non digit
+         if (rec(p:p) == " ") p = p + 1
+         seedcnt(numseeds2) % count = str_int64(rec, p)
       end do
    end subroutine loadseeds
 
-   function str_int64(s, p) result(res)
-      implicit none
-      character(len=*), intent(in) :: s
-      integer, intent(inout)       :: p
-      integer(kind=int64)          :: res
-      res = 0
-      do while (is_digit(s(p:p)))
-         res = res * 10 + char_int(s(p:p))
-         p = p + 1
-      end do
-   end function str_int64
-
-   function is_letter(c) result(res)
-      implicit none
-      character(len=1), intent(in) :: c
-      logical :: res
-      res = (c >= "a" .and. c <= "z") .or. (c >= "A" .and. c <= "Z")
-   end function is_letter
-
-   ! each 'map' consists of one .or. more ranges. maps are identified by a tag
+   ! each 'map' consists of one or more ranges. maps are identified by a tag
    ! record holding the name of the map (something-to-something) followed by the
-   ! word 'map:'. there are seven maps .and. they happen to be in the correct order
-   ! as read so no link pointers are needed.
+   ! word 'map:'. there are seven maps and they happen to be in the correct
+   ! order as read so no sort or link pointers are needed.
    !
-   ! each range is a single input record holding three numbers. destination index
-   ! value start, source (or input) index value start, .and. the length of the
-   ! range. a map can hold multiple ranges, and a blank record .or. end of file
+   ! each range is a single input record holding three numbers. the destination
+   ! index value start, source (or input) index value start, and the length of
+   ! the range. a map can hold multiple ranges. a blank blank record end of file
    ! marks the end of the current map's ranges.
 
    subroutine loadmaps
@@ -176,11 +227,13 @@ contains
             if (len_trim(rec) < 1) exit
             p = 1
             i = i + 1
-            xmap(nummaps) % xrange(i) % begdest = str_int64(rec, p)
-            p = p + 1
-            xmap(nummaps) % xrange(i) % begsrc = str_int64(rec, p)
-            p = p + 1
-            xmap(nummaps) % xrange(i) % leng = str_int64(rec, p)
+            associate (xmr => xmap(nummaps) % xrange(i))
+               xmr % begdest = str_int64(rec, p)
+               p = p + 1
+               xmr % begsrc = str_int64(rec, p)
+               p = p + 1
+               xmr % leng = str_int64(rec, p)
+            end associate
          end do
          xmap(nummaps) % numranges = i
       end do
@@ -197,319 +250,66 @@ contains
 
       res = n
       do i = 1, m % numranges
-         if (m % xrange(i) % begsrc <= n .and. n <= m % xrange(i) % begsrc + m % xrange(i) % leng) then
-            res = m % xrange(i) % begdest + (n - m % xrange(i) % begsrc)
-            return
-         end if
+         associate (xmr => m % xrange(i))
+            if (xmr % begsrc <= n .and. n <= xmr % begsrc + xmr % leng) then
+               res = xmr % begdest + (n - xmr % begsrc)
+               return
+            end if
+         end associate
       end do
 
    end function lookup
 
 ! walk each seed through the maps using the lookup defined, then
-! find the lowest final seed location .and. report it.
+! find the lowest final seed location and report it.
 
    function dopartone() result(res)
       implicit none
       integer(kind=int64) :: res
       integer :: i, lowest
 
-      do i = 1, numseeds
-         seed(i) % src = seed(i) % seed
-         seed(i) % dest = lookup(seed(i) % src, xmap(1))
-         seed(i) % dest = lookup(seed(i) % dest, xmap(2))
-         seed(i) % dest = lookup(seed(i) % dest, xmap(3))
-         seed(i) % dest = lookup(seed(i) % dest, xmap(4))
-         seed(i) % dest = lookup(seed(i) % dest, xmap(5))
-         seed(i) % dest = lookup(seed(i) % dest, xmap(6))
-         seed(i) % dest = lookup(seed(i) % dest, xmap(7))
+      do i = 1, numseeds1
+         seedloc(i) % src = seedloc(i) % seed
+         seedloc(i) % dest = lookup(seedloc(i) % src, xmap(1))
+         seedloc(i) % dest = lookup(seedloc(i) % dest, xmap(2))
+         seedloc(i) % dest = lookup(seedloc(i) % dest, xmap(3))
+         seedloc(i) % dest = lookup(seedloc(i) % dest, xmap(4))
+         seedloc(i) % dest = lookup(seedloc(i) % dest, xmap(5))
+         seedloc(i) % dest = lookup(seedloc(i) % dest, xmap(6))
+         seedloc(i) % dest = lookup(seedloc(i) % dest, xmap(7))
       end do
       lowest = 1
-      do i = 1, numseeds
-         if (seed(i) % dest < seed(lowest) % dest) lowest = i
+      do i = 1, numseeds1
+         if (seedloc(i) % dest < seedloc(lowest) % dest) lowest = i
       end do
-      res = seed(lowest) % dest
+      res = seedloc(lowest) % dest
    end function dopartone
 
+   ! crunch very slowly for part two of this problem.
+
+   function doparttwo() result(res)
+      implicit none
+      integer(kind=int64) :: res
+      integer             :: i
+      integer(kind=int64) :: j, k
+      integer(kind=int64) :: lowest
+      res = -1
+      lowest = huge(res)
+      do i = 1, numseeds2
+         associate (sc => seedcnt(i)) ! seed, count
+            do j = sc % seed, sc % seed + sc % count
+               k = lookup(j, xmap(1))
+               k = lookup(k, xmap(2))
+               k = lookup(k, xmap(3))
+               k = lookup(k, xmap(4))
+               k = lookup(k, xmap(5))
+               k = lookup(k, xmap(6))
+               k = lookup(k, xmap(7))
+               lowest = min(lowest, k)
+            end do
+         end associate
+      end do
+      res = lowest
+   end function doparttwo
+
 end program solution
-!
-!{ only a part one in this program, part two is split to a separate program. }
-!
-!procedure mainline
-!
-!var
-!   p1answer : integer
-!
-!begin
-!   aocopen
-!
-!   init
-!   loadseeds
-!   loadmaps
-!   p1answer = partone
-!   writeln('part one answer : ', p1answer)
-!   aocclose
-!end
-!
-!
-!{ minimal boot to mainline }
-!begin
-!   mainline
-!end.
-!{ solution.pas -- getting seedy -- Troy Brumley blametroi@gmail.com }
-!program solutiontwo
-!{$longstrings off}
-!{$booleval on}
-!
-!type
-!   integer == int64
-!
-!{ advent of code 2023 day 5 -- getting seedier
-!
-!  the new problem for part two becomes a high volume problem so the
-!  'just use a big array' approach isn't the right way to do it. it
-!  also seemed easier to spit this into a second stand alone program. }
-!
-!const
-!{$define xxxTESTING }
-!{$ifdef TESTING }
-!   MAXSEEDS == 10
-!   MAXMAPS == 10
-!   MAXRANGES == 10
-!{$else}
-!   MAXSEEDS == 50
-!   MAXMAPS == 10
-!   MAXRANGES == 100
-!{$endif}
-!   CSEEDS == 'seeds:';         { input markers }
-!   CMAP == 'map:'
-!   NULLVAL == -1;              { dead cell marker }
-!{$I constchars.p }
-!
-!type
-!   { the goal is to find a location through the maps. the original
-!   value is preserved .and. then passed through each map as 'source',
-!   with the result reported in 'dest'. then cycle dest as the new
-!   source .and. keep going until the last map is processed.
-!
-!                  do part two, we learn that the what was viewed as all seeds in
-!   part one were really pairs: seed .and. count. the counts can be
-!   huge. this structure is still valid but it isn't what we'll store
-!                     do the seed input.}
-!   tSeedToLocation == record
-!                        seed : integer;  { as originally entered }
-!                        dest : integer;  { result from map }
-!                        src  : integer;  { passed through to map }
-!                     end
-!
-!{ .and. so instead we store this input. }
-!   tSeed == record
-!              seed  : integer
-!              count : integer
-!           end
-!
-!{ range translation, source to destination }
-!   tRange == record
-!               begdest : integer; { first slot in destination }
-!               begsrc  : integer; { first slot in source }
-!               len     : integer; { length of each }
-!            end
-!
-!{ the map .or. index .or. lookup, pick your word. find the range that
-!  holds a number in source .and. its equivalent in destination. that
-!  number is input to the next map. }
-!   tMap == record
-!             tag       : string
-!             ranges    : array(1 .. MAXRANGES) of tRange
-!             numranges : 0 .. MAXRANGES
-!          end
-!
-!
-!{$I str2int.p }
-!{$I strbegins.p }
-!{$I aocinput.p }
-!
-!
-!{ rather than pass, let's put the tables as globals. }
-!var
-!   seeds    : array(1 .. MAXSEEDS) of tSeed
-!   numseeds : 0 .. MAXSEEDS
-!   maps     : array(1 .. MAXMAPS) of tMap
-!   nummaps  : 0 .. MAXMAPS
-!
-!
-!{ clear out globals. }
-!
-!procedure init
-!
-!var
-!   i, j : integer
-!
-!begin
-!                       do i = 1 to MAXSEEDS do
-!      with seeds(i) do begin
-!         seed = NULLVAL
-!         count = NULLVAL
-!      end
-!   numseeds = 0
-!                          do i = 1 to MAXMAPS do
-!      with maps(i) do begin
-!         tag = 'NULL'
-!                             do j = 1 to MAXRANGES do
-!            with ranges(i) do begin
-!               begdest = NULLVAL
-!               begsrc = NULLVAL
-!               len = NULLVAL
-!            end
-!         numranges = 0
-!      end
-!   nummaps = 0
-!end
-!
-!
-!{ read the seed numbers. they are all one one input record, preceded
-!  by 'seed:', space delimited integers. }
-!
-!procedure loadseeds
-!
-!var
-!   p : integer
-!   s : string
-!
-!begin
-!   s = aocread
-!   if not strbegins(s, CSEEDS) then
-!      aochalt('invalid input, missing seeds')
-!   p = length(CSEEDS) + 1; { position to first space }
-!   numseeds = 0
-!   do while(p < length(s) do begin
-!      numseeds = numseeds + 1
-!      if s(p) == SPACE then
-!         p = p + 1
-!      with seeds(numseeds) do begin
-!         seed = str2int(s, p); { position to non digit }
-!         if s(p) == SPACE then
-!            p = p + 1
-!         count = str2int(s, p)
-!      end
-!   end
-!end
-!
-!
-!{ each 'map' consists of one .or. more ranges. maps are identified by a
-!  tag record holding the name of the map (something-to-something)
-!  followed by the word 'map:'. there are seven maps .and. they happen
-!  to be in the correct order as read so no link pointers are needed.
-!
-!  each range is a single input record holding three numbers. the
-!  destination index value start, source (or input) index value start,
-!  .and. the length of the range. a map can hold multiple ranges, .and. a
-!  blank record .or. end of file marks the end of the current map's
-!  ranges. }
-!
-!procedure loadmaps
-!
-!var
-!   p : integer
-!   s : string
-!
-!begin
-!   s = aocread
-!   if s <> '' then
-!      aochalt('input sequence error in loadmaps')
-!   nummaps = 0
-!   do while(not aoceof do begin
-!      s = aocread
-!      if not (s(1) in ('a' .. 'z', 'A' .. 'Z')) then
-!         aochalt('unexpected input in loadmaps')
-!      nummaps = nummaps + 1
-!      with maps(nummaps) do begin
-!         tag = s
-!         numranges = 0
-!         do while(not eof(input) do begin
-!            readln(s)
-!            if s == '' then
-!               exit
-!            p = 1
-!            numranges = numranges + 1
-!            with ranges(numranges) do begin
-!               begdest = str2int(s, p)
-!               p = p + 1
-!               begsrc = str2int(s, p)
-!               p = p + 1
-!               len = str2int(s, p)
-!            end; { with ranges }
-!         end; { do while(not eof ranges }
-!      end; { with maps }
-!   end; { do while(not eof maps }
-!end
-!
-!
-!{ this is a rather slow approach, but it runs do while(i do the dishes }
-!
-!function lookup(src : integer
-!                map : tMap) : integer
-!var
-!   i : integer
-!
-!begin
-!   lookup = src
-!   with map do
-!                                 do i = 1 to numranges do
-!         with ranges(i) do
-!            if (begsrc <= src) .and. (src <= begsrc + len) then begin
-!               lookup = begdest + (src - begsrc)
-!               exit
-!            end
-!end
-!
-!
-!{ crunch very slowly for part two of this problem. }
-!
-!function parttwo : integer
-!
-!var
-!   i, j, k   : integer
-!   lowestval : integer
-!
-!begin
-!   lowestval = high(int64)
-!                                    do i = 1 to numseeds do
-!      with seeds(i) do
-!                                       do j = seed to seed + count do begin
-!            k = lookup(j, maps(1))
-!            k = lookup(k, maps(2))
-!            k = lookup(k, maps(3))
-!            k = lookup(k, maps(4))
-!            k = lookup(k, maps(5))
-!            k = lookup(k, maps(6))
-!            k = lookup(k, maps(7))
-!            { don't bother trying to optimize this }
-!            if k < lowestval then
-!               lowestval = k
-!         end
-!   parttwo = lowestval
-!end
-!
-!
-!{ the mainline driver for a day's solution. }
-!
-!procedure mainline
-!
-!var
-!   p2answer : integer
-!
-!begin
-!   aocopen
-!   init
-!   loadseeds
-!   loadmaps
-!   p2answer = parttwo
-!   writeln(output, 'part two answer : ', p2answer)
-!   aocclose
-!end
-!
-!
-!{ minimal boot to mainline }
-!begin
-!   mainline
-!end.
