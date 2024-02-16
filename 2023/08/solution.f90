@@ -67,6 +67,8 @@ program solution
 
    call load
    part_one = dopartone()
+   ! nothing in part one should break part two so no need to reload reinit
+   part_two = doparttwo()
 
    ! report and close
    print *
@@ -256,55 +258,55 @@ contains
       res = steps
    end function dopartone
 
+   ! for part two, do the moves simultaneously starting from all the
+   ! nodes that end with 'A' until all the nodes at the end of a move end
+   ! with 'Z'.
+
+   function doparttwo() result(res)
+      implicit none
+      integer(kind=int64) :: res
+      integer :: i, j
+      integer(kind=int64) :: steps
+      character(len=1) :: move
+      integer(kind=int64) :: cycles(1:10) ! by observation there are 7, i should fix this to allocate
+      res = -1
+      call buildsimulnodes
+      do i = 1, numsimuls
+         cycles(i) = 0
+      end do
+
+      ! the sims will loop. some take more steps per loop than others. once you
+      ! know the length of each cycle to complete, you can calculate the steps
+      ! as the product of the unique prime multiples of all the cycles.
+
+      steps = 0
+      do while (.not. allatend())
+         steps = steps + 1
+         move = getmove()
+         do i = 1, numsimuls
+            if (.not. isendnode(simulnodes(i))) then
+               simulnodes(i) = nextnode(simulnodes(i), move)
+            end if
+            if (cycles(i) < 1) then
+               if (isendnode(simulnodes(i))) then
+                  cycles(i) = steps
+               end if
+            end if
+         end do
+      end do
+      j = 0
+      do i = 1, numsimuls
+         if (cycles(i) /= 0) j = j + 1
+      end do
+      if (j == numsimuls) then
+         print *
+         print *, "all have cycled at least once"
+         do i = 1, numsimuls
+            print *, i, cycles(i)
+         end do
+         print *, "break out a calculator to get the real answer"
+      end if
+      res = steps
+   end function doparttwo
+
 end program solution
-!
-!{ for part two, do the moves simultaneously starting from all the
-!  nodes that end with 'A' until all the nodes at the end of a move end
-!  with 'Z'. }
-!
-!function parttwo : integer;
-!
-!var
-!  i, j   : integer;
-!  steps  : integer;
-!  move   : char;
-!  cycles : array[1..10] of integer;
-!
-!begin
-!   buildsimulnodes;
-!   for i := 1 to numsimuls do
-!      cycles[i] := 0;
-!   steps := 0;
-!   { the sims will loop...some take more steps per loop than
-!     others. once you know how long it takes each one to
-!     finish, you should be able to figure out when they all
-!     synch. }
-!   while not allatend do begin
-!      steps := steps + 1;
-!      {if steps > 50 then
-!      aochalt('debug break'); }
-!      move := getmove;
-!      for i := 1 to numsimuls do begin
-!         if not isendnode(simulnodes[i]) then
-!            simulnodes[i] := nextnode(simulnodes[i], move);
-!         if cycles[i] < 1 then
-!            if isendnode(simulnodes[i]) then
-!               cycles[i] := steps;
-!      end;
-!   end;
-!   j := 0;
-!   for i := 1 to numsimuls do
-!      if cycles[i] = 0 then
-!         break
-!      else
-!         j := j + 1;
-!   if j = numsimuls then begin
-!      writeln;
-!      writeln('all have cycled at least once');
-!      for i := 1 to numsimuls do
-!         writeln(i : 2, cycles[i] : 20);
-!      writeln('break out a calculator to get the real answer');
-!      { aochalt('check this output'); }
-!   end;
-!   parttwo := steps;
-!end;

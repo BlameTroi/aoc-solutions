@@ -1,7 +1,17 @@
 ./solution /Users/troi/projects/aoc/datasets/2023/08/dataset.txt
  aoc dataset '/Users/troi/projects/aoc/datasets/2023/08/dataset.txt' opened for reading
+ found            6  start nodes
+
+ all have cycled at least once
+           1                16579
+           2                18827
+           3                19951
+           4                12083
+           5                22199
+           6                17141
+ break out a calculator to get the real answer
 
                 19951 part one
-                    0 part two
+                22199 part two
 
  aoc dataset closed
