@@ -43,6 +43,7 @@ module aochelpers
    public :: is_letter
    public :: str_int
    public :: str_int64
+   public :: str_ints               ! from string, with delimiter, into allocated array of ints
 
 contains
 
@@ -160,6 +161,25 @@ contains
       end do
    end function str_int64
 
+   ! lifted from so and modified a bit, original at
+   ! https://stackoverflow.com/questions/30006834/reading-a-file-of-lists-of-integers-in-fortran
+   function str_ints(str, sep) result(res)
+      character(len=*), intent(in) :: str
+      character(len=1), intent(in) :: sep
+      integer, allocatable         :: res(:)
+      character(len=len(str))      :: tmp
+      integer                      :: i, n
+      tmp = str
+      n = 0
+      do i = 1, len_trim(tmp)
+         if (tmp(i:i) == sep) then
+            n = n + 1
+            tmp(i:i) = ","
+         end if
+      end do
+      allocate (res(n + 1))
+      read (tmp, *) res
+   end function str_ints
    ! return a decimal string representation of integer i in a string
    ! just large enough to hold the digits.
 
