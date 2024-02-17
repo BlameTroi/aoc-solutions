@@ -73,9 +73,16 @@ program solution
    call init
    call load
 
-   part_one = dopartone()
+   ! part one, how far is it to get to the furthest point you can reach
+
+   part_one = do_part_one()
+
+   ! part two, count the cells that are completely enclosed by the loop
+
+   part_two = do_part_two()
 
    ! report and close
+
    print *
    print *, part_one, "part one"
    print *, part_two, "part two"
@@ -90,10 +97,12 @@ contains
    subroutine get_dimensions
       implicit none
       integer :: i
+
       map_dimensions(1, 1) = huge(map_dimensions) ! min row size
       map_dimensions(1, 2) = huge(map_dimensions) ! min col size
       map_dimensions(2, 1) = -huge(map_dimensions) ! max row
       map_dimensions(2, 2) = -huge(map_dimensions) ! max col
+
       call rewind_aoc_input(AOCIN)
       i = 0
       do while (read_aoc_input(AOCIN, rec))
@@ -103,18 +112,25 @@ contains
          map_dimensions(2, 1) = i
          map_dimensions(2, 2) = max(map_dimensions(2, 2), len_trim(rec))
       end do
+
       if (map_dimensions(1, 2) /= map_dimensions(2, 2)) then
          print *, "*** error *** input is not rectangular!"
          stop 1
       end if
    end subroutine get_dimensions
 
+   ! allocate (or reallocate) proper sized arrays and initialize all glyphs
+   ! to blank.
    subroutine init
       implicit none
+
       call get_dimensions
       maxrows = map_dimensions(2, 1)
       maxcols = map_dimensions(2, 2)
-      write (*, "('maze dimensions are ', i3, 'x', i3, '.')") maxrows, maxcols
+      if (allocated(glyphs)) deallocate (glyphs)
+      if (allocated(filled)) deallocate (filled)
+      if (allocated(onloop)) deallocate (onloop)
+      if (allocated(inside)) deallocate (inside)
       allocate (character(len=1) :: glyphs(1:maxrows, 1:maxcols))
       allocate (character(len=1) :: filled(1:maxrows, 1:maxcols))
       allocate (character(len=1) :: onloop(1:maxrows, 1:maxcols))
@@ -134,8 +150,8 @@ contains
       implicit none
       integer :: r, c
       logical :: b
-      call rewind_aoc_input(AOCIN)
 
+      call rewind_aoc_input(AOCIN)
       do r = 1, maxrows
          b = read_aoc_input(AOCIN, rec)
          do c = 1, maxcols
@@ -187,8 +203,9 @@ contains
          w = index("L-F", glyphs(begrow, begcol - 1)) > 0
       end if
 
-      ! only two of n e s w should be true. if not, that's a data
-      ! problem but it's not checked for here.
+      ! only two of n e s w should be true. if not, that's a data problem but
+      ! it's not checked for here.
+
       if (n .and. s) then
          res = "|"
       else if (n .and. w) then
@@ -214,6 +231,7 @@ contains
       implicit none
       integer, intent(in) :: r, c
       logical             :: res
+
       res = (r >= 1) .and. (r <= maxrows) .and. (c >= 1) .and. (c <= maxcols)
    end function is_valid_coord
 
@@ -223,6 +241,7 @@ contains
       implicit none
       integer, intent(in) :: r, c
       logical             :: res
+
       res = .false.
       if (is_valid_coord(r, c)) res = onloop(r, c) /= " "
    end function is_on_loop
@@ -235,6 +254,7 @@ contains
       implicit none
       integer, intent(in) :: r, c
       logical             :: res
+
       res = .false.
       if (.not. is_valid_coord(r, c) .or. .not. is_valid_coord(r - 1, c)) return
       res = (.not. is_on_loop(r - 1, c)) .and. (index("|LJ", glyphs(r, c)) > 0)
@@ -253,6 +273,7 @@ contains
       implicit none
       integer, intent(in) :: r, c
       logical             :: res
+
       res = .false.
       if (.not. is_valid_coord(r, c) .or. .not. is_valid_coord(r + 1, c)) return
       res = (.not. is_on_loop(r + 1, c)) .and. (index("|F7", glyphs(r, c)) > 0)
@@ -262,6 +283,7 @@ contains
       implicit none
       integer, intent(in) :: r, c
       logical             :: res
+
       res = .false.
       if (.not. is_valid_coord(r, c) .or. .not. is_valid_coord(r, c - 1)) return
       res = (.not. is_on_loop(r, c - 1)) .and. (index("-J7", glyphs(r, c)) > 0)
@@ -287,6 +309,7 @@ contains
 
       res = 1                         ! count this point
       onloop(r, c) = glyphs(r, c)       ! remember we've been visited
+
       if (can_go_north(r, c)) then
          res = res + loop_walker(r - 1, c)
       else if (can_go_east(r, c)) then
@@ -299,145 +322,119 @@ contains
    end function loop_walker
 
    ! driver for part one
-   function dopartone() result(res)
+   function do_part_one() result(res)
       implicit none
       integer :: res
       integer :: i
+
       i = loop_walker(begrow, begcol)
       res = (i / 2) + mod(i, 2)
-   end function dopartone
+   end function do_part_one
+
+   ! part two.
+   !
+   ! find out how many points are inside the loop. the tricky part is that it is
+   ! possible to seep through parallel pipes in which case the points are not
+   ! enclosed. this is a paint fill sort of problem.
+
+   ! fill points in the maze starting from r, c. can be called with invalid
+   ! coordinates and quietly ignores the request. it also quietly ignores the
+   ! request if the point has been filled already or is part of the loop.
+
+   recursive subroutine filler(r, c)
+      implicit none
+      integer :: r, c
+
+      if (.not. is_valid_coord(r, c)) return
+      if (filled(r, c) /= " " .or. onloop(r, c) /= " ") return
+
+      filled(r, c) = 'O'
+
+      call filler(r - 1, c - 1)
+      call filler(r - 1, c)
+      call filler(r - 1, c + 1)
+      call filler(r, c - 1)
+      call filler(r, c + 1)
+      call filler(r + 1, c - 1)
+      call filler(r + 1, c)
+      call filler(r + 1, c + 1)
+   end subroutine filler
+
+   ! any outer row or column grid that isn't on the loop can be filled. most of
+   ! the requests after the first couple will return without doing anything as
+   ! the nodes will have been marked filled.
+   !
+   ! while the spec allows filling to bleed through parallel pipes in the maze,
+   ! that's being deferred to a later step.
+   !
+   ! when this fill is done, any nodes that are neither filled nor on the loop
+   ! are candidates for part two. attempting to figure out the parallel pipes.
+
+   subroutine first_fill
+      implicit none
+      integer :: r
+
+      do r = 1, maxrows
+         call filler(r, 1)
+         call filler(r, maxcols)
+      end do
+   end subroutine first_fill
+
+   ! is this point inside the loop? use raycasting to check.
+
+   function is_interior(r, c) result(res)
+      implicit none
+      integer, intent(in) :: r, c
+      logical             :: res
+      integer             :: ray, crossings
+
+      res = .false.
+      crossings = 0
+
+      if (r == 1 .or. r == maxrows) return
+      if (c == 1 .or. c == maxcols) return
+
+      do ray = 1, c
+         if (index(" -JL", onloop(r, ray)) > 0) cycle
+         crossings = crossings + 1
+      end do
+      res = (crossings > 0) .and. (mod(crossings, 2) == 1)
+   end function is_interior
+
+   ! check any remaining unmarked points in the maze. if it isn't filled or on
+   ! the loop, it might be completely contained within the loop. use raycasting
+   ! to see if it is, and if it isn't, fill it.
+
+   function check_remaining() result(res)
+      implicit none
+      integer :: res
+      integer :: r, c, count
+
+      count = 0
+      do r = 1, maxrows
+         do c = 1, maxcols
+            if (onloop(r, c) == " " .and. filled(r, c) == " ") then
+               inside(r, c) = "?"
+               if (is_interior(r, c)) then
+                  count = count + 1
+                  inside(r, c) = "I"
+               end if
+            end if
+         end do
+      end do
+      res = count
+   end function check_remaining
+
+   ! find every node that is neither filled nor one of the loop nodes. is
+   ! there a path from it to a filled node? if so, fill it. whatever is
+   ! left after all that must be an interior node. }
+
+   function do_part_two() result(res)
+      implicit none
+      integer :: res
+
+      call first_fill
+      res = check_remaining()
+   end function do_part_two
 
 end program solution
-
-!
-!{ ---------------------------------------------------------
-!  part two.
-!
-!  find out how many points are inside the loop. the tricky
-!  part is that it is possible to seep through parallel pipes
-!  in which case the points are not enclosed. this is a paint
-!  fill sort of problem.
-!  --------------------------------------------------------- }
-!
-!
-!{ fill points in the maze starting from r, c. can be called with
-!  invalid coordinates and quietly ignores the request. it also quietly
-!  ignores the request if the point has been filled already or is part
-!  of the loop. }
-!
-!procedure filler(r, c : integer)
-!
-!begin
-!  if not validcoord(r, c) then
-!    exit
-!  if (filled[r, c] <> ' ') or (onloop[r, c] <> ' ') then
-!    exit
-!  filled[r, c] = 'O'
-!  filler(r-1, c-1); filler(r-1, c); filler(r+1, c+1)
-!  filler(r,   c-1);                 filler(r,   c+1)
-!  filler(r+1, c+1); filler(r+1, c); filler(r+1, c+1)
-!end
-!
-!
-!{ any outer row or column grid that isn't on the loop can be filled.
-!  most of the requests after the first couple will return without
-!  doing anything as the nodes will have been marked filled.
-!
-!  while the spec allows filling to bleed through parallel pipes in the
-!  maze, that's being deferred to a later step.
-!
-!  when this fill is done, any nodes that are neither filled nor on the
-!  loop are candidates for part two. attempting to figure out the
-!  parallel pipes. }
-!
-!procedure firstfill
-!
-!var
-!   r : integer
-!
-!begin
-!   for r = low(glyphs) to high(glyphs) do begin
-!      filler(r, low(glyphs[r]))
-!      filler(r, high(glyphs[r]))
-!   end
-!end
-!
-!
-!{ is this point inside the loop? use raycasting to check. }
-!
-!function interior(r, c : integer) : boolean
-!
-!var
-!   ray       : integer
-!   crossings : integer
-!
-!begin
-!   interior = false
-!   crossings = 0
-!
-!   if (r = low(glyphs)) or (r = high(glyphs)) then
-!      exit
-!   if (c = low(glyphs[r])) or (c = high(glyphs[r])) then
-!      exit
-!
-!   for ray = low(glyphs[r]) to c do begin
-!      if onloop[r, ray] in [' ', '-', 'J', 'L'] then
-!         continue
-!      crossings = crossings + 1
-!   end
-!
-!   interior = (crossings > 0) and ((crossings mod 2) = 1)
-!end
-!
-!
-!{ check any remaining unmarked points in the maze. if it isn't filled
-!  or on the loop, it might be completely contained within the loop.
-!  use raycasting to see if it is, and if it isn't, fill it. }
-!
-!function checkremaining : integer
-!
-!var
-!   r, c : integer
-!   count : integer
-!
-!begin
-!   count = 0
-!   for r = low(glyphs) to high(glyphs) do begin
-!      for c = low(glyphs[r]) to high(glyphs[r]) do begin
-!         if (onloop[r, c] = ' ') and (filled[r, c] = ' ') then begin
-!            inside[r, c] = '?'
-!            if interior(r, c) then begin
-!               count = count + 1
-!               inside[r, c] = 'I'
-!            end
-!         end
-!      end
-!   end
-!   checkremaining = count
-!end
-!
-!
-!{ find every node that is neither filled nor one of the loop nodes. is
-!  there a path from it to a filled node? if so, fill it. whatever is
-!  left after all that must be an interior node. }
-!
-!function parttwo : integer
-!
-!begin
-!   firstfill
-!   parttwo = checkremaining
-!end
-!
-!{ mainline }
-!
-!var
-!   i : integer
-!
-!begin
-!   aocopen
-!   i = partone
-!   writeln('part one: ', i)
-!   i = parttwo
-!   writeln('part two: ', i)
-!   aocclose
-!end.
