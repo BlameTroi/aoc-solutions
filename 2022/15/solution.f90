@@ -2,11 +2,9 @@
 
 ! advent of code 2022 day 15 -- beacon exclusion zone
 !
-! given sensors that can identify the closest beacon, cast a net of
-! sensors to map beacons. then determine where a beacon can not be in a
-! specific row.
+! given sensors that can identify the closest beacon, cast a net of sensors to
+! map beacons. then determine where a beacon can not be in a specific row.
 
-!
 program solution
 
    use iso_fortran_env, only: int64
@@ -57,6 +55,7 @@ program solution
    type(line_t) :: lines(0:MAXDIM * 4)
 
    ! initialize
+
    part_one = 0; part_two = 0
    rec = ""
    call open_aoc_input(AOCIN)
@@ -68,10 +67,10 @@ program solution
 
    ! report and close
 
-   print *
-   print *, part_one, "part one"
-   print *, part_two, "part two"
-   print *
+   write (*, *)
+   write (*, *) part_one, "part one"
+   write (*, *) part_two, "part two"
+   write (*, *)
 
    call close_aoc_input(AOCIN)
 
@@ -111,22 +110,22 @@ contains
 
       j = 0
 
-      print *
-      write (*, "('of ', i3, ' sensors, the following are of interest:')") numsensors
+      write (*, *)
+      write (*, "('of ', i0, ' sensors, the following are of interest:')") numsensors
       buf = sensor_range_prthdr()
-      print *, trim(buf)
+      write (*, *) trim(buf)
       do i = 0, numsensors - 1
          associate (s => sensors(i))
             if (s % distance > s % tydistance) then
-               adjx = s % distance - abs(s % y - s % tydistance)
+               adjx = s % distance - abs(s % y - targety)
                s % tyminx = s % x - adjx
                s % tymaxx = s % x + adjx
                buf = sensor_range_prtstr(i)
-               print *, trim(buf)
+               write (*, *) trim(buf)
                ranges(j) % lo = s % tyminx; ranges(j) % hi = s % tymaxx
                j = j + 1
                mintyx = min(mintyx, s % tyminx)
-               maxtyx = max(mintyx, s % tymaxx)
+               maxtyx = max(maxtyx, s % tymaxx)
             end if
          end associate
       end do
@@ -135,35 +134,35 @@ contains
 
       call sort_ranges
 
-      print *
-      print *, "sorted ranges"
+      write (*, *) ""
+      write (*, *) "sorted ranges:"
       do i = 0, numranges - 1
          write (*, "(*(i14))") ranges(i) % lo, ranges(i) % hi
       end do
 
-      print *
-      print *, "collapsing ranges..."
+      write (*, *)
+      write (*, *) "collapsing ranges..."
       do while (collapse_ranges())
          ! blip nothing yet
       end do
 
-      print *
-      print *, "merging ranges..."
+      write (*, *)
+      write (*, *) "merging ranges..."
       do while (merge_ranges())
          ! bloop also nothing yet
       end do
 
-      print *
-      print *, "collapsed and merged ranges:"
+      write (*, *)
+      write (*, *) "collapsed and merged ranges:"
       do i = 0, numranges - 1
          write (*, "(*(i14))") ranges(i) % lo, ranges(i) % hi
       end do
 
       ! this is a wrong answer for the big data
-      print *
-      print *, "minimum and maximum are:"
+      write (*, *)
+      write (*, *) "minimum and maximum are:"
       write (*, "(*(i14))") mintyx, maxtyx
-      print *
+      write (*, *)
       write (*, "('for a maximum of ', i0)") abs(mintyx) + abs(maxtyx)
 
       res = abs(mintyx) + abs(maxtyx)
@@ -355,8 +354,10 @@ contains
       integer :: i, p
       character(len=:), allocatable :: t
 
+      write (*, *) "loading..."
       i = 0
       do while (read_aoc_input(AOCIN, rec))
+         write (*, *) trim(rec)
          if (rec(1:9) /= "Sensor at") exit
          associate (s => sensors(i))
             t = sanatize(trim(rec))
@@ -372,9 +373,9 @@ contains
          i = i + 1
       end do
 
-      if (rec(1:9) == "target y=") then
-         p = index(rec, "=") + 1
-         targety = str_int64(rec, p)
+      if (rec(1:9) == "Target y=") then
+         t = sanatize(trim(rec))
+         read (t, *) targety
       end if
 
       do i = 0, numsensors - 1
@@ -424,20 +425,20 @@ contains
       character(len=*), parameter :: fmtcor = "('used grid coordinates range from ', a19, ' to ', a19)"
       character(len=200) :: buf
       integer :: i
-      print *
-      print *, "our data"
-      print *
-      print *, sensor_prthdr()
-      print *
+      write (*, *)
+      write (*, *) "our data"
+      write (*, *)
+      write (*, *) sensor_prthdr()
+      write (*, *)
       do i = 0, numsensors - 1
          buf = sensor_prtstr(i)
-         print *, trim(buf)
+         write (*, *) trim(buf)
       end do
-      print *
+      write (*, *)
       write (*, fmtcor) point_str(minx, miny), point_str(maxx, maxy)
-      print *
+      write (*, *)
       write (*, "('target y line is ', i7)") targety
-      print *
+      write (*, *)
    end subroutine display_sensors
 
 end program solution
