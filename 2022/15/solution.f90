@@ -1,7 +1,7 @@
 ! solution.f90 -- 2022 day 15 -- beacon exclusion zone -- troy brumley blametroi@gmail.com
 
 ! advent of code 2022 day 15 -- beacon exclusion zone
-!
+
 ! given sensors that can identify the closest beacon, cast a net of sensors to
 ! map beacons. then determine where a beacon can not be in a specific row.
 
@@ -63,7 +63,10 @@ program solution
    call init
    call load
    call display_sensors
+
    part_one = do_part_one()
+
+   part_two = do_part_two()
 
    ! report and close
 
@@ -351,7 +354,7 @@ contains
 
    subroutine load
       implicit none
-      integer :: i, p
+      integer :: i
       character(len=:), allocatable :: t
 
       write (*, *) "loading..."
@@ -441,123 +444,127 @@ contains
       write (*, *)
    end subroutine display_sensors
 
-end program solution
+! part two -- where is the beacon
 
-!{========================================================================}
-!{ part two -- where is the beacon                                        }
-!{                                                                        }
-!{ we are told that the beacon's x and y coordinates can range from 0 to  }
-!{ 4000000. determine the beacon's tuning frequency (x * 4000000 + y).    }
-!{ there is only one grid coordinate that can hold the beacon, what is    }
-!{ its frequency?                                                         }
-!{                                                                        }
-!{ in the small test data, the location is x=14 y=11 for a frequency of   }
-!{ 56000011.                                                              }
-!{ a brute force scan is feasible but will take forever. i'm trying to    }
-!{ visualize finding gaps but it isn't coming clear to me yet. one idea   }
-!{ to play with is sampling, just to keep me in the problem space and see }
-!{ what i might learn.                                                    }
-!{                                                                        }
-!{ as i think about it, unlike circles the manhattan distance gives us    }
-!{ diamond shapes. so there won't be the same sort of gap shapes that     }
-!{ exist when working with cartesian coordinates. gaps will be along      }
-!{ parallel diagonal or cardinal lines.                                   }
-!{                                                                        }
-!{ i spent too much time trying to find a way to rotate the whole graph   }
-!{ so i could workd with rectangles instead of diamonds, but actually the }
-!{ diamond shape is fine. since we know there is only one point that is   }
-!{ not covered by the sensors, it must be on a line that runs along one   }
-!{ of the four edges of the coverage diamond at range+1.                  }
-!{                                                                        }
-!{ the lines all have slopes of |1| so it's easy to figure out the        }
-!{ intersections.                                                         }
-!{                                                                        }
-!{========================================================================}
+! we are told that the beacon's x and y coordinates can range from 0 to 4000000.
+! determine the beacon's tuning frequency (x * 4000000 + y). there is only one
+! grid coordinate that can hold the beacon, what is its frequency?
 !
-!function parttwo : integer
-!var
-!   i    : integer
-!   j    : integer
-!   x, y : integer
+! in the small test data, the location is x=14 y=11 for a frequency of 56000011.
 !
-!begin
-!   x := 0; y := 0
-!   parttwo := -1
+! a brute force scan is feasible but will take forever. i'm trying to visualize
+! finding gaps but it isn't coming clear to me yet. one idea to play with is
+! sampling, just to keep me in the problem space and see what i might learn.
 !
-!   { determine the end points of the open lines. all the lines have a slope of |1|. }
+! as i think about it, unlike circles the manhattan distance gives us diamond
+! shapes. so there won't be the same sort of gap shapes that exist when working
+! with cartesian coordinates. gaps will be along parallel diagonal or cardinal
+! lines.
 !
-!   { n-e, w-s, w-n, s-e are the lines }
-!   { n-e checks against all w-n s-e }
-!   { w-s checks against all w-n and w-e }
-!   j := 0
-!   for i := 0 to sensors - 1 do
-!      with sensor[i] do begin
-!         nx := x; ny := y - dist - 1
-!         ex := x + dist + 1; ey := y
-!         sx := x; sy := y + dist + 1
-!         wx := x - dist - 1; wy := y
-!         writeln
-!         writeln('sensor ', i:2)
-!         writeln
-!         writeln('  negative slope:')
-!         writeln('    line n-e : ', point_str(nx, ny), '-', point_str(ex, ey))
-!         writeln('    line w-s : ', point_str(wx, wy), '-', point_str(sx, sy))
-!         writeln('  positive slope:')
-!         writeln('    line s-e : ', point_str(sx, sy), '-', point_str(ex, ey))
-!         writeln('    line w-n : ', point_str(wx, wy), '-', point_str(nx, ny))
-!         intersection(x, y, nx, ny, ex, ey, wx, wy, nx, ny)
-!         writeln('intersection should be ', point_str(nx, ny), ' and is ', point_str(x, y))
+! i spent too much time trying to find a way to rotate the whole graph so i
+! could workd with rectangles instead of diamonds, but actually the diamond
+! shape is fine. since we know there is only one point that is not covered by
+! the sensors, it must be on a line that runs along one of the four edges of the
+! coverage diamond at range+1.
 !
-!      end
-!   writeln
-!end
-!
-!
-!{========================================================================}
-!{ given points on lines a-b and c-d, find their interesection. find the  }
-!{ y=m*x+b equation (slope intercept form) for each line and then work    }
-!{ from those to find the x and y coordinates of their intersection. the  }
-!{ data in this problem gives us lines at 45 degrees from the axis (slope }
-!{ |1|) so calculations can all be done with integers. i lifted the code  }
-!{ from a more general solution on rosetta code that used floating point  }
-!{ and changed the data types.                                            }
-!{                                                                        }
-!{ there is no real error checking here. the data we are given is clean.  }
-!{ i do double (or triple) dispatch as needed to make sure that all the   }
-!{ segments are given from lower x to higher x.                           }
-!{========================================================================}
-!
-!procedure slope_intercept(var m      : integer
-!                         var b      : integer
-!                             xa, ya,
-!                             xb, yb : integer)
-!begin
-!   m := (yb - ya) div (xb - xa)
-!   b := ya - xa * m
-!end
-!
-!procedure intersection(var x              : integer
-!                       var y              : integer
-!                           xa, ya, xb, yb,
-!                           xc, yc, xd, yd : integer)
-!
-!var
-!   mab, mcd : integer; { slopes }
-!   bab, bcd : integer; { intercepts }
-!
-!begin
-!   if xa > xb then
-!      { lean consistently }
-!      intersection(x, y, xb, yb, xa, ya, xc, yc, xd, yd)
-!   else if xc > xd then
-!      { lean consistently }
-!      intersection(x, y, xa, ya, xb, yb, xd, yd, xc, yc)
-!   else begin
-!      { find m and b for y = m*x + b form }
-!      slope_intercept(mab, bab, xa, ya, xb, yb)
-!      slope_intercept(mcd, bcd, xc, yc, xd, yd)
-!      { find intersection }
-!      x := (bcd - bab) div (mab - mcd)
-!      y := ya - xa*mab + x*mab
-!   end
-!end
+! the lines all have slopes of |1| so it's easy to figure out the intersections.
+
+   function do_part_two() result(res)
+      implicit none
+      integer(kind=int64) :: res
+      integer :: i, j
+      integer(kind=int64) :: x, y
+
+      x = 0; y = 0
+      res = -1
+
+      ! determine endpoints of the open lines, all the lines have a slope of
+      ! |1|.
+      !
+      ! n-e, w-s, w-n, s-e are the lines
+      ! n-e checks against all w-n and s-e
+      ! w-s checks against all w-n and w-e
+
+      j = 0
+      do i = 0, numsensors - 1
+         associate (s => sensors(i))
+            s % nx = s % x
+            s % ny = s % y - s % distance - 1
+
+            s % ex = s % x + s % distance + 1
+            s % ey = s % y
+
+            s % sx = s % x
+            s % sy = s % y + s % distance + 1
+
+            s % wx = s % x - s % distance - 1
+            s % wy = y
+
+            write (*, *) ""
+            write (*, "('sensor ', i0)") i
+            write (*, *) ""
+            write (*, *) "  negative slope:"
+            write (*, "('    line ', a3, ' : ', a19, '-', a19)") "n-e", point_str(s % nx, s % ny), point_str(s % ex, s % ey)
+            write (*, "('    line ', a3, ' : ', a19, '-', a19)") "w-s", point_str(s % wx, s % wy), point_str(s % sx, s % sy)
+            write (*, *) "  positive slope:"
+            write (*, "('    line ', a3, ' : ', a19, '-', a19)") "s-e", point_str(s % sx, s % sy), point_str(s % ex, s % ey)
+            write (*, "('    line ', a3, ' : ', a19, '-', a19)") "w-n", point_str(s % wx, s % wy), point_str(s % nx, s % ny)
+
+            call intersection(x, y, s % nx, s % ny, s % ex, s % ey, s % wx, s % wy, s % nx, s % ny)
+            write (*, "('intersection should be ', a19, ' and is ', a19)") point_str(s % nx, s % ny), point_str(x, y)
+         end associate
+      end do
+   end function do_part_two
+
+   ! given points on lines a-b and c-d, find their interesection. find the
+   ! y=m*x+b equation (slope intercept form) for each line and then work from
+   ! those to find the x and y coordinates of their intersection. the data in
+   ! this problem gives us lines at 45 degrees from the axis (slope |1|) so
+   ! calculations can all be done with integers. i lifted the code from a more
+   ! general solution on rosetta code that used floating point and changed the
+   ! data types.
+   !
+   ! there is no real error checking here. the data we are given is clean. i do
+   ! double (or triple) dispatch as needed to make sure that all the segments
+   ! are given from lower x to higher x.
+
+   recursive subroutine intersection(x, y, xa, ya, xb, yb, xc, yc, xd, yd)
+      implicit none
+      integer(kind=int64), intent(out) :: x, y
+      integer(kind=int64), intent(in) :: xa, ya, xb, yb, xc, yc, xd, yd
+      integer(kind=int64) :: mab, mcd ! slopes
+      integer(kind=int64) :: bab, bcd ! intercepts
+
+      if (xa > xb) then
+         ! lean consistently
+         call intersection(x, y, xb, yb, xa, ya, xc, yc, xd, yd)
+      else if (xc > xd) then
+         ! lean consistently
+         call intersection(x, y, xa, ya, xb, yb, xd, yd, xc, yc)
+      else
+
+         ! find m and b for y = m*x + b form
+         call slope_intercept(mab, bab, xa, ya, xb, yb)
+         call slope_intercept(mcd, bcd, xc, yc, xd, yd)
+
+         ! find intersection
+         x = (bcd - bab) / (mab - mcd)
+         y = ya - xa * mab + x * mab
+
+      end if
+   end subroutine intersection
+
+   ! given two points, what is the slope and intecept of the line
+   ! using y = mx+b form? integers, the slope in the problem set is
+   ! |1|.
+
+   subroutine slope_intercept(m, b, ax, ay, bx, by)
+      implicit none
+      integer(kind=int64), intent(out) :: m, b
+      integer(kind=int64), intent(in)  :: ax, ay, bx, by
+
+      m = (by - ay) / (bx - ax)
+      b = ay - ax * m
+   end subroutine slope_intercept
+
+end program solution
