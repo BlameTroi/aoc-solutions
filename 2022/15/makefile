@@ -1,22 +1,28 @@
-# shell or sample makefile for fpc
+# shell or sample makefile for gfortran
 # see https://bytes.usc.edu/cs104/wiki/makefile/ for a quick reference
+# attempting to do the include paths cleanly
+ROOTDIR=$(HOME)
+PROJDIR=$(ROOTDIR)/projects/aoc/solutions
+COMPILER=gfortran
+OPTIONS=-Wall -fcheck=all
+INCDIR=$(PROJDIR)/commonf90
+MODDIR=$(PROJDIR)/commonf90
+DATDIR=$(ROOTDIR)/projects/aoc/datasets
+INCLUDES=-I$(INCDIR)
+MODULES=-J$(MODDIR)
+COMPILE=$(COMPILER) -c $(OPTIONS) $(INCLUDES) $(MODULES)
+COMPLINK=$(COMPILER) $(OPTIONS) $(INCLUDES) $(MODULES) $(MODDIR)/*.o
 
-COMPILER=fpc
-OPTIONS=-glw3 -Ciort -ap -Sgix -Sh- -vewnlb
-INCLUDES=-Fi../../common/
-UNITS=
-COMPILE=$(COMPILER) $(OPTIONS) $(INCLUDES) $(UNITS)
+default:
 
-all: program
-
-program: solution.pas
-	$(COMPILE) solution
-
-run:
-	./solution ../../../datasets/2022/15/dataset.txt >output.txt
+build: solution.f90
+	$(COMPLINK) solution.f90 -o solution
 
 test:
-	./solution ../../../datasets/2022/15/testone.txt >testing.txt
+	./solution $(DATDIR)/2022/15/testone.txt
+
+run:
+	./solution $(DATDIR)/2022/15/dataset.txt
 
 clean:
-	rm -f solution *.o output.txt testing.txt aoc-log
+	rm -rf *.mod *.o
