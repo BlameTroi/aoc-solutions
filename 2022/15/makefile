@@ -1,13 +1,13 @@
 # shell or sample makefile for gfortran
 # see https://bytes.usc.edu/cs104/wiki/makefile/ for a quick reference
 # attempting to do the include paths cleanly
-ROOTDIR=$(HOME)
-PROJDIR=$(ROOTDIR)/projects/aoc/solutions
+#ROOTDIR=$(HOME)
+PROJDIR=$(ROOTDIR)/solutions
 COMPILER=gfortran
 OPTIONS=-Wall -fcheck=all
 INCDIR=$(PROJDIR)/commonf90
 MODDIR=$(PROJDIR)/commonf90
-DATDIR=$(ROOTDIR)/projects/aoc/datasets
+DATDIR=$(ROOTDIR)/datasets
 INCLUDES=-I$(INCDIR)
 MODULES=-J$(MODDIR)
 COMPILE=$(COMPILER) -c $(OPTIONS) $(INCLUDES) $(MODULES)

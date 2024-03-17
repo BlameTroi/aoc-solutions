@@ -1,0 +1,20 @@
+after compile with errors, edit makefile, recompile with errors, the periods are back
+
+Minor modes enabled in this buffer: Auto-Save Corfu
+Display-Line-Numbers Eldoc Flycheck Font-Lock Hl-Line Lsp-Completion
+Lsp-Diagnostics Lsp-Headerline-Breadcrumb Lsp-Managed Lsp
+Lsp-Modeline-Code-Actions Lsp-Modeline-Diagnostics
+Lsp-Modeline-Workspace-Status Lsp-Ui-Doc Lsp-Ui Lsp-Ui-Sideline
+Undo-Tree Ws-Butler
+
+after loading, no sign of periods back, modes look the same
+
+Minor modes enabled in this buffer: Auto-Save Corfu
+Display-Line-Numbers Eldoc Flycheck Font-Lock Hl-Line Lsp-Completion
+Lsp-Diagnostics Lsp-Headerline-Breadcrumb Lsp-Managed Lsp
+Lsp-Modeline-Code-Actions Lsp-Modeline-Diagnostics
+Lsp-Modeline-Workspace-Status Lsp-Ui-Doc Lsp-Ui Lsp-Ui-Sideline
+Undo-Tree Ws-Butler
+
+
+ok, this is weird. i did a c-h v to check variables and scrolled around in the list checking pertient variables and when i closed the buffer via c-g, the period behavior starts.
