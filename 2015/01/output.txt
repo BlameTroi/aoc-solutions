@@ -1,0 +1,3 @@
+./solution /Users/troi/projects/aoc/datasets/2015/01/dataset.txt
+after 7000 parens, santa finds himeself on floor 138.
+and he first entered the basement on paren 1771.
