@@ -8,11 +8,10 @@
 //
 // the live dataset contains 7,000 parens on one line.
 
-#include <assert.h>
+
 #include <stdlib.h>
 #include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
+
 
 int
 main(int argc, char **argv) {

@@ -1,9 +1,7 @@
-# Makefile -- 2015 04
-
-# no data files today, i could stuff the keys in files but that'd be silly.
+# Makefile -- 2015 05
 
 YEAR=2015
-MONTH=04
+MONTH=05
 
 CC=clang
 CFLAGS=-Wall -g3 -std=c99
@@ -21,14 +19,13 @@ solution.o: solution.c
 	$(CC) $(CFLAGS) -c solution.c
 
 solution: solution.o
-	$(CC) -o solution solution.o -lm
+	$(CC) -o solution solution.o -lm -lpcre2-8
 
 clean:
 	rm -rf *.o solution solution.dSYM/
 
 short:
-	./solution abcdef
-	./solution pqrstuv
+	./solution $(DATADIR)/testone.txt
 
 long:
-	./solution iwrupvqb
+	./solution $(DATADIR)/dataset.txt

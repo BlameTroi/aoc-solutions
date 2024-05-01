@@ -2,8 +2,6 @@
 
 
 #include <assert.h>
-#include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -152,6 +150,7 @@ incGrid(int x, int y) {
 }
 
 
+// let's do this:
 int
 main(int argc, char **argv) {
    FILE *ifile;
@@ -195,8 +194,6 @@ main(int argc, char **argv) {
       default:
          printf("illegal input %c %x, ignored!\n", ch, ch);
          continue;
-      // fclose(ifile);
-      // return EXIT_FAILURE;
       }
       moves += 1;
       incGrid(who->x, who->y);

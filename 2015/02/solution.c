@@ -22,9 +22,8 @@
 // 2x3x4 requires 2+2+3+3 = 10 feet to wrap plus 2 * 3 * 4 = 24 feet
 // for a bow.
 
+
 #include <assert.h>
-#include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -98,6 +97,8 @@ getWrap(char *line, size_t line_max) {
    return g;
 }
 
+
+// do the work
 int
 main(int argc, char **argv) {
    FILE *ifile;
@@ -122,8 +123,6 @@ main(int argc, char **argv) {
       gift_t g = getWrap(iline, LINE_MAX);
       totalWrap = totalWrap + g.area + g.slack;
       totalRibbon = totalRibbon + g.ribbon + g.bow;
-      /* printf("l=%zu w=%zu h=%zu area=%zu slack=%zu ribbon=%zu bow=%zu running=%zu running=%zu\n", */
-      /*        g.l, g.w, g.h, g.area, g.slack, g.ribbon, g.bow, totalWrap, totalRibbon); */
    }
 
    if (ferror(ifile)) {

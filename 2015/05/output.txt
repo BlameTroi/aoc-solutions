@@ -1,0 +1,5 @@
+./solution /Users/troi/projects/aoc/datasets/2015/05/dataset.txt
+
+part one: 238
+
+part two: 69

@@ -13,12 +13,19 @@
 // here, the solution is brute force.
 
 #include <assert.h>
-#include <stddef.h>
-#include <stdint.h>
+//#include <stddef.h>
+//#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+//#include <stdlib.h>
+//#include <string.h>
+
+// i suspect most people doing this in c would have used openssl, or
+// rather libressl, but i gave the apple wrappers a try.
+
 #include <CommonCrypto/CommonCrypto.h>
+
+// maximum length of the text to digest. it actually can't be more
+// than 21 + length of key, but memory is rather cheap.
 
 #define HASH_MAX (1024)
 
@@ -42,12 +49,14 @@ main(int argc, char **argv) {
    int done5 = 0;
    int done6 = 0;
 
-   // we'll assume that this will eventually work
+   // no check for runaway here. the expectation is that we
+   // will get an answer within the limits of the problem.
    while (!done5 || !done6) {
       odometer += 1;
       memset(workarea+keyLen, 0, HASH_MAX-1-keyLen);
       sprintf(workarea+keyLen, "%llu", odometer);
       computeMd5(workarea, digest);
+      // checking for leading zeros is actually pretty easy.
       if (digest[0]) continue;
       if (digest[1]) continue;
       if (digest[2] < 16) {
@@ -66,6 +75,7 @@ main(int argc, char **argv) {
    return EXIT_SUCCESS;
 }
 
+// yes, md5 isn't all that secure, but big deal.
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 void computeMd5(char *str, unsigned char digest[16]) {
 

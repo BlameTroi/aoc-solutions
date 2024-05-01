@@ -1,0 +1,16 @@
+# good, 0 and 3
+x-xzzzz
+# good, 0 and 4
+zzzzx-x
+# good, 0 and 0
+qjqxxxxxxxqjz
+# good, qj twice, zxz
+qjhvhtzxzqqjkmpb
+# good, xxyxx, xyx
+xxyxx
+# bad tg, but no repeats with just one letter between
+uurcxstgmygtbstg
+# bad, repeating letter patter odo, no pairs
+ieodomkazucvgmuy
+
+
