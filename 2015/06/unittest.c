@@ -53,10 +53,28 @@ MU_TEST(test_read_toggle) {
    char *iline = "toggle 100,800 through 99,77\n";
    cmd_t cmd = parseCmd(iline, strlen(iline));
    mu_assert(cmd.cmd == toggle, "comand should be toggle");
-   mu_assert_int_eq(cmd.p0.x, 12);
-   mu_assert_int_eq(cmd.p0.y, 345);
-   mu_assert_int_eq(cmd.p1.x, 678);
-   mu_assert_int_eq(cmd.p1.y, 987);
+   mu_assert_int_eq(cmd.p0.x, 100);
+   mu_assert_int_eq(cmd.p0.y, 800);
+   mu_assert_int_eq(cmd.p1.x, 99);
+   mu_assert_int_eq(cmd.p1.y, 77);
+}
+
+MU_TEST(test_bad_prefix) {
+   char *iline = "turnon 3,7 through 9,2\n";
+   cmd_t cmd = parseCmd(iline, strlen(iline));
+   mu_assert(cmd.cmd == invalid, "command should be invalid");
+}
+
+MU_TEST(test_bad_coord) {
+   char *iline = "turn on abc,def through 255,8\n";
+   cmd_t cmd = parseCmd(iline, strlen(iline));
+   mu_assert(cmd.cmd == invalid, "command should be invalid");
+}
+
+MU_TEST(test_bad_delim) {
+   char *iline = "turn on 12,34 thru 56,78\n";
+   cmd_t cmd = parseCmd(iline, strlen(iline));
+   mu_assert(cmd.cmd == invalid, "command should be invalid");
 }
 
 
@@ -79,6 +97,9 @@ MU_TEST_SUITE(test_suite) {
    MU_RUN_TEST(test_read_on);
    MU_RUN_TEST(test_read_off);
    MU_RUN_TEST(test_read_toggle);
+   MU_RUN_TEST(test_bad_prefix);
+   MU_RUN_TEST(test_bad_coord);
+   MU_RUN_TEST(test_bad_delim);
 
 }
 

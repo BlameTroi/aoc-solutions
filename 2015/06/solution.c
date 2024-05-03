@@ -63,8 +63,9 @@ cmd_t
 parseCmd(char *iline, int len) {
 
    /* fill the shell */
-   cmd_t cmd;
-   cmd.cmd = invalid;
+   cmd_t cmd;                          /* our answer */
+   cmd_e hold = invalid;               /* the command, plugged in at end */
+   cmd.cmd = invalid;                  /* build invalid shell */
    cmd.p0.x = 0;
    cmd.p0.y = 0;
    cmd.p1.x = 0;
@@ -78,25 +79,59 @@ parseCmd(char *iline, int len) {
    const char *togg = "toggle ";
    const char *tthr = "through ";      /* delimiter between coordinates */
 
-   /* which command and set the start of the first coordinates */
+   /* check prefix and determine command type. if at any time we have
+      an error, just return with the cmd code set to invalid. */
+
+   /* length of prefix determins the start of the first coordinate pair. */
    if (strncmp(iline, ton, strlen(ton)) == 0) {
       pos = iline+strlen(ton);
-      cmd.cmd = on;
+      hold = on;
    } else if (strncmp(iline, toff, strlen(toff)) == 0) {
       pos = iline+strlen(toff);
-      cmd.cmd = off;
+      hold = off;
    } else if (strncmp(iline, togg, strlen(togg)) == 0) {
       pos = iline+strlen(togg);
-      cmd.cmd = toggle;
+      hold = toggle;
    } else {
-      /*  not recognized */
+      /* not recognized */
       return cmd;
    }
 
-   /*       long */
-   /*       strtol(const char *restrict str, char **restrict endptr, int base); */
+   /* get the coordinates, exit early with an invalid block if any parse
+      errors occur. */
 
+   /* first corner */
+   cmd.p0.x = strtol(pos, &nxt, 10);
+   if (pos == nxt || *nxt != ',') {
+      return cmd;
+   }
+   pos = nxt + 1;
+   cmd.p0.y = strtol(pos, &nxt, 10);
+   if (pos == nxt || *nxt != ' ') {
+      return cmd;
+   }
+   pos = nxt + 1;
 
-   /* more to come */
+   /* delimiter between coordinate pairs is " through ", return invalid
+      if it isn't found. */
+   if (strncmp(pos, tthr, strlen(tthr)) != 0) {
+      return cmd;
+   }
+
+   /* second corner */
+   pos = pos + strlen(tthr);
+   cmd.p1.x = strtol(pos, &nxt, 10);
+   if (pos == nxt || *nxt != ',') {
+      return cmd;
+   }
+   pos = nxt + 1;
+   cmd.p1.y = strtol(pos, &nxt, 10);
+   if (pos == nxt || *nxt != '\n') {
+      return cmd;
+   }
+
+   /* all fields processed, mark command as valid with the */
+   /* command code and return. */
+   cmd.cmd = hold;
    return cmd;
 }
