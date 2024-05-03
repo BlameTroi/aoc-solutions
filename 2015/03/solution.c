@@ -1,12 +1,15 @@
-// solution.c -- aoc 2015 03 -- troy brumley
+/* solution.c -- aoc 2015 03 -- troy brumley */
 
 
 #include <assert.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 
-// and i still can't believe these aren't built in
+/*
+ * and i still can't believe these aren't built in:
+ */
 
 
 int
@@ -20,33 +23,37 @@ max(int a, int b) {
    return a > b ? a : b;
 }
 
+/*
+ * santa gets delivery instructions as moves on an infinite
+ * rectangular grid. ^>v< for north, east, south, and west. moves are
+ * always exactly one house. after each move, he delivers another
+ * present to the house at his new location. for the first move, he is
+ * assumed to have dropped off a package at his starting location.
+ *
+ * examples:
+ *
+ * > delivers presents to 2 houses: one at the starting location,
+ *   and one to the east.
+ *
+ * ^>v< delivers presents to 4 houses in a square, including twice
+ *      to the house at his starting/ending location.
+ *
+ * ^v^v^v^v^v delivers a bunch of presents to some very lucky
+ *            children at only 2 houses.
+ *
+ * for part two, the instructions alternate between santa and
+ * a robot helper. flip back and forth between them for a
+ * different answer.
+ *
+ * to get the part one answer, comment out the second inc(0,0)
+ * before the main loop, and the flip of who between santa and
+ * robot at the end of the loop.
+ */
 
-// santa gets delivery instructions as moves on an infinite
-// rectangular grid. ^>v< for north, east, south, and west. moves are
-// always exactly one house. after each move, he delivers another
-// present to the house at his new location. for the first move, he is
-// assumed to have dropped off a package at his starting location.
 
-// examples:
-
-// > delivers presents to 2 houses: one at the starting location,
-//   and one to the east.
-// ^>v< delivers presents to 4 houses in a square, including twice
-//      to the house at his starting/ending location.
-// ^v^v^v^v^v delivers a bunch of presents to some very lucky
-//            children at only 2 houses.
-
-
-// for part two, the instructions alternate between santa and
-// a robot helper. flip back and forth between them for a
-// different answer.
-
-// to get the part one answer, comment out the second inc(0,0)
-// before the main loop, and the flip of who between santa and
-// robot at the end of the loop.
-
-
-// direction glyphs:
+/*
+ * direction glyphs:
+ */
 
 #define N ('^')
 #define E ('>')
@@ -55,9 +62,11 @@ max(int a, int b) {
 #define NESW ("^>v<")
 
 
-// we know the input is 8k in length, so at worst we could
-// only move 8192 positions along a straight line. swag a
-// dimension:
+/*
+ * we know the input is 8k in length, so at worst we could
+ * only move 8192 positions along a straight line. swag a
+ * dimension:
+ */
 
 #define X_ADJ (1000)
 #define Y_ADJ (1000)
@@ -68,20 +77,22 @@ max(int a, int b) {
 #define Y_MAX (Y_ADJ)
 
 
-// for part 2, santa has a robot helper so roll the position into a
-// helper structure.
+/*
+ * for part 2, santa has a robot helper so roll the position into a
+ *  helper structure.
+ */
 
 typedef struct coord_t {
-   int x;                     // current coordinates
+   int x;                     /* current coordinates */
    int y;
 } coord_t;
 
 
-// grid is a block of storage to hold gift counters.
+/* grid is a block of storage to hold gift counters. */
 
 typedef struct grid_t {
-   size_t atLeastOnce;       // how many cells visited
-   int minx;                 // range of cells visited
+   size_t atLeastOnce;       /* how many cells visited */
+   int minx;                 /* range of cells visited */
    int maxx;
    int miny;
    int maxy;
@@ -91,7 +102,9 @@ typedef struct grid_t {
 grid_t *grid;
 
 
-// create the grid, initialized appropriately.
+/*
+ * create the grid, initialized appropriately.
+ */
 void
 makeGrid(void) {
    grid = calloc(sizeof(grid_t), 1);
@@ -104,7 +117,9 @@ makeGrid(void) {
 }
 
 
-// release the grid.
+/*
+ * release the grid.
+ */
 void
 freeGrid(void) {
    free(grid);
@@ -112,7 +127,9 @@ freeGrid(void) {
 }
 
 
-// fake out negative array indices.
+/*
+ * fake out negative array indices.
+ */
 void
 adjustCoords(int *x, int *y) {
    assert(X_MIN < *x && *x < X_MAX);
@@ -122,7 +139,9 @@ adjustCoords(int *x, int *y) {
 }
 
 
-// get the value from a grid cell.
+/*
+ * get the value from a grid cell.
+ */
 uint16_t
 getGrid(int x, int y) {
    adjustCoords(&x, &y);
@@ -130,34 +149,38 @@ getGrid(int x, int y) {
 }
 
 
-// increment a visited grid cell and count each cell
-// when it is visited for the first time.
+/*
+ * increment a visited grid cell and count each cell
+ * when it is visited for the first time.
+ */
 void
 incGrid(int x, int y) {
-   // min and max are pre-adjustment
+   /* min and max are pre-adjustment */
    grid->minx = min(grid->minx, x);
    grid->maxx = max(grid->maxx, x);
    grid->miny = min(grid->miny, y);
    grid->maxy = max(grid->maxy, y);
-   // map coordinates to 0 based
+   /* map coordinates to 0 based */
    adjustCoords(&x, &y);
-   // count first visits
+   /* count first visits */
    if (grid->cell[x][y] == 0) {
       grid->atLeastOnce += 1;
    }
-   // count gifts left
+   /* count gifts left */
    grid->cell[x][y] += 1;
 }
 
 
-// let's do this:
+/*
+ * let's do this:
+ */
 int
 main(int argc, char **argv) {
    FILE *ifile;
    coord_t santa = {0, 0};
    coord_t robot = {0, 0};
-   size_t moves = 0;     // how many?
-   int ch;               // an input command
+   size_t moves = 0;     /* how many? */
+   int ch;               /* an input command */
 
    makeGrid();
 
@@ -172,8 +195,8 @@ main(int argc, char **argv) {
       return EXIT_FAILURE;
    }
 
-   // prime the pump. we start at 0,0 and have left
-   // a gift there.
+   /* prime the pump. we start at 0,0 and have left */
+   /* a gift there. */
    incGrid(santa.x, santa.y);
    incGrid(robot.x, robot.y);
    coord_t *who = &santa;
@@ -197,8 +220,8 @@ main(int argc, char **argv) {
       }
       moves += 1;
       incGrid(who->x, who->y);
-      // comment out the following update of who for
-      // part one result.
+      /* comment out the following update of who for */
+      /* part one result. */
       who = who == &santa ? &robot : &santa;
    }
 
