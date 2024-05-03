@@ -19,10 +19,10 @@
 
 /* commands symbolically */
 typedef enum cmd_e {
-   invalid,
-   on,
-   off,
-   toggle
+   e_invalid,
+   e_on,
+   e_off,
+   e_toggle
 } cmd_e;
 
 
@@ -64,6 +64,40 @@ freeGrid(lights_t *);
 /* parse command line into our command structure */
 cmd_t
 parseCmd(char *line, int len);
+
+
+/*
+ * how many lights are on?
+ */
+int
+lightsOn(lights_t *);
+
+
+/*
+ * turn single light on, off, or toggle it.
+ */
+void
+turnOn(lights_t *, coord_t);
+
+void
+turnOff(lights_t *, coord_t);
+
+void
+toggle(lights_t *, coord_t);
+
+
+/*
+ * single light's status.
+ */
+bool
+isLit(lights_t *, coord_t);
+
+
+/*
+ * by your command
+ */
+void
+doCmd(lights_t *, cmd_t);
 
 
 /*

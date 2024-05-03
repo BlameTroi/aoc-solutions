@@ -24,7 +24,30 @@
 /* part one: */
 int
 partOne(char *fname) {
-   printf("part one\n");
+
+   FILE *ifile;
+
+   ifile = fopen(fname, "r");
+   if (!ifile) {
+      printf("could not open file: %s\n", fname);
+      return EXIT_FAILURE;
+   }
+
+   /* line from input */
+   char *iline;
+   /* length, expected to have a trailing \n */
+   size_t ilen;
+
+   lights_t *g = initGrid();
+
+   while ((iline = fgetln(ifile, &ilen))) {
+      cmd_t c = parseCmd(iline, ilen);
+      doCmd(g, c);
+   }
+
+   printf("part one: %d\n", g->lit);
+
+   fclose(ifile);
    return EXIT_SUCCESS;
 }
 
@@ -64,8 +87,8 @@ parseCmd(char *iline, int len) {
 
    /* fill the shell */
    cmd_t cmd;                          /* our answer */
-   cmd_e hold = invalid;               /* the command, plugged in at end */
-   cmd.cmd = invalid;                  /* build invalid shell */
+   cmd_e hold = e_invalid;               /* the command, plugged in at end */
+   cmd.cmd = e_invalid;                  /* build invalid shell */
    cmd.p0.x = 0;
    cmd.p0.y = 0;
    cmd.p1.x = 0;
@@ -85,13 +108,13 @@ parseCmd(char *iline, int len) {
    /* length of prefix determins the start of the first coordinate pair. */
    if (strncmp(iline, ton, strlen(ton)) == 0) {
       pos = iline+strlen(ton);
-      hold = on;
+      hold = e_on;
    } else if (strncmp(iline, toff, strlen(toff)) == 0) {
       pos = iline+strlen(toff);
-      hold = off;
+      hold = e_off;
    } else if (strncmp(iline, togg, strlen(togg)) == 0) {
       pos = iline+strlen(togg);
-      hold = toggle;
+      hold = e_toggle;
    } else {
       /* not recognized */
       return cmd;
@@ -134,4 +157,92 @@ parseCmd(char *iline, int len) {
    /* command code and return. */
    cmd.cmd = hold;
    return cmd;
+}
+
+/*
+ * how many lights are on?
+ */
+int
+lightsOn(lights_t *g) {
+   return g->lit;
+}
+
+
+/*
+ * turn single light on, off, or toggle it.
+ */
+void
+turnOn(lights_t *g, coord_t p) {
+   if (isLit(g, p)) {
+      return;
+   }
+   g->bulb[p.x][p.y] = true;
+   g->lit += 1;
+}
+
+void
+turnOff(lights_t *g, coord_t p) {
+   if (!isLit(g, p)) {
+      return;
+   }
+   g->bulb[p.x][p.y] = false;
+   g->lit -= 1;
+}
+
+void
+toggle(lights_t *g, coord_t p) {
+   isLit(g, p) ? turnOff(g, p) : turnOn(g, p);
+}
+
+
+/*
+ * single light's status.
+ */
+bool
+isLit(lights_t *g, coord_t p) {
+   return g->bulb[p.x][p.y];
+}
+
+
+
+/*
+ * by your command...
+ */
+int min(int a, int b) { return a < b ? a : b; }
+
+void
+doCmd(lights_t *g, cmd_t c) {
+
+   /* get light indices in proper ordering */
+   int x1 = min(c.p0.x, c.p1.x);
+   int x2 = x1 == c.p0.x ? c.p1.x : c.p0.x;
+   int y1 = min(c.p0.y, c.p1.y);
+   int y2 = y1 == c.p0.y ? c.p1.y : c.p0.y;
+
+   /* get function for command */
+   void (*fn)(lights_t *, coord_t) = NULL;
+   switch (c.cmd) {
+   case e_on:
+      fn = &turnOn;
+      break;
+   case e_off:
+      fn = &turnOff;
+      break;
+   case e_toggle:
+      fn = &toggle;
+      break;
+   case e_invalid:
+      break;
+   /* does nothing, should not occur, will accvio when called */
+   }
+
+   /* do whatever we need to */
+   int i, j;
+   for (i = x1; i <= x2; i++) {
+      coord_t p = {i, -1};
+      for (j = y1; j <= y2; j++) {
+         p.y = j;
+         (*fn)(g, p);
+      }
+   }
 }
