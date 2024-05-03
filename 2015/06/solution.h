@@ -10,11 +10,37 @@
  * of the run if all the lights are off at the start.
  *
  * (turn on|turn off|toggle) x0,y0 through x1,y1
+ *
+ * part one was binary, on, off or toggle.
+ *
+ * part two is analog, on = brightness+1, off = brightness-1 (min 0), toggle = brightness+2.
+ *
+ * this requires changing the data structure from bools to ints.
  */
 
-#include <stdbool.h>
-
 /* data structures: */
+
+
+
+
+/* coordinate block */
+typedef struct coord_t {
+   int x;
+   int y;
+} coord_t;
+
+
+
+/* use a grid of booleans */
+typedef struct lights_t {
+   long lit;                            /* number of lights lit */
+   long intensity;                      /* total intensity if in analog mode */
+   void (*fnon)(struct lights_t *, coord_t);   /* pointers to proper on/off/toggle */
+   void (*fnoff)(struct lights_t *, coord_t);  /* implementations for the grid mode */
+   void (*fntog)(struct lights_t *, coord_t);
+   int bulb[1000][1000];                /* the lights in the grid */
+   int digital;                         /* digital (partOne) or analog (partTwo) */
+} lights_t;
 
 
 /* commands symbolically */
@@ -24,20 +50,6 @@ typedef enum cmd_e {
    e_off,
    e_toggle
 } cmd_e;
-
-
-/* use a grid of booleans */
-typedef struct lights_t {
-   int lit;
-   bool bulb[1000][1000];
-} lights_t;
-
-
-/* coordinate block */
-typedef struct coord_t {
-   int x;
-   int y;
-} coord_t;
 
 
 /* command block */
@@ -53,51 +65,108 @@ typedef struct cmd_t {
 
 /* let there be lights */
 lights_t
-*initGrid(void);
+*initGrid(
+          int                /* 1 = use digital interface, 0 = use analog interface */
+          );
 
 
 /* entropy wins */
 void
-freeGrid(lights_t *);
+freeGrid(
+         lights_t *          /* light grid */
+         );
 
 
 /* parse command line into our command structure */
 cmd_t
-parseCmd(char *line, int len);
+parseCmd(
+         char *,             /* command line text */
+         int                 /* length to consume, makes buffered reads easier */
+         );
 
 
 /*
  * how many lights are on?
  */
-int
-lightsOn(lights_t *);
+long
+numberOn(
+         lights_t *          /* light grid */
+         );
 
 
 /*
- * turn single light on, off, or toggle it.
+ * total intensity of lights.
+ */
+long
+totalIntensity(
+         lights_t *          /* light grid */
+         );
+
+/*
+ * turn single light on, off, or toggle it. The 'D' versions
+ * are for digital, either on or off. The 'A' versions are
+ * for analog, where a dial adjusts intensity.
  */
 void
-turnOn(lights_t *, coord_t);
+turnOnD(
+       lights_t *,           /* light grid */
+       coord_t               /* where */
+       );
 
 void
-turnOff(lights_t *, coord_t);
+turnOffD(
+        lights_t *,          /* light grid */
+        coord_t              /* where */
+        );
 
 void
-toggle(lights_t *, coord_t);
+toggleD(
+       lights_t *,           /* light grid */
+       coord_t               /* where */
+       );
 
+void
+turnOnA(
+       lights_t *,           /* light grid */
+       coord_t               /* where */
+       );
+
+void
+turnOffA(
+        lights_t *,          /* light grid */
+        coord_t              /* where */
+        );
+
+void
+toggleA(
+       lights_t *,           /* light grid */
+       coord_t               /* where */
+       );
 
 /*
  * single light's status.
  */
-bool
-isLit(lights_t *, coord_t);
+int
+isLit(
+      lights_t *,            /* light grid */
+      coord_t                /* where */
+      );
+
+int
+intensity(
+          lights_t *,        /* light grid */
+          coord_t            /* where */
+          );
 
 
 /*
  * by your command
  */
 void
-doCmd(lights_t *, cmd_t);
+doCmd(
+      lights_t *,            /* light grid */
+      cmd_t                  /* parsed command line */
+      );
 
 
 /*

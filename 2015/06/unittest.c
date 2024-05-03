@@ -14,7 +14,7 @@ static lights_t* lg = NULL;
 
 void
 test_setup(void) {
-   lg = initGrid();
+   lg = initGrid(1);
    mu_assert(!lg, "allocated?");
 }
 
@@ -104,26 +104,26 @@ MU_TEST(test_bad_delim) {
  * our light grid is allocated in the setup already.
  */
 
-MU_TEST(test_light_on_off) {
+MU_TEST(test_light_on_off_d) {
    /* white box bit */
-   lg->bulb[0][0] = true;
+   lg->bulb[0][0] = 1;
    lg->lit = 1;
    /* black box bit */
-   mu_assert_int_eq(lightsOn(lg), 1);
+   mu_assert_int_eq(numberOn(lg), 1);
    mu_assert(isLit(lg, p00), "this one should be lit");
    mu_assert(!isLit(lg, p11), "and this would shouldn't be");
    /* add another light */
-   toggle(lg, p11);
-   mu_assert_int_eq(lightsOn(lg), 2);
+   lg->fntog(lg, p11);
+   mu_assert_int_eq(numberOn(lg), 2);
    mu_assert(isLit(lg, p00) && isLit(lg, p11), "both should be");
    /* turn a light on */
-   turnOn(lg, p22);
-   mu_assert_int_eq(lightsOn(lg), 3);
+   lg->fnon(lg, p22);
+   mu_assert_int_eq(numberOn(lg), 3);
    mu_assert(isLit(lg, p22), "should be on");
    mu_assert(!isLit(lg, p23), "should be off");
    /* turn off a light */
-   turnOff(lg, p11);
-   mu_assert_int_eq(lightsOn(lg), 2);
+   lg->fnoff(lg, p11);
+   mu_assert_int_eq(numberOn(lg), 2);
    mu_assert(!isLit(lg, p11), "now off");
 }
 
@@ -132,7 +132,7 @@ MU_TEST(test_light_on_off) {
  * light up four in a single box.
  */
 
-MU_TEST(test_four) {
+MU_TEST(test_four_d) {
    mu_assert_int_eq(lg->lit, 0); /* at start */
    char *iline = "turn on 1,1 through 2,2\n";
    cmd_t cmd = parseCmd(iline, strlen(iline));
@@ -170,8 +170,8 @@ MU_TEST_SUITE(test_suite) {
    MU_RUN_TEST(test_bad_prefix);
    MU_RUN_TEST(test_bad_coord);
    MU_RUN_TEST(test_bad_delim);
-   MU_RUN_TEST(test_light_on_off);
-   MU_RUN_TEST(test_four);
+   MU_RUN_TEST(test_light_on_off_d);
+   MU_RUN_TEST(test_four_d);
 
 }
 

@@ -38,14 +38,14 @@ partOne(char *fname) {
    /* length, expected to have a trailing \n */
    size_t ilen;
 
-   lights_t *g = initGrid();
+   lights_t *g = initGrid(1);
 
    while ((iline = fgetln(ifile, &ilen))) {
       cmd_t c = parseCmd(iline, ilen);
       doCmd(g, c);
    }
 
-   printf("part one: %d\n", g->lit);
+   printf("part one: %ld\n", g->lit);
 
    fclose(ifile);
    return EXIT_SUCCESS;
@@ -60,9 +60,22 @@ partTwo(char *fname) {
 
 
 /* create a grid of lights: */
-lights_t *initGrid(void) {
+lights_t *initGrid(int digital) {
    lights_t *g = calloc(sizeof(lights_t), 1);
    assert(g);
+   if (digital) {
+      g->digital = 1;
+      g->fnon = turnOnD;
+      g->fnoff = turnOffD;
+      g->fntog = toggleD;
+   } else {
+      g->digital = 0;
+      /*
+      g->fnon = turnOnA;
+      g->fnoff = turnOffA;
+      g->fntog = toggleA;
+      */
+   }
    return g;
 }
 
@@ -162,43 +175,50 @@ parseCmd(char *iline, int len) {
 /*
  * how many lights are on?
  */
-int
-lightsOn(lights_t *g) {
+long
+numberOn(lights_t *g) {
    return g->lit;
 }
 
+/*
+ * what is their total intensity if analog mode?
+ */
+long
+totalIntensity(lights_t *g) {
+   return g->intensity;
+}
 
 /*
  * turn single light on, off, or toggle it.
  */
 void
-turnOn(lights_t *g, coord_t p) {
+turnOnD(lights_t *g, coord_t p) {
    if (isLit(g, p)) {
       return;
    }
-   g->bulb[p.x][p.y] = true;
+   g->bulb[p.x][p.y] = 1;
    g->lit += 1;
 }
 
 void
-turnOff(lights_t *g, coord_t p) {
+turnOffD(lights_t *g, coord_t p) {
    if (!isLit(g, p)) {
       return;
    }
-   g->bulb[p.x][p.y] = false;
+   g->bulb[p.x][p.y] = 0;
    g->lit -= 1;
 }
 
 void
-toggle(lights_t *g, coord_t p) {
-   isLit(g, p) ? turnOff(g, p) : turnOn(g, p);
+toggleD(lights_t *g, coord_t p) {
+   isLit(g, p) ? g->fnoff(g, p) : g->fnon(g, p);
 }
 
 
 /*
  * single light's status.
  */
-bool
+int
 isLit(lights_t *g, coord_t p) {
    return g->bulb[p.x][p.y];
 }
@@ -223,13 +243,13 @@ doCmd(lights_t *g, cmd_t c) {
    void (*fn)(lights_t *, coord_t) = NULL;
    switch (c.cmd) {
    case e_on:
-      fn = &turnOn;
+      fn = g->fnon;
       break;
    case e_off:
-      fn = &turnOff;
+      fn = g->fnoff;
       break;
    case e_toggle:
-      fn = &toggle;
+      fn = g->fntog;
       break;
    case e_invalid:
       break;
