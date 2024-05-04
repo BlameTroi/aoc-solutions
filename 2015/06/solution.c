@@ -24,7 +24,6 @@
 /* part one: */
 int
 partOne(char *fname) {
-
    FILE *ifile;
 
    ifile = fopen(fname, "r");
@@ -54,7 +53,29 @@ partOne(char *fname) {
 /* part two: */
 int
 partTwo(char *fname) {
-   printf("part two\n");
+   FILE *ifile;
+
+   ifile = fopen(fname, "r");
+   if (!ifile) {
+      printf("could not open file: %s\n", fname);
+      return EXIT_FAILURE;
+   }
+
+   /* line from input */
+   char *iline;
+   /* length, expected to have a trailing \n */
+   size_t ilen;
+
+   lights_t *g = initGrid(0);
+
+   while ((iline = fgetln(ifile, &ilen))) {
+      cmd_t c = parseCmd(iline, ilen);
+      doCmd(g, c);
+   }
+
+   printf("part one: %ld\n", g->intensity);
+
+   fclose(ifile);
    return EXIT_SUCCESS;
 }
 
@@ -70,11 +91,9 @@ lights_t *initGrid(int digital) {
       g->fntog = toggleD;
    } else {
       g->digital = 0;
-      /*
       g->fnon = turnOnA;
       g->fnoff = turnOffA;
       g->fntog = toggleA;
-      */
    }
    return g;
 }
@@ -216,6 +235,37 @@ toggleD(lights_t *g, coord_t p) {
 
 
 /*
+ * turn single light on, off, or toggle it.
+ *
+ * in analog mode, on = +1 to brightness
+ *                 off = -1 to brightness, but can not go below 0.
+ *                 toggle = +2 to brightness
+ *
+ * does not yet track total count of lights actually lit.
+ */
+void
+turnOnA(lights_t *g, coord_t p) {
+   g->bulb[p.x][p.y] += 1;
+   g->intensity += 1;
+}
+
+void
+turnOffA(lights_t *g, coord_t p) {
+   if (g->bulb[p.x][p.y] == 0) {
+      return;
+   }
+   g->bulb[p.x][p.y] -= 1;
+   g->intensity -= 1;
+}
+
+void
+toggleA(lights_t *g, coord_t p) {
+   g->bulb[p.x][p.y] += 2;
+   g->intensity += 2;
+}
+
+
+/*
  * single light's status.
  */
 int
@@ -252,8 +302,10 @@ doCmd(lights_t *g, cmd_t c) {
       fn = g->fntog;
       break;
    case e_invalid:
+   /* does nothing, should not occur, will get a segmentation fault
+      if we get this far and issue the call, but we should never ever
+      execute this. */
       break;
-   /* does nothing, should not occur, will accvio when called */
    }
 
    /* do whatever we need to */

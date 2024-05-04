@@ -6,35 +6,53 @@
 #include "solution.h"
 #include <string.h>
 
-static lights_t* lg = NULL;
 
 /*
- * infrastructure
+ * two separate grigs, one for digital (part one), and one for analog
+ * (part two). init and free are cheap operations.
+ */
+
+static lights_t *lgdigital = NULL;
+static lights_t *lganalog = NULL;
+
+
+/*
+ * minunit setup and teardown of infrastructure.
  */
 
 void
 test_setup(void) {
-   lg = initGrid(1);
-   mu_assert(!lg, "allocated?");
+   lgdigital = initGrid(1);        /* digital/partone rules */
+   lganalog = initGrid(0);         /* analog/parttwo rules */
 }
 
 void
 test_teardown(void) {
-   freeGrid(lg);
+   freeGrid(lgdigital);
+   freeGrid(lganalog);
 }
 
+
+/*
+ * may as well verify creation separately.
+ */
+
 MU_TEST(test_created) {
-   mu_assert(lg, "grid allocated?");
+   mu_assert(lgdigital, "grid allocated?");
+   mu_assert(lganalog, "grid allocated?");
 }
 
 MU_TEST(test_initialized) {
-   mu_assert_int_eq(lg->lit, 0);
+   mu_assert_int_eq(lgdigital->lit, 0);
+   mu_assert_int_eq(lganalog->intensity, 0);
 }
 
 
 /*
  * save some typing later...
  */
+
+/* some standard coordinate pairs */
 coord_t p00 = { 0, 0 };
 coord_t p11 = { 1, 1 };
 coord_t p12 = { 1, 2 };
@@ -43,17 +61,27 @@ coord_t p22 = { 2, 2 };
 coord_t p23 = { 2, 3 };
 coord_t p33 = { 2, 3 };
 
+/* valid command strings to parse */
+char *clon = "turn on 012,345 through 678,987\n";
+char *cloff = "turn off 10,20 through 30,40\n";
+char *cltog = "toggle 100,800 through 99,77\n";
+
+/* bad command strings to parse */
+char *clbadprefix = "turnon 3,7 through 9,2\n";
+char *clbadcoord = "turn on abc,def through 255,8\n";
+char *clbaddelim = "turn on 12,34 thru 56,78\n";
+
 
 /*
- * parse testing of our input:
+ * test that parsing is working. this should be independent of
+ * analog or digital mode grids.
  *
  * (turn on|turn off|toggle) x0,y0 through x1,y1
  */
 
 MU_TEST(test_read_on) {
-   char *iline = "turn on 012,345 through 678,987\n";
-   cmd_t cmd = parseCmd(iline, strlen(iline));
-   mu_assert(cmd.cmd == e_on, "comand should be on");
+   cmd_t cmd = parseCmd(clon, strlen(clon));
+   mu_assert(cmd.cmd == e_on, "command should be on");
    mu_assert_int_eq(cmd.p0.x, 12);
    mu_assert_int_eq(cmd.p0.y, 345);
    mu_assert_int_eq(cmd.p1.x, 678);
@@ -61,9 +89,8 @@ MU_TEST(test_read_on) {
 }
 
 MU_TEST(test_read_off) {
-   char *iline = "turn off 10,20 through 30,40\n";
-   cmd_t cmd = parseCmd(iline, strlen(iline));
-   mu_assert(cmd.cmd == e_off, "comand should be off");
+   cmd_t cmd = parseCmd(cloff, strlen(cloff));
+   mu_assert(cmd.cmd == e_off, "command should be off");
    mu_assert_int_eq(cmd.p0.x, 10);
    mu_assert_int_eq(cmd.p0.y, 20);
    mu_assert_int_eq(cmd.p1.x, 30);
@@ -71,82 +98,177 @@ MU_TEST(test_read_off) {
 }
 
 MU_TEST(test_read_toggle) {
-   char *iline = "toggle 100,800 through 99,77\n";
-   cmd_t cmd = parseCmd(iline, strlen(iline));
-   mu_assert(cmd.cmd == e_toggle, "comand should be toggle");
+   cmd_t cmd = parseCmd(cltog, strlen(cltog));
+   mu_assert(cmd.cmd == e_toggle, "command should be toggle");
    mu_assert_int_eq(cmd.p0.x, 100);
    mu_assert_int_eq(cmd.p0.y, 800);
    mu_assert_int_eq(cmd.p1.x, 99);
    mu_assert_int_eq(cmd.p1.y, 77);
 }
 
+
+/*
+ * test that attempting to parase bad input fails in a
+ * predictable manner.
+ */
+
 MU_TEST(test_bad_prefix) {
-   char *iline = "turnon 3,7 through 9,2\n";
-   cmd_t cmd = parseCmd(iline, strlen(iline));
+   cmd_t cmd = parseCmd(clbadprefix, strlen(clbadprefix));
    mu_assert(cmd.cmd == e_invalid, "command should be invalid");
 }
 
 MU_TEST(test_bad_coord) {
-   char *iline = "turn on abc,def through 255,8\n";
-   cmd_t cmd = parseCmd(iline, strlen(iline));
+   cmd_t cmd = parseCmd(clbadcoord, strlen(clbadcoord));
    mu_assert(cmd.cmd == e_invalid, "command should be invalid");
 }
 
 MU_TEST(test_bad_delim) {
-   char *iline = "turn on 12,34 thru 56,78\n";
-   cmd_t cmd = parseCmd(iline, strlen(iline));
+   cmd_t cmd = parseCmd(clbaddelim, strlen(clbaddelim));
    mu_assert(cmd.cmd == e_invalid, "command should be invalid");
 }
+
 
 /*
  * is a light on or off?
  *
- * our light grid is allocated in the setup already.
+ * testing under digital rules.
  */
 
 MU_TEST(test_light_on_off_d) {
+
    /* white box bit */
-   lg->bulb[0][0] = 1;
-   lg->lit = 1;
+   lgdigital->bulb[0][0] = 1;
+   lgdigital->lit = 1;
+
    /* black box bit */
-   mu_assert_int_eq(numberOn(lg), 1);
-   mu_assert(isLit(lg, p00), "this one should be lit");
-   mu_assert(!isLit(lg, p11), "and this would shouldn't be");
+   mu_assert_int_eq(numberOn(lgdigital), 1);
+   mu_assert(isLit(lgdigital, p00), "this one should be lit");
+   mu_assert(!isLit(lgdigital, p11), "and this would shouldn't be");
+
    /* add another light */
-   lg->fntog(lg, p11);
-   mu_assert_int_eq(numberOn(lg), 2);
-   mu_assert(isLit(lg, p00) && isLit(lg, p11), "both should be");
+   lgdigital->fntog(lgdigital, p11);
+   mu_assert_int_eq(numberOn(lgdigital), 2);
+   mu_assert(isLit(lgdigital, p00) && isLit(lgdigital, p11), "both should be");
+
    /* turn a light on */
-   lg->fnon(lg, p22);
-   mu_assert_int_eq(numberOn(lg), 3);
-   mu_assert(isLit(lg, p22), "should be on");
-   mu_assert(!isLit(lg, p23), "should be off");
+   lgdigital->fnon(lgdigital, p22);
+   mu_assert_int_eq(numberOn(lgdigital), 3);
+   mu_assert(isLit(lgdigital, p22), "should be on");
+   mu_assert(!isLit(lgdigital, p23), "should be off");
+
    /* turn off a light */
-   lg->fnoff(lg, p11);
-   mu_assert_int_eq(numberOn(lg), 2);
-   mu_assert(!isLit(lg, p11), "now off");
+   lgdigital->fnoff(lgdigital, p11);
+   mu_assert_int_eq(numberOn(lgdigital), 2);
+   mu_assert(!isLit(lgdigital, p11), "now off");
 }
 
 
 /*
- * light up four in a single box.
+ * light up four in a single box under the digital rules.
  */
 
 MU_TEST(test_four_d) {
-   mu_assert_int_eq(lg->lit, 0); /* at start */
+
+   /* make sure grid is as we expect it */
+   mu_assert_int_eq(lgdigital->lit, 0);
+
+   /* a small box is lit */
    char *iline = "turn on 1,1 through 2,2\n";
    cmd_t cmd = parseCmd(iline, strlen(iline));
-   doCmd(lg, cmd);
-   mu_assert_int_eq(lg->lit, 4);
-   mu_assert(isLit(lg, p11), "");
-   mu_assert(isLit(lg, p22), "");
-   mu_assert(isLit(lg, p12), "");
-   mu_assert(isLit(lg, p21), "");
-   mu_assert(!isLit(lg, p23), ""); /* boundary checks */
-   mu_assert(!isLit(lg, p00), "");
-   mu_assert(!isLit(lg, p33), "");
+   doCmd(lgdigital, cmd);
+
+   /* verify that things are as they should be */
+
+   /* only four lit */
+   mu_assert_int_eq(lgdigital->lit, 4);
+   mu_assert_int_eq(lgdigital->intensity, 0);
+
+   /* these are the four we lit */
+   mu_assert(isLit(lgdigital, p11), "");
+   mu_assert(isLit(lgdigital, p22), "");
+   mu_assert(isLit(lgdigital, p12), "");
+   mu_assert(isLit(lgdigital, p21), "");
+
+   /* and these are some around the boundary that we should have
+      left alone. */
+   mu_assert(!isLit(lgdigital, p23), "");
+   mu_assert(!isLit(lgdigital, p00), "");
+   mu_assert(!isLit(lgdigital, p33), "");
 }
 
+
+/*
+ * test just turning on four under analog rules.
+ */
+MU_TEST(test_four_a) {
+   /* make sure grid is as we expect it */
+   mu_assert_int_eq(lganalog->lit, 0);
+
+   /* a small box is lit */
+   char *iline = "turn on 1,1 through 2,2\n";
+   cmd_t cmd = parseCmd(iline, strlen(iline));
+   doCmd(lganalog, cmd);
+
+   /* verify that things are as they should be */
+
+   /* only four lit, and in analog we should report
+      the intensity as well. */
+   /* mu_assert_int_eq(lganalog->lit, 4); */
+   mu_assert_int_eq(lganalog->intensity, 4);
+
+   /* these are the four we lit */
+   mu_assert(isLit(lganalog, p11), "");
+   mu_assert(isLit(lganalog, p22), "");
+   mu_assert(isLit(lganalog, p12), "");
+   mu_assert(isLit(lganalog, p21), "");
+
+   /* and these are some around the boundary that we should have
+      left alone. */
+   mu_assert(!isLit(lganalog, p23), "");
+   mu_assert(!isLit(lganalog, p00), "");
+   mu_assert(!isLit(lganalog, p33), "");
+
+}
+
+MU_TEST(test_analog) {
+   /* make sure grid is as we expect it */
+   mu_assert_int_eq(lganalog->lit, 0);
+
+   /* a small box is lit */
+   char *iline = "turn on 1,1 through 2,2\n";
+   cmd_t cmd = parseCmd(iline, strlen(iline));
+   doCmd(lganalog, cmd);
+
+   /* verify that things are as they should be */
+   mu_assert_int_eq(lganalog->intensity, 4);
+
+   /* dim one light by 1 */
+   iline = "turn off 1,1 through 1,1\n";
+   cmd = parseCmd(iline, strlen(iline));
+   doCmd(lganalog, cmd);
+   mu_assert_int_eq(lganalog->intensity, 3);
+   mu_assert(!isLit(lganalog, p11), "");
+
+   /* toggle (+2 in analog) the original 4 */
+   iline = "toggle 1,1 through 2,2\n";
+   cmd = parseCmd(iline, strlen(iline));
+   doCmd(lganalog, cmd);
+   mu_assert_int_eq(lganalog->intensity, 11); /* 3 + 4*2 */
+
+   /* turn off the lights 3 times, so -3 from all */
+   iline = "turn off 1,1 through 2,2\n";
+   cmd = parseCmd(iline, strlen(iline));
+   doCmd(lganalog, cmd);
+   doCmd(lganalog, cmd);
+   doCmd(lganalog, cmd);
+
+   /* 1,1 was 0+2, so it should now be 0 */
+   mu_assert(!isLit(lganalog, p11), "");
+
+   /* the other 3 were also at 3, so they should be zero as well */
+   mu_assert_int_eq(lganalog->intensity, 0);
+
+}
 
 /*
  * here we define the whole test suite. sadly there's no runtime
@@ -154,7 +276,6 @@ MU_TEST(test_four_d) {
  * to create the suite in the editor, but for now it's just a matter
  * of doing it manually.
  */
-
 MU_TEST_SUITE(test_suite) {
 
    /* always have a setup and teardown, even if they */
@@ -162,16 +283,27 @@ MU_TEST_SUITE(test_suite) {
 
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
+   /* is it plugged in? */
 	MU_RUN_TEST(test_created);
 	MU_RUN_TEST(test_initialized);
+
+   /* correct parsing of commands */
    MU_RUN_TEST(test_read_on);
    MU_RUN_TEST(test_read_off);
    MU_RUN_TEST(test_read_toggle);
+
+   /* detect bad commands */
    MU_RUN_TEST(test_bad_prefix);
    MU_RUN_TEST(test_bad_coord);
    MU_RUN_TEST(test_bad_delim);
+
+   /* digital mode tests */
    MU_RUN_TEST(test_light_on_off_d);
    MU_RUN_TEST(test_four_d);
+
+   /* analog mode tests */
+   MU_RUN_TEST(test_four_a);
+   MU_RUN_TEST(test_analog);
 
 }
 
