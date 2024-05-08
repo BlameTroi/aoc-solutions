@@ -19,6 +19,7 @@ DATADIR=$(HOME)/projects/aoc/datasets/$(YEAR)/$(MONTH)
 
 # compiler and linker:
 CC=gcc
+# CFLAGS=-fsanitize=address -Wall -g3 -O0 -std=c99
 CFLAGS=-Wall -g3 -O0 -std=c99
 # LDFLAGS=-lm
 

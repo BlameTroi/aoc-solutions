@@ -25,7 +25,7 @@
 
 circuit_t *
 initCircuit() {
-   circuit_t * circuit = calloc(sizeof(circuit_t), 0);
+   circuit_t * circuit = calloc(sizeof(circuit_t), 1);
    assert(circuit);
    return circuit;
 }
@@ -549,7 +549,7 @@ runCircuit(circuit_t *circuit) {
          if (this->received_signal) {
             continue;
          }
-         printf("%d %d %d\n", runaway, notDone, i);
+         /* printf("%d %d %d\n", runaway, notDone, i); */
          /* if we had to check a connection, we're stilll working */
          notDone += 1;
          switch (this->source_type) {
