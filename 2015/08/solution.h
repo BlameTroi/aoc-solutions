@@ -1,9 +1,16 @@
-/* solution.h -- aoc 2015 06 -- troy brumley */
+/* solution.h -- aoc 2015 08 -- troy brumley */
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
 /*
- * describe the day's problem
+ * aoc 2015 day 8, matchsticks
+ *
+ * this is an escaped encoding problem where strings containing c-like
+ * backslash escapes (\\, \", and \x??) are provided and we need to
+ * determine the lengths those strings would occupy in storage after
+ * compilation, and then again how long the strings are if we expand
+ * the literals to a format that would compile back down to the
+ * originals.
  *
  */
 
@@ -12,6 +19,7 @@
  * how long can one input line be?
  */
 
+
 #define INPUT_LEN_MAX 255
 
 
@@ -19,7 +27,9 @@
  * data structures:
  */
 
+
 /* none at this time */
+
 
 /*
  * functions:
@@ -42,6 +52,26 @@ int
 sourceStringLength(
                    char *
                    );
+
+
+/* In addition to finding the number of characters of code, you should
+   now encode each code representation as a new string and find the
+   number of characters of the new encoded representation, including
+   the surrounding double quotes. */
+
+char *
+encodedString(
+              char *
+              );
+
+
+/* how long is the string after it's been escape encoded? this actually
+   turns out to be strlen, but i'm keeping the wrapper in place. */
+
+int
+encodedStringLength(
+                    char *
+                    );
 
 
 /*

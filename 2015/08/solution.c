@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 /* how long is the input line as a compiled string */
@@ -76,6 +77,123 @@ sourceStringLength(char *c) {
 
 
 /*
+- "" encodes to "\"\"", an increase from 2 characters to 6.
+- "abc" encodes to "\"abc\"", an increase from 5 characters to 9.
+- "aaa\"aaa" encodes to "\"aaa\\\"aaa\"", an increase from 10 characters to 16.
+- "\x27" encodes to "\"\\x27\"", an increase from 6 characters to 11.
+*/
+
+/* In addition to finding the number of characters of code, you should
+   now encode each code representation as a new string and find the
+   number of characters of the new encoded representation, including
+   the surrounding double quotes. */
+
+/* re-encode the input string, converting it from free text to the
+   proper escaped sequence for a c-like compiler. this creates a new
+   string that should be freed when no longer needed. the allocation
+   may include some slack bytes at the end, but the string is properly
+   ended with a trailing \0. */
+
+int max(int a, int b) { return a > b ? a : b; }
+
+char *
+encodedString(char *c) {
+
+   /* pathological case first */
+
+   if (strlen(c) == 0) {
+      return strdup("\"\"");
+   }
+
+   /* copy and encode character by character. our buffer size guess
+      should be big enough, but if not the buffer will be reallocated
+      as needed */
+
+   int buflen = max(strlen(c)*4 + 2 + 1, 32);
+   char *buf = malloc(buflen);
+   int bufidx = 0;
+
+   /* opening quote */
+
+   buf[bufidx] = '"';
+   bufidx += 1;
+
+   /* for each character */
+
+   while (*c) {
+
+      /* resize if we need to, the 8 byte pad is more than
+         enough for a trailing escaped character (2 bytes)
+         and the closing quote and \0 (another 2 bytes). */
+
+      if (buflen - bufidx < 8) {
+         buf = realloc(buf, buflen * 2);
+         buflen *= 2;
+      }
+
+      /* ignore whitespace, in our input that's only newlines */
+
+      if (*c == '\n') {
+         c += 1;
+         continue;
+      }
+
+      /* handle the easy stuff first */
+
+      if (*c != '\\' && *c != '"') {
+         buf[bufidx] = *c;
+         bufidx += 1;
+         c += 1;
+         continue;
+      }
+
+      /* escape quotes and slashes */
+
+      /* a backslash becomes two backslashes */
+
+      if (*c == '\\') {
+         buf[bufidx] = *c;
+         buf[bufidx+1] = *c;
+         bufidx += 2;
+         c += 1;
+         continue;
+      }
+
+      /* a quote becomes a backslash quote */
+
+      if (*c == '"') {
+         buf[bufidx] = '\\';
+         buf[bufidx+1] = *c;
+         bufidx += 2;
+         c += 1;
+         continue;
+      }
+
+      /* this should be impossible to reach */
+
+      assert(NULL);
+   }
+
+   /* closing quote and trailing null byte */
+
+   buf[bufidx] = '"';
+   buf[bufidx+1] = '\0';
+
+   return buf;
+}
+
+
+/* and how long is the encoded string? i allowed for the wrapper
+   function but it wasn't really needed. i decided to keep it
+   for consistency. */
+
+int
+encodedStringLength(char *c) {
+   return strlen(c);
+}
+
+
+/*
  * part one:
  *
  */
@@ -123,10 +241,18 @@ partTwo(char *fname) {
    }
    char iline[INPUT_LEN_MAX];
 
+   int originalSize = 0;
+   int encodedSize = 0;
    while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+      originalSize += strlen(iline) - 1; /* drop newline */
+      char *encoded = encodedString(iline);
+      encodedSize += encodedStringLength(encoded);
+      free(encoded);
    }
 
-   printf("part two: %d\n", 0);
+   printf("original size: %d\n", originalSize);
+   printf("encoded size: %d\n", encodedSize);
+   printf("part two: %d\n", encodedSize - originalSize);
 
    fclose(ifile);
    return EXIT_SUCCESS;

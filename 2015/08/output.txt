@@ -1,0 +1,7 @@
+./driver /Users/troi/projects/aoc/datasets/2015/08/dataset.txt
+source size: 6202
+compiled size: 4860
+part one: 1342
+original size: 6202
+encoded size: 8276
+part two: 2074
