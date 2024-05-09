@@ -1,40 +1,58 @@
-// solution.c -- aoc 2015 ?? -- troy brumley
+/* solution.c -- aoc 2015 07 -- troy brumley */
 
+#include "solution.h"
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+
+
+/*
+ * part one:
+ *
+ */
 
 int
-main(int argc, char **argv) {
-   FILE *ifile;
+partOne(char *fname) {
 
-
-   if (argc < 2) {
-      printf("usage: %s path-to-input\n", argv[0]);
-      return EXIT_FAILURE;
-   }
-
-   ifile = fopen(argv[1], "r");
+   FILE *ifile = fopen(fname, "r");
    if (!ifile) {
-      printf("could not open file: %s\n", argv[1]);
+      printf("could not open file: %s\n", fname);
       return EXIT_FAILURE;
    }
 
-   while(EOF != (ch = fgetc(ifile))) {
-      if (<someerror>) {
-         printf("error: aborting\n");
-         fclose(ifile);
-         return EXIT_FAILURE;
-      }
+   char iline[INPUT_LEN_MAX];
+
+   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
    }
 
-   printf("answers here\n");
+   printf("part one: %d\n", 0);
 
    fclose(ifile);
+   return EXIT_SUCCESS;
+}
 
+
+/*
+ * part two:
+ *
+ */
+
+int
+partTwo(char *fname) {
+   FILE *ifile;
+
+   ifile = fopen(fname, "r");
+   if (!ifile) {
+      printf("could not open file: %s\n", fname);
+      return EXIT_FAILURE;
+   }
+   char iline[INPUT_LEN_MAX];
+
+   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+   }
+
+   printf("part two: %d\n", 0);
+
+   fclose(ifile);
    return EXIT_SUCCESS;
 }

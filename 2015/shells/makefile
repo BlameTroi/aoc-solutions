@@ -19,14 +19,16 @@ DATADIR=$(HOME)/projects/aoc/datasets/$(YEAR)/$(MONTH)
 
 # compiler and linker:
 CC=clang
-CFLAGS=-Wall -g3 -std=c99
-LDFLAGS=-lm
+# CFLAGS=-Wall -g3 -std=c99
+CFLAGS=-fsanitize=address -Wall -g3 -O0 -std=c99
+# LDFLAGS=-lm
+LDFLAGS=
 
 
 # i don't really use these but for the sake of documentation:
-SRCS = driver.c solution.c unittest.c
-HDRS = solution.h
-OBJS = driver.o solution.o unittest.o
+SRCS=driver.c solution.c unittest.c
+HDRS=solution.h
+OBJS=driver.o solution.o unittest.o
 
 
 # the targets you should ask for
@@ -59,7 +61,7 @@ unittest.o: unittest.c solution.h solution.c
 
 
 unittest: unittest.o solution.o
-	$(CC) $(CFLAGS) -o unittest unittest.o solution.o -lm
+	$(CC) $(CFLAGS) -o unittest unittest.o solution.o $(LDFLAGS)
 
 
 # run unit tests
@@ -73,7 +75,7 @@ driver.o: driver.c
 
 
 driver: driver.o solution.o
-	$(CC) $(CFLAGS) -o driver driver.o solution.o -lm
+	$(CC) $(CFLAGS) -o driver driver.o solution.o $(LDFLAGS)
 
 
 # run against test data
@@ -83,4 +85,3 @@ short:
 
 long:
 	./driver $(DATADIR)/dataset.txt
-
