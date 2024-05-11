@@ -1,11 +1,13 @@
 /* solution.c -- aoc 2015 06 -- troy brumley */
 
-#include "solution.h"
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define TXBUTILS_IMPLEMENTATION
+#include "txbutils.h"
+#include "solution.h"
 
 
 /* how long is the input line as a compiled string */
@@ -21,7 +23,7 @@ compiledStringLength(char *c) {
 
    /* count each character up until ending \0, then trim that last
       quote off the count as well. */
-   while(*c) {
+   while (*c) {
       i += 1;
       switch (*c) {
       case '\\':
@@ -93,8 +95,6 @@ sourceStringLength(char *c) {
    string that should be freed when no longer needed. the allocation
    may include some slack bytes at the end, but the string is properly
    ended with a trailing \0. */
-
-int max(int a, int b) { return a > b ? a : b; }
 
 char *
 encodedString(char *c) {
