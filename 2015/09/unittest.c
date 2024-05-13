@@ -37,12 +37,6 @@ test_teardown(void) {
 
 /* global/static data and constants */
 
-#define LOCATIONS_MAX 10
-
-int distances[LOCATIONS_MAX][LOCATIONS_MAX];
-char* locations[LOCATIONS_MAX];
-int numLocations = 0;
-
 char *sampleInput[] = {
    "London to Dublin = 464\n",
    "London to Belfast = 518\n",
@@ -56,62 +50,25 @@ char *expectedLocations[] = {
 };
 
 
-/*
- * map the location name to an index. as the
- * dataset is very small, there's no need to
- * sort or optimize.
- */
-
-int
-indexOfLocation(char *s) {
-   int i;
-   /* if it's already here, return it */
-   for (i = 0; i < numLocations; i++) {
-      if (strcmp(locations[i], s) == 0) {
-         return i;
-      }
-   }
-   assert(numLocations <= LOCATIONS_MAX);
-   locations[numLocations] = strdup(s);
-   numLocations += 1;
-   return numLocations-1;
-}
-
 
 MU_TEST(test_problem_data) {
 
+   /* clear any prior work */
+   resetData();
+
+   /* 'read' the input distances and build the locations list
+      and distances matrix. */
+
    int numInputs = sizeof(sampleInput) / sizeof(char *);
-
-   memset(distances, 0, sizeof(distances));
-   memset(locations, 0, sizeof(locations));
-   numLocations = 0;
-
-   /* loc1 to loc2 = dst */
    for (int i = 0; i < numInputs; i++) {
-      /* first city in 1, second in 3, distance in 5 */
-      char **tokens = splitString(sampleInput[i], " \n");
-      /* find in locations table -or- add new entry */
-      int lx1 = indexOfLocation(tokens[1]);
-      int lx2 = indexOfLocation(tokens[3]);
-      /* if no distance logged yet, add it */
-      if (distances[lx1][lx2] == 0) {
-         distances[lx1][lx2] = strtol(tokens[5], NULL, 10);
-         distances[lx2][lx1] = distances[lx1][lx2];
-      }
-      /* memory hygine */
-      free(tokens[0]);
-      free(tokens);
+      addDistance(sampleInput[i]);
    }
-   /* temp print */
-   for (int i = 0; i < numLocations; i++) {
-      printf("\n%3d %15s: ", i, locations[i]);
-      for (int j = 0; j < numLocations; j++) {
-         printf("%6d ", distances[i][j]);
-      }
-   }
-   printf("\n");
 
-   mu_assert_int_eq(3, 3);
+   /* these are the expected results */
+
+   mu_assert_int_eq(605, shortestPath());
+   mu_assert_int_eq(982, longestPath());
+
 }
 
 

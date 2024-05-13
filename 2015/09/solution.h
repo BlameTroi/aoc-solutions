@@ -22,23 +22,58 @@
 #define LOCATION_SEP " to "
 #define DISTANCE_SEP " = "
 
+#define LOCATIONS_MAX 15
+
 
 /*
- * data structures:
+ * global data structures:
+ *
+ * in a real application i'd hide these, but it's not worth it at this
+ * point.
  */
 
+/* distances between two locations can be found by indexing into this
+   table. */
 
-/*
-London to Dublin = 464
-London to Belfast = 518
-Dublin to Belfast = 141
-*/
+int distances[LOCATIONS_MAX][LOCATIONS_MAX];
 
+/* locations are identified by their index into this list. as the
+   list is short and lookups are isolated to loading, a linear
+   search is sufficient. */
+
+char *locations[LOCATIONS_MAX];
+
+/* we found this many locations during the load process. */
+
+int numLocations;
 
 
 /*
  * functions:
  */
+
+/* zero out our tables */
+
+void
+resetData(void);
+
+
+/* get the shortest and longest path lengths */
+
+int
+shortestPath(void);
+
+int
+longestPath(void);
+
+
+/* parse the distance between two locations from an input record.
+   format is 'loc1 to loc2 = dst'. */
+
+void
+addDistance(
+   char *s
+);
 
 
 /*

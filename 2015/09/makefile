@@ -13,7 +13,7 @@
 
 # where to find test data:
 YEAR=2015
-MONTH=06
+MONTH=09
 DATADIR=$(HOME)/projects/aoc/datasets/$(YEAR)/$(MONTH)
 
 
