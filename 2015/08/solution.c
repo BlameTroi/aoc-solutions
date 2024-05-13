@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TXBUTILS_IMPLEMENTATION
-#include "txbutils.h"
+#define TXBMISC_H_IMPLEMENTATION
+#include "txbmisc.h"
 #include "solution.h"
 
 
