@@ -123,7 +123,6 @@ contains
    ! should be straight forward algebra.
 
    function do_part_one() result(res)
-      implicit none
       integer(kind=int64) :: res
       integer             :: i, j
       integer(kind=int64) :: adjx
@@ -203,7 +202,6 @@ contains
    ! display and format helpers
 
    function base36(i) result(res)
-      implicit none
       integer, intent(in) :: i
       character(len=1)    :: res
       if (i > 36) then
@@ -218,7 +216,6 @@ contains
    end function base36
 
    function point_str(x, y) result(res)
-      implicit none
       integer(kind=int64), intent(in) :: x, y
       character(len=:), allocatable :: res
       character(len=64) :: buf
@@ -242,7 +239,6 @@ contains
    ! range.
 
    function calculate_distance(x1, y1, x2, y2) result(res)
-      implicit none
       integer(kind=int64), intent(in) :: x1, y1, x2, y2
       integer(kind=int64) :: res
       res = abs(x1 - x2) + abs(y1 - y2)
@@ -251,7 +247,6 @@ contains
    ! sort covered ranges
 
    subroutine sort_ranges
-      implicit none
       integer       :: i
       logical       :: did
       type(range_t) :: swap
@@ -273,7 +268,6 @@ contains
    ! find any ranges completely contained in another and squeeze them out
 
    function collapse_ranges() result(res)
-      implicit none
       logical :: res
       integer :: i, j
 
@@ -304,7 +298,6 @@ contains
    ! merge adjacent ranges
 
    function merge_ranges() result(res)
-      implicit none
       logical :: res
       integer :: i
 
@@ -334,7 +327,6 @@ contains
    ! the standard clear, load, and print helpers
 
    subroutine init
-      implicit none
       integer :: i
 
       do i = 0, MAXDIM
@@ -360,7 +352,6 @@ contains
    ! it readable by read(str,*).
 
    function sanatize(s) result(res)
-      implicit none
       character(len=*), intent(in) :: s
       character(len=len(s)) :: res
       integer :: p
@@ -382,7 +373,6 @@ contains
    ! Target y=10
 
    subroutine load
-      implicit none
       integer :: i
       character(len=:), allocatable :: t
 
@@ -417,7 +407,6 @@ contains
    end subroutine load
 
    function sensor_prtstr(i) result(res)
-      implicit none
       integer, intent(in) :: i
       character(len=*), parameter :: fmtsen = "(i7, '  ', a19, '  ', a19, '  ', i7, '  ', i7)"
       character(len=len(fmtsen) + 7*3 + 19*2 + 10) :: res
@@ -428,7 +417,6 @@ contains
    end function sensor_prtstr
 
    function sensor_range_prtstr(i) result(res)
-      implicit none
       integer, intent(in) :: i
       character(len=*), parameter :: fmtsenrng = "(i7, ' ', a19, ' ', i8, ' ', i8, ' ' i8, ' ', i8)"
       character(len=(len(fmtsenrng) + 8*5 + 19 + 10)) :: res
@@ -439,21 +427,18 @@ contains
    end function sensor_range_prtstr
 
    function sensor_range_prthdr() result(res)
-      implicit none
       character(len=*), parameter :: hdrsen = " sensor      at coordinates    range   sees y     from       to"
       character(len=len(hdrsen)) :: res
       res = hdrsen
    end function sensor_range_prthdr
 
    function sensor_prthdr() result(res)
-      implicit none
       character(len=*), parameter :: hdrsen = " sensor       at coordinates       sees beacon at    range     to y"
       character(len=len(hdrsen)) :: res
       res = hdrsen
    end function sensor_prthdr
 
    subroutine display_sensors
-      implicit none
       character(len=*), parameter :: fmtcor = "('used grid coordinates range from ', a19, ' to ', a19)"
       character(len=200) :: buf
       integer :: i
@@ -515,7 +500,6 @@ contains
    !
 
    function do_part_two() result(res)
-      implicit none
       integer(kind=int64) :: res
       integer :: i, j
       integer(kind=int64) :: x, y
@@ -591,7 +575,6 @@ contains
    ! is a particular point in the valid range for this problem? 0->4000000
 
    function possible_location(x, y) result(res)
-      implicit none
       integer(kind=int64), intent(in) :: x, y
       logical :: res
       res = (x >= MINCOORD) .and. (x <= MAXCOORD) .and. (y >= MINCOORD) .and. (y <= MAXCOORD)
@@ -600,7 +583,6 @@ contains
    ! is a particular point visible to any sensor?
 
    function can_be_seen(x, y) result(res)
-      implicit none
       integer(kind=int64), intent(in) :: x, y
       logical :: res
       integer(kind=int64) :: d
@@ -626,7 +608,6 @@ contains
    ! points to see if it's in range of anything.
 
    recursive function get_line(ax, ay, bx, by) result(res)
-      implicit none
       integer(kind=int64), intent(in) :: ax, ay, bx, by
       type(line_t) :: res
 
@@ -656,7 +637,6 @@ contains
    end function get_line
 
    function find_x(l, y) result(res)
-      implicit none
       type(line_t), intent(in) :: l
       integer(kind=int64), intent(in) :: y
       integer(kind=int64) :: res
@@ -664,7 +644,6 @@ contains
    end function find_x
 
    function find_y(l, x) result(res)
-      implicit none
       type(line_t), intent(in) :: l
       integer(kind=int64), intent(in) :: x
       integer(kind=int64) :: res
@@ -672,7 +651,6 @@ contains
    end function find_y
 
    function in_bounds(x, y) result(res)
-      implicit none
       integer(kind=int64), intent(in) :: x, y
       logical                         :: res
       res = (x >= mincoord) .and. (x <= maxcoord) .and. (y >= mincoord) .and. (y <= maxcoord)
@@ -691,7 +669,6 @@ contains
    ! are given from lower x to higher x.
 
    recursive subroutine intersection(x, y, xa, ya, xb, yb, xc, yc, xd, yd)
-      implicit none
       integer(kind=int64), intent(out) :: x, y
       integer(kind=int64), intent(in) :: xa, ya, xb, yb, xc, yc, xd, yd
       integer(kind=int64) :: mab, mcd ! slopes
@@ -721,7 +698,6 @@ contains
    ! |1|.
 
    subroutine slope_intercept(m, b, ax, ay, bx, by)
-      implicit none
       integer(kind=int64), intent(out) :: m, b
       integer(kind=int64), intent(in)  :: ax, ay, bx, by
 

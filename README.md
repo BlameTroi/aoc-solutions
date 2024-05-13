@@ -54,17 +54,25 @@ About half way through the 2022 and 2023 I decided to switch to Fortran. I've be
 
 The general approach is the same as with Pascal, but given the strong standards support I don't have to add cruft to get the language in what I consider proper shape.
 
-#### Compilers
-
 There are two compilers I am alternating between: gfortran 13.2 and lfortran. lfortran is still in a pre-beta state but as gfortran and lldb on MacOs don't work without jumping through hoops, I expect to use lfortran if I have to use a debugger.
 
-#### Editor/IDE
+### C
 
-I have relented and am using the fortran language module with lsp support enabled in Doom Emacs. I still find intellisense and autocompletion to be flow breaking, but they can be turned off or switched to 'on demand' once I am more familiar with the language.
+I started on 2015 using `C`. At this time clang 15 is the version Apple provides. All my code is compiled with `-Wall --std=c99`.
+
+### Editor/IDE
+
+Emacs, eglot, clangd, fortls, treesitter, fprettify, and astyle for the win.
+
+## Dependencies
+
+I strive for no external (to me) dependencies. The Fortran and Pascal based solutions carry common code and shells in directories parallel with each day's code.
+
+For `C` I'm using `minunit` (a header only unit testing harness) from https://github.com/siu/minunit. I also have started putting my own `C` common code in header only libraries that are at https://github.com/BlameTroi/txblibs. I don't add those as formal dependencies in git but the headers are in my local include directory.
 
 ## Licensing and copyright
 
-All my code is released with the unlicense. To whatever extent a copyright is needed, this is copyright 2023 by Troy Brumley.
+All my code is released with the unlicense. To whatever extent a copyright is needed, this is copyright 2024 by Troy Brumley.
 
 Troy Brumley  
 blametroi@gmail.com  
