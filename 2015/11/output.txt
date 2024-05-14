@@ -1,0 +1,5 @@
+./driver /Users/troi/projects/aoc/datasets/2015/11/dataset.txt
+
+part one after 374044 tries gets hepxxyzz
+
+part two after another 950510 tries gets heqaabcc
