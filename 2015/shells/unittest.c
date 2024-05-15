@@ -2,9 +2,12 @@
 
 /*  because you should always make an effort to test first! */
 
+
+#include <string.h>
+
+
 #include "minunit.h"
 #include "solution.h"
-#include <string.h>
 
 
 /*
@@ -26,19 +29,15 @@ test_teardown(void) {
 
 
 /*
- * may as well verify creation separately.
+ * sample test shell.
  */
 
 MU_TEST(test_created) {
-   mu_assert(1, "just do something");
-}
-
-MU_TEST(test_initialized) {
    int want=4;
    int got=7;
    mu_assert_int_eq(want, got);
+   mu_assert(1, "just do something");
 }
-
 
 
 /*
@@ -54,14 +53,15 @@ MU_TEST_SUITE(test_suite) {
 
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
-   /* is it plugged in? */
+   /* run your tests here */
 	MU_RUN_TEST(test_created);
-	MU_RUN_TEST(test_initialized);
-
-   /* and more tests as needed */
 
 }
 
+
+/*
+ * master control:
+ */
 
 int
 main(int argc, char *argv[]) {

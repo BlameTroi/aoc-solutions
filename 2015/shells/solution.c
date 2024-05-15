@@ -1,10 +1,9 @@
-/* solution.c -- aoc 2015 07 -- troy brumley */
-
-#include "solution.h"
+/* solution.c -- aoc 2015 13 -- troy brumley */
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "solution.h"
 
 /*
  * part one:
