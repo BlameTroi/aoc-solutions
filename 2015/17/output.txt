@@ -1,0 +1,4 @@
+./driver /Users/troi/projects/aoc/datasets/2015/17/dataset.txt
+1048575 possible combinations
+part one: 654
+part two: 57
