@@ -1,0 +1,6 @@
+./driver /Users/troi/projects/aoc/datasets/2015/19/dataset.txt
+part one: 576
+success in 207 transforms at trial 10
+success in 207 transforms at trial 58
+success in 207 transforms at trial 73
+part two: 207
