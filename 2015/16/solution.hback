@@ -162,7 +162,7 @@ satisfy_ix(
 
 
 int
-part_one(
+partOne(
    const char *                       /* a file name */
 );
 

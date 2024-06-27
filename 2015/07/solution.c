@@ -78,7 +78,7 @@ addConnection(
 
 char *resultWire = "a";
 char *modifyInputWire = "b";
-uint16_t partOneResult = 0;
+uint16_t part_oneResult = 0;
 
 
 /*
@@ -91,7 +91,7 @@ uint16_t partOneResult = 0;
  */
 
 int
-partOne(
+part_one(
    const char *fname
 ) {
 
@@ -113,7 +113,7 @@ partOne(
 
    runCircuit(circuit);
    connection_t *this = connectionFor(circuit, resultWire);
-   partOneResult = this->signal;
+   part_oneResult = this->signal;
    printf("part one: %d\n", this->signal);
 
    freeCircuit(circuit);
@@ -131,12 +131,12 @@ partOne(
  * new signal is ultimately provided to wire a?"
  *
  * since we're already built to reload the dataset, we'll do that
- * and use values saved from partOne to configure the circuit before
+ * and use values saved from part_one to configure the circuit before
  * we run it.
  */
 
 int
-partTwo(
+part_two(
    const char *fname
 ) {
    FILE *ifile;
@@ -157,10 +157,10 @@ partTwo(
    }
 
    /* modify the input for wire b to be the result from wire a
-      in partOne */
+      in part_one */
 
    connection_t *this = connectionFor(circuit, modifyInputWire);
-   this->inp_value = partOneResult;
+   this->inp_value = part_oneResult;
 
    runCircuit(circuit);
 

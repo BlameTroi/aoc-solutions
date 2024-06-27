@@ -35,8 +35,8 @@
 
 /* forward declarations */
 
-int partOne(char *fname);
-int partTwo(char *fname);
+int part_one(char *fname);
+int part_two(char *fname);
 
 
 /* mainline */
@@ -48,12 +48,12 @@ main(int argc, char ** argv) {
       return EXIT_FAILURE;
    }
 
-   if (partOne(argv[1]) != EXIT_SUCCESS) {
+   if (part_one(argv[1]) != EXIT_SUCCESS) {
       printf("error in part one\n");
       return EXIT_FAILURE;
    }
 
-   if (partTwo(argv[1]) != EXIT_SUCCESS) {
+   if (part_two(argv[1]) != EXIT_SUCCESS) {
       printf("error in part two\n");
       return EXIT_FAILURE;
    }
@@ -83,7 +83,7 @@ main(int argc, char ** argv) {
  */
 
 int
-partOne(char *fname) {
+part_one(char *fname) {
 
    FILE *ifile;
 
@@ -181,7 +181,7 @@ partOne(char *fname) {
  */
 
 int
-partTwo(char *fname) {
+part_two(char *fname) {
 
    FILE *ifile;
 

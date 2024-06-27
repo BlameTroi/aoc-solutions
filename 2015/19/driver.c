@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "solution.h"  /* all we use here are the partOne and partTwo functions. */
+#include "solution.h"  /* all we use here are the part_one and part_two functions. */
 
 int
 main(int argc, char **argv) {
@@ -18,12 +18,12 @@ main(int argc, char **argv) {
       return EXIT_FAILURE;
    }
 
-   if (partOne(argv[1]) != EXIT_SUCCESS) {
+   if (part_one(argv[1]) != EXIT_SUCCESS) {
       printf("error in part one\n");
       return EXIT_FAILURE;
    }
 
-   if (partTwo(argv[1]) != EXIT_SUCCESS) {
+   if (part_two(argv[1]) != EXIT_SUCCESS) {
       printf("error in part two\n");
       return EXIT_FAILURE;
    }

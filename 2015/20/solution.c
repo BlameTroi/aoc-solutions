@@ -14,7 +14,7 @@
  */
 
 int
-partOne(const char *fname) {
+part_one(const char *fname) {
 
    FILE *ifile = fopen(fname, "r");
    if (!ifile) {
@@ -40,7 +40,7 @@ partOne(const char *fname) {
  */
 
 int
-partTwo(const char *fname) {
+part_two(const char *fname) {
    FILE *ifile;
 
    ifile = fopen(fname, "r");

@@ -5,7 +5,7 @@
 # current shells to support this is the work for 2015 day 6. each day's
 # solution will have:
 #
-# driver.c   -- just a main function that calls partOne and partTwo in
+# driver.c   -- just a main function that calls part_one and part_two in
 # solution.h -- types and any function definitions needed for
 # unittest.c -- any unit tests for code in
 # solution.c -- where the real work happens

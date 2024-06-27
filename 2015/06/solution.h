@@ -36,7 +36,7 @@ typedef struct lights_t {
    void (*fnoff)(struct lights_t *, coord_t);  /* implementations for the grid mode */
    void (*fntog)(struct lights_t *, coord_t);
    int bulb[1000][1000];                /* the lights in the grid */
-   int digital;                         /* digital (partOne) or analog (partTwo) */
+   int digital;                         /* digital (part_one) or analog (part_two) */
 } lights_t;
 
 
@@ -178,12 +178,12 @@ doCmd(
  */
 
 int
-partOne(
+part_one(
    const char *
 );
 
 int
-partTwo(
+part_two(
    const char *
 );
 

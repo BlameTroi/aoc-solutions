@@ -197,7 +197,7 @@ sort_inverted(
  */
 
 int
-partOne(
+part_one(
    const char *fname
 ) {
 
@@ -259,7 +259,7 @@ partOne(
  */
 
 int
-partTwo(
+part_two(
    const char *fname
 ) {
    FILE *ifile;

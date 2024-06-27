@@ -52,7 +52,7 @@
  */
 
 int
-partOne(
+part_one(
    const char *fname
 ) {
    FILE *ifile = fopen(fname, "r");
@@ -110,7 +110,7 @@ partOne(
  */
 
 int
-partTwo(
+part_two(
    const char *fname
 ) {
    return EXIT_SUCCESS;

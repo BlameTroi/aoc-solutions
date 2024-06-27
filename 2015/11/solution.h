@@ -44,13 +44,13 @@ password_increment(
 
 
 int
-partOne(
+part_one(
    const char *                       /* a file name */
 );
 
 
 int
-partTwo(
+part_two(
    const char *                       /* a file name */
 );
 

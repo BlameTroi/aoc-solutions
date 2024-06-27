@@ -23,7 +23,7 @@
 
 /* part one: */
 int
-partOne(
+part_one(
    const char *fname
 ) {
    FILE *ifile;
@@ -54,7 +54,7 @@ partOne(
 
 /* part two: */
 int
-partTwo(
+part_two(
    const char *fname
 ) {
    FILE *ifile;
