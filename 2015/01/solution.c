@@ -14,11 +14,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
 int
 main(int argc, char **argv) {
    FILE *ifile;
-
 
    if (argc < 2) {
       printf("usage: %s path-to-input\n", argv[0]);
@@ -36,7 +34,7 @@ main(int argc, char **argv) {
    int parens = 0;           /* parens read/current paren position */
    int ch = 0;               /* input character, could include newlines */
 
-   while(EOF != (ch = fgetc(ifile))) {
+   while (EOF != (ch = fgetc(ifile))) {
       /* part one, move from floor to floor as instructed */
       if (ch == '(') {
          parens += 1;

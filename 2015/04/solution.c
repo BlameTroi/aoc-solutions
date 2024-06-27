@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 /* maximum length of the text to digest. it actually can't be more */
 /* than 21 + length of key, but memory is rather cheap. */
 

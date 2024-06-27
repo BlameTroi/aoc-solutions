@@ -49,26 +49,26 @@ freeCircuit(
  * on an error (parse failure or running out of room).
  */
 
-int
+bool
 addConnection(
    circuit_t *circuit,
    const char* iline
 ) {
    if (circuit->num_connections >= CONNECTIONS_MAX-1) {
       printf("circuit full %d\n", circuit->num_connections);
-      return 0;
+      return false;
    }
 
    connection_t this = parseConnection(iline);
    if (strlen(this.wire) == 0) {
       printf("parse failure\n");
-      return 0;
+      return false;
    }
 
    circuit->connections[circuit->num_connections] = this;
    circuit->num_connections += 1;
 
-   return 1;
+   return true;
 }
 
 
@@ -180,23 +180,22 @@ part_two(
 
 /* an input wire name is one or two lower case letters. */
 
-int
+bool
 validWireName(
    const char *str
 ) {
    int i = strlen(str);
    if (i < 1 || i > 2) {
-      return 0;
+      return false;
    }
-   while (i > 0) {
+   while (i > false) {
       i -= 1;
       if (str[i] < 'a' || str[i] > 'z') {
-         return 0;
+         return false;
       }
    }
-   return 1;
+   return true;
 }
-
 
 /* a valid input value (signal) is a 16 bit unsigned number. */
 
@@ -206,19 +205,19 @@ validInputValue(
 ) {
    int i = strlen(str);
    if (i < 1 || i > 5) {
-      return 0;
+      return false;
    }
    while (i > 0) {
       i -= 1;
       if (str[i] < '0' || str[i] > '9') {
-         return 0;
+         return false;
       }
    }
    long j = strtol(str, NULL, 10);
    if (j > 65535) {
-      return 0;
+      return false;
    }
-   return 1;
+   return true;
 }
 
 
@@ -231,19 +230,19 @@ validBitShift(
 
    int i = strlen(str);
    if (i < 1 || i > 2) {
-      return 0;
+      return false;
    }
    while (i > 0) {
       i -= 1;
       if (str[i] < '0' || str[i] > '9') {
-         return 0;
+         return false;
       }
    }
    long j = strtol(str, NULL, 10);
    if (j > 15) {
-      return 0;
+      return false;
    }
-   return 1;
+   return true;
 }
 
 
@@ -266,6 +265,7 @@ parseConnection(
 
    connection_t pb;                    /* empty result block */
    memset(&pb, 0, sizeof(pb));
+   pb.received_signal = false;
 
    /* the split tokens */
    const int MAXTOKLEN = 8;     /* should be enough */
@@ -450,7 +450,7 @@ postValueTo(
       return this->received_signal;
    }
    this->signal = this->inp_value;
-   this->received_signal = 1;
+   this->received_signal = true;
    return this->received_signal;
 }
 
@@ -469,7 +469,7 @@ postWireTo(
    connection_t *that = connectionFor(circuit, this->inp_wire);
    if (that->received_signal) {
       this->signal = that->signal;
-      this->received_signal = 1;
+      this->received_signal = true;
    }
    return this->received_signal;
 }
@@ -563,7 +563,7 @@ postGateTo(
  * of hard coded signal value to a wire, such as: 123 -> a.
  */
 
-int
+bool
 runCircuit(
    circuit_t *circuit
 ) {

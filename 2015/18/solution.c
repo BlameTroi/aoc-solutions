@@ -14,6 +14,7 @@
  */
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -60,20 +61,20 @@ flip_pages(void) {
  * lights.
  */
 
-int
+bool
 stuck_p(
    int row,
    int col
 ) {
    if (stuck_rules) {
       if (row == 0 && (col == 0 || col == dim_cols-1)) {
-         return 1;
+         return true;
       }
       if (row == dim_rows-1 && (col == 0 || col == dim_cols-1)) {
-         return 1;
+         return true;
       }
    }
-   return 0;
+   return false;
 }
 
 
@@ -83,18 +84,18 @@ stuck_p(
  * level code.
  */
 
-int
+bool
 on_p(
    int row,
    int col
 ) {
    if (row < 0 || col < 0 || row > dim_rows - 1 || col > dim_cols - 1) {
-      return 0;
+      return false;
    }
    if (stuck_p(row, col)) {
-      return 1;
+      return true;
    } else {
-      return reading->p[row][col] == G_ON ? 1 : 0;
+      return reading->p[row][col] == G_ON;
    }
 }
 
@@ -156,13 +157,13 @@ neighbors_on(
  * stays off otherwise.
  */
 
-int
+bool
 decide(
    int row,
    int col
 ) {
    if (stuck_p(row, col)) {
-      return 1;
+      return true;
    }
    int hood = neighbors_on(row, col);
    if (on_p(row, col)) {

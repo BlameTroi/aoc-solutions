@@ -33,7 +33,6 @@ reset_state(int rel) {
 }
 
 
-
 /*
  * parse input into race_trace_t
  *

@@ -10,12 +10,13 @@
  * (turn on|turn off|toggle) x0,y0 through x1,y1
  */
 
-#include "solution.h"
-
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "solution.h"
 
 /*
  * the day's real code.
@@ -280,7 +281,7 @@ toggleA(lights_t *g, coord_t p) {
 /*
  * single light's status.
  */
-int
+bool
 isLit(lights_t *g, coord_t p) {
    return g->bulb[p.x][p.y];
 }

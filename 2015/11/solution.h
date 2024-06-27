@@ -2,6 +2,8 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
+#include <stdbool.h>
+
 /*
  * elven password generation
  */
@@ -20,7 +22,7 @@
  * functions:
  */
 
-int
+bool
 password_p(
    const char *candidate /* a password string */
 );

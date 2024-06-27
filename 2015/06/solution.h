@@ -18,6 +18,8 @@
  * this requires changing the data structure from bools to ints.
  */
 
+#include <stdbool.h>
+
 /* data structures: */
 
 
@@ -143,7 +145,7 @@ toggleA(
 /*
  * single light's status.
  */
-int
+bool
 isLit(
    lights_t *,            /* light grid */
    coord_t                /* where */

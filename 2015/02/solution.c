@@ -24,7 +24,6 @@
  * for a bow.
  */
 
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

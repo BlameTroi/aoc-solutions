@@ -2,6 +2,8 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
+#include <stdbool.h>
+
 /*
  * describe the day's problem
  *
@@ -61,26 +63,6 @@ typedef struct facts_t {
  * data structures:
  */
 
-#ifdef SOLUTION_IMPLEMENTATION
-
-/* map keywords to positions in the data array. this is also a
-   convenient place to put comparison operators. they are
-   tweaked in part two. */
-
-map_t map[DATA_MAX] = {
-   { "children", CHIL_IX, '='},
-   { "cats", CATS_IX, '='},
-   { "samoyeds", SAMO_IX, '=' },
-   { "pomeranians", POME_IX, '=' },
-   { "akitas", AKIT_IX, '=' },
-   { "vizslas", VISZ_IX, '=' },
-   { "goldfish", FISH_IX, '=' },
-   { "trees", TREE_IX, '=' },
-   { "cars", CARS_IX, '=' },
-   { "perfumes", PERF_IX, '='}
-};
-
-#endif /* SOLUTION_IMPLEMENTATION */
 
 int num_aunts;
 facts_t aunts[AUNT_MAX];
@@ -132,7 +114,7 @@ satisfy_count(
 
 /* does the aunt at this index satisfy the condition? */
 
-int
+bool
 satisfies(
    facts_t cond,
    int ix

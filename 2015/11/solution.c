@@ -1,5 +1,6 @@
 /* solution.c -- aoc 2015 11 -- troy brumley */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -172,7 +173,7 @@ pairFrom(const char *p) {
  *
  */
 
-int
+bool
 password_p(
    const char *candidate
 ) {
@@ -190,10 +191,10 @@ password_p(
    p = candidate;
    while (*p) {
       if (*p < 'a' || *p > 'z') {
-         return 0;
+         return false;
       }
       if (*p == 'i' || *p == 'o' || *p == 'l') {
-         return 0;
+         return false;
       }
       p += 1;
    }
@@ -216,22 +217,22 @@ password_p(
       p += 1;
    }
    if (!f) {
-      return 0;
+      return false;
    }
 
    /* are there two non-overlapping pairs? */
    p = candidate;
    p = pairFrom(p);
    if (!p) {
-      return 0;
+      return false;
    }
    q = pairFrom(p+2);
    if (!q) {
-      return 0;
+      return false;
    }
 
    /* that's the end of the rules */
-   return 1;
+   return true;
 }
 
 

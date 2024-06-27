@@ -18,12 +18,9 @@
  * characters long but it's still nice.
  */
 
-
-/* standard libraries */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 
 /*
  * pcre2 support, 8 bit characters. link against the appropriate
@@ -32,12 +29,12 @@
 #define PCRE2_CODE_UNIT_WIDTH 8
 #include <pcre2.h>
 
-
 /* forward declarations */
 
-int part_one(char *fname);
-int part_two(char *fname);
-
+int
+part_one(char *fname);
+int
+part_two(char *fname);
 
 /* mainline */
 int
@@ -132,7 +129,7 @@ part_one(char *fname) {
    size_t nice = 0;
    char strbuf[256];
 
-   while((iline = fgetln(ifile, &ilen))) {
+   while ((iline = fgetln(ifile, &ilen))) {
       memset(strbuf, 0, 255);
       memcpy(strbuf, iline, ilen-1);           /* omit newline */
       /* printf("%s", strbuf); */
@@ -199,7 +196,7 @@ part_two(char *fname) {
 
    /* there are two conditions to check for and no disqualifiers. */
    /* x-x and xy-*xy, with overlaps allowed */
-   while((iline = fgetln(ifile, &ilen))) {
+   while ((iline = fgetln(ifile, &ilen))) {
       int gotOne = 0;      /* hit on x-x */
       int atOne = 0;
       int gotTwo = 0;      /* hit on xy-*xy */

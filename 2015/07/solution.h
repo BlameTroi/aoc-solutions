@@ -2,6 +2,7 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 /*
@@ -118,7 +119,7 @@ typedef struct gate_t {
 
 typedef struct connection_t {
    char wire[WIRE_MAX];             /* who i am */
-   int received_signal;             /* have we? */
+   bool received_signal;            /* have we? */
    uint16_t signal;                 /* if we have, this is what we got */
    sig_e source_type;               /* where i get my signal from */
    gate_t inp_gate;                 /* if it's a gate, it's described in here */
@@ -156,7 +157,7 @@ initCircuit(
 /* given a connection string, parse and add it to the circuit board.
    they are added sequentially. any error returns false. */
 
-int
+bool
 addConnection(
    circuit_t *,         /* address of the circuit board */
    const char *         /* input string from dataset to parse and add */
@@ -184,7 +185,7 @@ connectionFor(
 
 /* flip the on switch to run the circuit. returns false the circuit failed. */
 
-int
+bool
 runCircuit(
    circuit_t *             /* address of the circuit board */
 );

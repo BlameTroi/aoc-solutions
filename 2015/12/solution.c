@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -112,10 +113,10 @@ part_two(
  * sum the numbers in the string. negative values are allowed.
  */
 
-inline int
+inline bool
 isValid(char c);
 
-int
+bool
 isValid(
    char c
 ) {

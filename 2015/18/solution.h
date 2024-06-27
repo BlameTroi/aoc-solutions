@@ -2,6 +2,8 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
+#include <stdbool.h>
+
 /*
  * play a grid of lights following the rules of conway's game of life.
  */
@@ -64,7 +66,7 @@ reset_state(int rel);
  * light?
  */
 
-int
+bool
 stuck_p(
    int row,
    int col
@@ -76,7 +78,7 @@ stuck_p(
  * are, off is reported.
  */
 
-int
+bool
 on_p(
    int row,
    int col
@@ -100,7 +102,7 @@ neighbors_on(
  * or 1 if on.
  */
 
-int
+bool
 decide(
    int row,
    int col

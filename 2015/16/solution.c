@@ -1,6 +1,7 @@
 /* solution.c -- aoc 2015 16 -- troy brumley */
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,8 +9,25 @@
 #define TXBSTR_IMPLEMENTATION
 #include "txbstr.h"
 
-#define SOLUTION_IMPLEMENTATION
 #include "solution.h"
+
+/* map keywords to positions in the data array. this is also a
+   convenient place to put comparison operators. they are
+   tweaked in part two. */
+
+map_t map[DATA_MAX] = {
+   { "children", CHIL_IX, '='},
+   { "cats", CATS_IX, '='},
+   { "samoyeds", SAMO_IX, '=' },
+   { "pomeranians", POME_IX, '=' },
+   { "akitas", AKIT_IX, '=' },
+   { "vizslas", VISZ_IX, '=' },
+   { "goldfish", FISH_IX, '=' },
+   { "trees", TREE_IX, '=' },
+   { "cars", CARS_IX, '=' },
+   { "perfumes", PERF_IX, '='}
+};
+
 
 /*
  * part one:
@@ -206,10 +224,10 @@ satisfy_count(facts_t cond) {
  * so it is ignored.
  */
 
-int
+bool
 satisfies(facts_t cond, int ix) {
    if (ix < 0 || ix >= AUNT_MAX) {
-      return 0;
+      return false;
    }
 
    for (int i = 0; i < DATA_MAX; i++) {
@@ -228,26 +246,26 @@ satisfies(facts_t cond, int ix) {
       switch (map[i].op) {
       case '=':
          if (aunts[ix].data[i] != cond.data[i]) {
-            return 0;
+            return false;
          }
          break;
       case '<':
          if (aunts[ix].data[i] >= cond.data[i]) {
-            return 0;
+            return false;
          }
          break;
       case '>':
          if (aunts[ix].data[i] <= cond.data[i]) {
-            return 0;
+            return false;
          }
          break;
       default:
          assert(NULL);
-         return 0;
+         return false;
       }
    }
 
-   return 1;
+   return true;
 }
 
 
