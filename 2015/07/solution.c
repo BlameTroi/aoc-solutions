@@ -36,7 +36,9 @@ initCircuit() {
  */
 
 void
-freeCircuit(circuit_t * circuit) {
+freeCircuit(
+   circuit_t * circuit
+) {
    free(circuit);
 }
 
@@ -48,7 +50,10 @@ freeCircuit(circuit_t * circuit) {
  */
 
 int
-addConnection(circuit_t *circuit, const char* iline) {
+addConnection(
+   circuit_t *circuit,
+   const char* iline
+) {
    if (circuit->num_connections >= CONNECTIONS_MAX-1) {
       printf("circuit full %d\n", circuit->num_connections);
       return 0;
@@ -86,7 +91,9 @@ uint16_t partOneResult = 0;
  */
 
 int
-partOne(char *fname) {
+partOne(
+   const char *fname
+) {
 
    FILE *ifile = fopen(fname, "r");
    if (!ifile) {
@@ -129,7 +136,9 @@ partOne(char *fname) {
  */
 
 int
-partTwo(char *fname) {
+partTwo(
+   const char *fname
+) {
    FILE *ifile;
 
    ifile = fopen(fname, "r");
@@ -172,7 +181,9 @@ partTwo(char *fname) {
 /* an input wire name is one or two lower case letters. */
 
 int
-validWireName(char *str) {
+validWireName(
+   const char *str
+) {
    int i = strlen(str);
    if (i < 1 || i > 2) {
       return 0;
@@ -190,7 +201,9 @@ validWireName(char *str) {
 /* a valid input value (signal) is a 16 bit unsigned number. */
 
 bool
-validInputValue(char *str) {
+validInputValue(
+   const char *str
+) {
    int i = strlen(str);
    if (i < 1 || i > 5) {
       return 0;
@@ -212,7 +225,9 @@ validInputValue(char *str) {
 /* a valid bit shift value is 1-15. */
 
 bool
-validBitShift(char *str) {
+validBitShift(
+   const char *str
+) {
 
    int i = strlen(str);
    if (i < 1 || i > 2) {
@@ -245,7 +260,9 @@ validBitShift(char *str) {
  */
 
 connection_t
-parseConnection(const char *iline) {
+parseConnection(
+   const char *iline
+) {
 
    connection_t pb;                    /* empty result block */
    memset(&pb, 0, sizeof(pb));
@@ -400,7 +417,10 @@ parseConnection(const char *iline) {
  */
 
 connection_t *
-connectionFor(circuit_t *circuit, char *wire) {
+connectionFor(
+   circuit_t *circuit,
+   const char *wire
+) {
    int i = 0;
    for (i = 0; i < circuit->num_connections; i++) {
       if (strcmp(wire, circuit->connections[i].wire) == 0) {
@@ -422,7 +442,10 @@ connectionFor(circuit_t *circuit, char *wire) {
    starts. just pass it through. */
 
 int
-postValueTo(circuit_t *circuit, connection_t *this) {
+postValueTo(
+   circuit_t *circuit,
+   connection_t *this
+) {
    if (this->received_signal) {
       return this->received_signal;
    }
@@ -436,7 +459,10 @@ postValueTo(circuit_t *circuit, connection_t *this) {
    received its signal). */
 
 int
-postWireTo(circuit_t *circuit, connection_t *this) {
+postWireTo(
+   circuit_t *circuit,
+   connection_t *this
+) {
    if (this->received_signal) {
       return this->received_signal;
    }
@@ -453,7 +479,10 @@ postWireTo(circuit_t *circuit, connection_t *this) {
    wires must be hot for the gate to process. */
 
 int
-postGateTo(circuit_t *circuit, connection_t *this) {
+postGateTo(
+   circuit_t *circuit,
+   connection_t *this
+) {
    if (this->received_signal) {
       return this->received_signal;
    }
@@ -535,7 +564,9 @@ postGateTo(circuit_t *circuit, connection_t *this) {
  */
 
 int
-runCircuit(circuit_t *circuit) {
+runCircuit(
+   circuit_t *circuit
+) {
 
    int runaway = 0;
    int notDone = 1;

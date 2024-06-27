@@ -2,15 +2,7 @@
 
 /*  because you should always make an effort to test first! */
 
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "minunit.h"
-
-#include "txbmisc.h"
-#include "txbstr.h"
-#include "txbpmute.h"
 
 #include "solution.h"
 

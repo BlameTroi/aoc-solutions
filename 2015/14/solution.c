@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
@@ -150,7 +151,9 @@ run_race_score(int ticks) {
  */
 
 int
-partOne(char *fname) {
+partOne(
+   const char *fname
+) {
 
    FILE *ifile = fopen(fname, "r");
    if (!ifile) {
@@ -183,7 +186,9 @@ partOne(char *fname) {
  */
 
 int
-partTwo(char *fname) {
+partTwo(
+   const char *fname
+) {
    FILE *ifile;
 
    ifile = fopen(fname, "r");

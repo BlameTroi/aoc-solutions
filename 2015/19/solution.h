@@ -1,4 +1,4 @@
-/* solution.h -- aoc 2015 13 -- troy brumley */
+/* solution.h -- aoc 2015 19 -- troy brumley */
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
@@ -78,7 +78,10 @@ parse_line(
 );
 
 char *
-transformer(transform_t *t, char *s, int *pos);
+transformer(
+   transform_t *t,
+   const char *s,
+   int *pos);
 
 
 /*
@@ -95,13 +98,13 @@ transformer(transform_t *t, char *s, int *pos);
 
 int
 partOne(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 
 int
 partTwo(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 

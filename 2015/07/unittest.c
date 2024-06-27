@@ -2,11 +2,11 @@
 
 /*  because you should always make an effort to test first! */
 
+#include <stdint.h>
+#include <stdio.h>
+
 #include "minunit.h"
 #include "solution.h"
-#include <assert.h>
-#include <stdlib.h>
-#include <string.h>
 
 
 /*
@@ -155,7 +155,7 @@ MU_TEST(test_example_one) {
    runCircuit(circuit);
 
    i = 0;
-   while(results[i].wire) {
+   while (results[i].wire) {
       connection_t *conn = connectionFor(circuit, results[i].wire);
       printf("wire %s  expected %d  actual %d\n", results[i].wire, results[i].value, conn->signal);
       i += 1;
@@ -175,11 +175,11 @@ MU_TEST_SUITE(test_suite) {
    /* always have a setup and teardown, even if they */
    /* do nothing. */
 
-	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
+   MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
    /* is it plugged in? */
-	MU_RUN_TEST(test_created);
-	MU_RUN_TEST(test_initialized);
+   MU_RUN_TEST(test_created);
+   MU_RUN_TEST(test_initialized);
 
    /* and more tests as needed */
    MU_RUN_TEST(test_parse_signal);
@@ -196,7 +196,7 @@ MU_TEST_SUITE(test_suite) {
 
 int
 main(int argc, char *argv[]) {
-	MU_RUN_SUITE(test_suite);
-	MU_REPORT();
-	return MU_EXIT_CODE;
+   MU_RUN_SUITE(test_suite);
+   MU_REPORT();
+   return MU_EXIT_CODE;
 }

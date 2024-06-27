@@ -30,6 +30,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define TXBMISC_IMPLEMENTATION
+#include "txbmisc.h"
 
 /*
  * gift box metrics type, units are consistent.
@@ -46,20 +48,14 @@ typedef struct gift_t {
 
 
 /*
- * i can't believe this isn't built in
- */
-size_t
-min(size_t a, size_t b) {
-   return a <= b ? a : b;
-}
-
-
-/*
  * given an input line lxwxh\n, parse out the
  * dimensions and compute the metrics.
  */
 gift_t
-getWrap(char *line, size_t line_max) {
+getWrap(
+   char *line,
+   size_t line_max
+) {
    char *work = strdup(line);
    assert(work);
    char *pos = work;
@@ -110,7 +106,10 @@ getWrap(char *line, size_t line_max) {
  * do the work
  */
 int
-main(int argc, char **argv) {
+main(
+   int argc,
+   const char **argv
+) {
    FILE *ifile;
    size_t totalWrap = 0;
    size_t totalRibbon = 0;

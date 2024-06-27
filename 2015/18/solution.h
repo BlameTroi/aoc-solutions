@@ -65,7 +65,10 @@ reset_state(int rel);
  */
 
 int
-stuck_p(int row, int col);
+stuck_p(
+   int row,
+   int col
+);
 
 
 /*
@@ -74,7 +77,10 @@ stuck_p(int row, int col);
  */
 
 int
-on_p(int row, int col);
+on_p(
+   int row,
+   int col
+);
 
 
 /*
@@ -82,7 +88,10 @@ on_p(int row, int col);
  */
 
 int
-neighbors_on(int row, int col);
+neighbors_on(
+   int row,
+   int col
+);
 
 
 /*
@@ -92,7 +101,10 @@ neighbors_on(int row, int col);
  */
 
 int
-decide(int row, int col);
+decide(
+   int row,
+   int col
+);
 
 
 /*
@@ -101,10 +113,16 @@ decide(int row, int col);
  */
 
 void
-turn_on(int row, int col);
+turn_on(
+   int row,
+   int col
+);
 
 void
-turn_off(int row, int col);
+turn_off(
+   int row,
+   int col
+);
 
 
 /*
@@ -138,13 +156,13 @@ flip_pages(void);
 
 int
 partOne(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 
 int
 partTwo(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 

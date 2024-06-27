@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
@@ -24,7 +25,9 @@ int maxDistance;
  */
 
 int
-partOne(char *fname) {
+partOne(
+   const char *fname
+) {
 
    FILE *ifile = fopen(fname, "r");
    if (!ifile) {
@@ -53,7 +56,9 @@ partOne(char *fname) {
  */
 
 int
-partTwo(char *fname) {
+partTwo(
+   const char *fname
+) {
    FILE *ifile;
 
    ifile = fopen(fname, "r");
@@ -148,7 +153,9 @@ resetData(void) {
    via a call to resetData before loading a new set of data. */
 
 void
-addDistance(char *s) {
+addDistance(
+   const char *s
+) {
 
    /* first city in 1, second in 3, distance in 5 */
    const char **tokens = split_string(s, " \n");

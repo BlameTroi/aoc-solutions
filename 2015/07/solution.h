@@ -2,8 +2,6 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
-#include <stdbool.h>
-#include <stddef.h>
 #include <stdint.h>
 
 /*
@@ -151,8 +149,8 @@ typedef struct circuit_t {
 
 circuit_t *
 initCircuit(
-            void
-            );
+   void
+);
 
 
 /* given a connection string, parse and add it to the circuit board.
@@ -160,9 +158,9 @@ initCircuit(
 
 int
 addConnection(
-              circuit_t *,         /* address of the circuit board */
-              const char *         /* input string from dataset to parse and add */
-              );
+   circuit_t *,         /* address of the circuit board */
+   const char *         /* input string from dataset to parse and add */
+);
 
 
 /* parse an input line producing an intermediate block. this is exposed
@@ -172,32 +170,32 @@ addConnection(
 
 connection_t
 parseConnection(
-      const char *                 /* input string from dataset to parse and add */
-      );
+   const char *                 /* input string from dataset to parse and add */
+);
 
 
 /* look up connection in circuit by terminal wire name. */
 connection_t *
 connectionFor(
-              circuit_t *,
-              char *
-              );
+   circuit_t *,
+   const char *
+);
 
 
 /* flip the on switch to run the circuit. returns false the circuit failed. */
 
 int
 runCircuit(
-           circuit_t *             /* address of the circuit board */
-           );
+   circuit_t *             /* address of the circuit board */
+);
 
 
 /* free the circuit board memory. */
 
 void
 freeCircuit(
-            circuit_t *            /* address of the circuit board */
-            );
+   circuit_t *            /* address of the circuit board */
+);
 
 
 /* the code for each of the day's parts. each expects the name of an input
@@ -207,13 +205,13 @@ freeCircuit(
 
 int
 partOne(
-      char *                       /* a file name */
-      );
+   const char *                       /* a file name */
+);
 
 int
 partTwo(
-      char *                       /* a file name */
-      );
+   const char *                       /* a file name */
+);
 
 
 /* end solution.h */

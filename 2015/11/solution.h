@@ -22,7 +22,7 @@
 
 int
 password_p(
-   char *candidate /* a password string */
+   const char *candidate /* a password string */
 );
 
 char *
@@ -45,13 +45,13 @@ password_increment(
 
 int
 partOne(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 
 int
 partTwo(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 

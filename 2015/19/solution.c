@@ -24,7 +24,9 @@
  */
 
 long
-payload_compare(void *s1, void *s2) {
+payload_compare(
+   void *s1,
+   void *s2) {
    return strcmp(s1, s2);
 }
 
@@ -105,7 +107,11 @@ parse_line(
    returns NULL if no transform possible. value of pos updated. */
 
 char *
-transformer(transform_t *t, char *s, int *pos) {
+transformer(
+   transform_t *t,
+   const char *s,
+   int *pos
+) {
    if (t == NULL || s == NULL) {
       return NULL;
    }
@@ -144,7 +150,9 @@ transformer(transform_t *t, char *s, int *pos) {
    rules. */
 
 void
-invert(transform_t *t) {
+invert(
+   transform_t *t
+) {
    char swap_text[TO_MAX];
    int swap_len;
    memcpy(swap_text, t->to, sizeof(swap_text));
@@ -162,7 +170,10 @@ invert(transform_t *t) {
    to descending followed by favoring anything over e. */
 
 int
-sort_inverted(const void *t1, const void *t2) {
+sort_inverted(
+   const void *t1,
+   const void *t2
+) {
    int r = ((transform_t *)t2)->from_len - ((transform_t *)t1)->from_len;
    if (r != 0) {
       return r;
@@ -186,7 +197,9 @@ sort_inverted(const void *t1, const void *t2) {
  */
 
 int
-partOne(char *fname) {
+partOne(
+   const char *fname
+) {
 
    FILE *ifile = fopen(fname, "r");
    if (!ifile) {
@@ -246,7 +259,9 @@ partOne(char *fname) {
  */
 
 int
-partTwo(char *fname) {
+partTwo(
+   const char *fname
+) {
    FILE *ifile;
 
    ifile = fopen(fname, "r");

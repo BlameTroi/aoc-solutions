@@ -2,10 +2,11 @@
 
 /*  because you should always make an effort to test first! */
 
+#include <stdlib.h>
+#include <string.h>
 
 #include "minunit.h"
 #include "solution.h"
-#include <stdlib.h>
 
 
 /*

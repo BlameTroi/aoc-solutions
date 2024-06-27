@@ -23,7 +23,9 @@
 
 /* part one: */
 int
-partOne(char *fname) {
+partOne(
+   const char *fname
+) {
    FILE *ifile;
 
    ifile = fopen(fname, "r");
@@ -52,7 +54,9 @@ partOne(char *fname) {
 
 /* part two: */
 int
-partTwo(char *fname) {
+partTwo(
+   const char *fname
+) {
    FILE *ifile;
 
    ifile = fopen(fname, "r");
@@ -81,7 +85,10 @@ partTwo(char *fname) {
 
 
 /* create a grid of lights: */
-lights_t *initGrid(int digital) {
+lights_t *
+initGrid(
+   int digital
+) {
    lights_t *g = calloc(sizeof(lights_t), 1);
    assert(g);
    if (digital) {
@@ -100,7 +107,9 @@ lights_t *initGrid(int digital) {
 
 /* release the grid of lights: */
 void
-freeGrid(lights_t *g) {
+freeGrid(
+   lights_t *g
+) {
    free(g);
 }
 
@@ -115,10 +124,13 @@ freeGrid(lights_t *g) {
  */
 
 cmd_t
-parseCmd(char *iline, int len) {
+parseCmd(
+   const char *iline,
+   int len
+) {
 
    /* fill the shell */
-   cmd_t cmd;                          /* our answer */
+   cmd_t cmd;                            /* our answer */
    cmd_e hold = e_invalid;               /* the command, plugged in at end */
    cmd.cmd = e_invalid;                  /* build invalid shell */
    cmd.p0.x = 0;
@@ -127,7 +139,7 @@ parseCmd(char *iline, int len) {
    cmd.p1.y = 0;
 
    /* identify command */
-   char *pos = NULL;                   /* start position in string for scans */
+   const char *pos = NULL;             /* start position in string for scans */
    char *nxt = NULL;                   /* end pos of scan */
    const char *ton = "turn on ";       /* command prefixes */
    const char *toff = "turn off ";
@@ -278,7 +290,10 @@ isLit(lights_t *g, coord_t p) {
 /*
  * by your command...
  */
-int min(int a, int b) { return a < b ? a : b; }
+int
+min(int a, int b) {
+   return a < b ? a : b;
+}
 
 void
 doCmd(lights_t *g, cmd_t c) {
@@ -302,9 +317,9 @@ doCmd(lights_t *g, cmd_t c) {
       fn = g->fntog;
       break;
    case e_invalid:
-   /* does nothing, should not occur, will get a segmentation fault
-      if we get this far and issue the call, but we should never ever
-      execute this. */
+      /* does nothing, should not occur, will get a segmentation fault
+         if we get this far and issue the call, but we should never ever
+         execute this. */
       break;
    }
 

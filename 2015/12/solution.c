@@ -40,7 +40,9 @@
  */
 
 int
-partOne(char *fname) {
+partOne(
+   const char *fname
+) {
 
    FILE *ifile = fopen(fname, "r");
    if (!ifile) {
@@ -74,7 +76,9 @@ partOne(char *fname) {
  */
 
 int
-partTwo(char *fname) {
+partTwo(
+   const char *fname
+) {
    FILE *ifile;
 
    ifile = fopen(fname, "r");
@@ -112,8 +116,11 @@ inline int
 isValid(char c);
 
 int
-isValid(char c) {
-   return isdigit(c) || c == '-';
+isValid(
+   char c
+) {
+   return isdigit(c) ||
+          c == '-';
 }
 
 /*
@@ -129,7 +136,10 @@ isValid(char c) {
  */
 
 int
-scrubObjects(char *s, char *a) {
+scrubObjects(
+   char *s,
+   char *a
+) {
    /* quick guards */
    if (s == NULL || *s == '\0' | strlen(s) <= strlen(a)+3) {
       return 0;
@@ -217,10 +227,13 @@ scrubObjects(char *s, char *a) {
  */
 
 int
-sumNumbers(char *from, char *to) {
+sumNumbers(
+   char *from,
+   char *to
+) {
    int sum = 0;
 
-   char *beg = from;
+   const char *beg = from;
    char *end = from;
 
    if (to == NULL) {

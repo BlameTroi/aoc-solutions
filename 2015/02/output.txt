@@ -1,0 +1,3 @@
+./solution /Users/troi/projects/aoc/datasets/2015/02/dataset.txt
+total wrapping paper needed: 1606483
+total ribbon needed: 3842356

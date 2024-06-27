@@ -46,14 +46,14 @@
 
 int
 partOne(
-      char *                       /* a file name */
-      );
+   const char *                       /* a file name */
+);
 
 
 int
 partTwo(
-      char *                       /* a file name */
-      );
+   const char *                       /* a file name */
+);
 
 
 /* end solution.h */

@@ -6,22 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define TXBMISC_IMPLEMENTATION
+#include "txbmisc.h"
 
-/*
- * and i still can't believe these aren't built in:
- */
-
-
-int
-min(int a, int b) {
-   return a < b ? a : b;
-}
-
-
-int
-max(int a, int b) {
-   return a > b ? a : b;
-}
 
 /*
  * santa gets delivery instructions as moves on an infinite
@@ -131,7 +118,10 @@ freeGrid(void) {
  * fake out negative array indices.
  */
 void
-adjustCoords(int *x, int *y) {
+adjustCoords(
+   int *x,
+   int *y
+) {
    assert(X_MIN < *x && *x < X_MAX);
    assert(Y_MIN < *y && *y < Y_MAX);
    *x = *x + X_ADJ;
@@ -143,7 +133,10 @@ adjustCoords(int *x, int *y) {
  * get the value from a grid cell.
  */
 uint16_t
-getGrid(int x, int y) {
+getGrid(
+   int x,
+   int y
+) {
    adjustCoords(&x, &y);
    return grid->cell[x][y];
 }
@@ -154,7 +147,10 @@ getGrid(int x, int y) {
  * when it is visited for the first time.
  */
 void
-incGrid(int x, int y) {
+incGrid(
+   int x,
+   int y
+) {
    /* min and max are pre-adjustment */
    grid->minx = min(grid->minx, x);
    grid->maxx = max(grid->maxx, x);
@@ -175,7 +171,10 @@ incGrid(int x, int y) {
  * let's do this:
  */
 int
-main(int argc, char **argv) {
+main(
+   int argc,
+   const char **argv
+) {
    FILE *ifile;
    coord_t santa = {0, 0};
    coord_t robot = {0, 0};

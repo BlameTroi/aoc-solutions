@@ -18,8 +18,10 @@
  */
 
 int
-runlen(char *c) {
-   char *p = c;
+runlen(
+   const char *c
+) {
+   const char *p = c;
    while (*p == *c) {
       p += 1;
    }
@@ -33,7 +35,9 @@ runlen(char *c) {
  */
 
 int
-digitsNeeded(int n) {
+digitsNeeded(
+   int n
+) {
    assert(n > 0 && n < 1000);
    if (n < 10) {
       return 1;
@@ -61,7 +65,9 @@ digitsNeeded(int n) {
  */
 
 char *
-seesay(char *s) {
+seesay(
+   const char *s
+) {
 
    /* safety first */
    assert(s);
@@ -106,7 +112,9 @@ seesay(char *s) {
  */
 
 int
-partOne(char *fname) {
+partOne(
+   const char *fname
+) {
 
    FILE *ifile = fopen(fname, "r");
    if (!ifile) {
@@ -151,7 +159,9 @@ partOne(char *fname) {
  */
 
 int
-partTwo(char *fname) {
+partTwo(
+   const char *fname
+) {
    FILE *ifile;
 
    ifile = fopen(fname, "r");

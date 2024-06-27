@@ -41,8 +41,8 @@
 
 int
 compiledStringLength(
-                     char *
-                     );
+   const char *
+);
 
 
 /* how long is the string as uncompiled program text. this includes
@@ -50,8 +50,8 @@ compiledStringLength(
 
 int
 sourceStringLength(
-                   char *
-                   );
+   const char *
+);
 
 
 /* In addition to finding the number of characters of code, you should
@@ -61,8 +61,8 @@ sourceStringLength(
 
 char *
 encodedString(
-              char *
-              );
+   const char *
+);
 
 
 /* how long is the string after it's been escape encoded? this actually
@@ -70,8 +70,8 @@ encodedString(
 
 int
 encodedStringLength(
-                    char *
-                    );
+   const char *
+);
 
 
 /*
@@ -88,14 +88,14 @@ encodedStringLength(
 
 int
 partOne(
-      char *                       /* a file name */
-      );
+   const char *                       /* a file name */
+);
 
 
 int
 partTwo(
-      char *                       /* a file name */
-      );
+   const char *                       /* a file name */
+);
 
 /* end solution.h */
 #endif /* SOLUTION_H */

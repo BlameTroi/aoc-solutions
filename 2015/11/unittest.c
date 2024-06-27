@@ -2,6 +2,9 @@
 
 /*  because you should always make an effort to test first! */
 
+#include <stdio.h>
+#include <string.h>
+
 #include "minunit.h"
 #include "solution.h"
 

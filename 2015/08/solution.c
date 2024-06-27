@@ -14,7 +14,9 @@
 /* how long is the input line as a compiled string */
 
 int
-compiledStringLength(char *c) {
+compiledStringLength(
+   const char *c
+) {
    int i = 0;
 
    /* skip the opening quote */
@@ -62,7 +64,9 @@ compiledStringLength(char *c) {
 /* how long is the text in code */
 
 int
-sourceStringLength(char *c) {
+sourceStringLength(
+   const char *c
+) {
    int i = 0;
    while (*c) {
       switch (*c) {
@@ -98,7 +102,9 @@ sourceStringLength(char *c) {
    ended with a trailing \0. */
 
 char *
-encodedString(char *c) {
+encodedString(
+   const char *c
+) {
 
    /* pathological case first */
 
@@ -189,7 +195,9 @@ encodedString(char *c) {
    for consistency. */
 
 int
-encodedStringLength(char *c) {
+encodedStringLength(
+   const char *c
+) {
    return strlen(c);
 }
 
@@ -200,7 +208,9 @@ encodedStringLength(char *c) {
  */
 
 int
-partOne(char *fname) {
+partOne(
+   const char *fname
+) {
 
    FILE *ifile = fopen(fname, "r");
    if (!ifile) {
@@ -232,7 +242,9 @@ partOne(char *fname) {
  */
 
 int
-partTwo(char *fname) {
+partTwo(
+   const char *fname
+) {
    FILE *ifile;
 
    ifile = fopen(fname, "r");

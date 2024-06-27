@@ -43,7 +43,9 @@ int target_volume;                  /* first value of input is the volume to spl
 /* the usual */
 
 void
-reset_state(int rel);
+reset_state(
+   int rel
+);
 
 
 /*
@@ -60,13 +62,13 @@ reset_state(int rel);
 
 int
 partOne(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 
 int
 partTwo(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 

@@ -61,7 +61,10 @@ flip_pages(void) {
  */
 
 int
-stuck_p(int row, int col) {
+stuck_p(
+   int row,
+   int col
+) {
    if (stuck_rules) {
       if (row == 0 && (col == 0 || col == dim_cols-1)) {
          return 1;
@@ -81,7 +84,10 @@ stuck_p(int row, int col) {
  */
 
 int
-on_p(int row, int col) {
+on_p(
+   int row,
+   int col
+) {
    if (row < 0 || col < 0 || row > dim_rows - 1 || col > dim_cols - 1) {
       return 0;
    }
@@ -98,7 +104,10 @@ on_p(int row, int col) {
  */
 
 void
-turn_on(int row, int col) {
+turn_on(
+   int row,
+   int col
+) {
    writing->p[row][col] = G_ON;
 }
 
@@ -108,7 +117,10 @@ turn_on(int row, int col) {
  */
 
 void
-turn_off(int row, int col) {
+turn_off(
+   int row,
+   int col
+) {
    if (stuck_p(row, col)) {
       return;
    }
@@ -121,7 +133,10 @@ turn_off(int row, int col) {
  */
 
 int
-neighbors_on(int row, int col) {
+neighbors_on(
+   int row,
+   int col
+) {
    int r = 0;
    r += on_p(row-1, col-1) + on_p(row, col-1) + on_p(row+1, col-1);
    r += on_p(row-1, col) + /*     this cell          */ on_p(row+1, col);
@@ -142,7 +157,10 @@ neighbors_on(int row, int col) {
  */
 
 int
-decide(int row, int col) {
+decide(
+   int row,
+   int col
+) {
    if (stuck_p(row, col)) {
       return 1;
    }
@@ -183,7 +201,10 @@ cycle_lights(void) {
  */
 
 void
-load_row(int row, char *s) {
+load_row(
+   int row,
+   const char *s
+) {
    assert(strlen(s) == dim_cols + 1);
    for (int c = 0; c < dim_cols; c++) {
       switch (s[c]) {
@@ -210,7 +231,9 @@ load_row(int row, char *s) {
  */
 
 int
-partOne(char *fname) {
+partOne(
+   const char *fname
+) {
 
    FILE *ifile = fopen(fname, "r");
    if (!ifile) {
@@ -261,7 +284,9 @@ partOne(char *fname) {
  */
 
 int
-partTwo(char *fname) {
+partTwo(
+   const char *fname
+) {
 
    FILE *ifile = fopen(fname, "r");
    if (!ifile) {

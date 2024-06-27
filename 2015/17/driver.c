@@ -11,7 +11,10 @@
 #include "solution.h"  /* all we use here are the partOne and partTwo functions. */
 
 int
-main(int argc, char **argv) {
+main(
+   int argc,
+   const char **argv
+) {
 
    if (argc < 2) {
       printf("usage: %s path-to-input\n", argv[0]);

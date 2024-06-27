@@ -25,8 +25,8 @@ scrubObjects(
 
 int
 sumNumbers(
-   char *from,          /* start in string buffer */
-   char *to             /* end in string buffer, or NULL end of string */
+   char *from,    /* start in string buffer */
+   char *to       /* end in string buffer, or NULL end of string */
 );
 
 
@@ -44,13 +44,13 @@ sumNumbers(
 
 int
 partOne(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 
 int
 partTwo(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 

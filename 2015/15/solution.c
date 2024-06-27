@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
@@ -17,7 +18,9 @@
  */
 
 void
-reset_state(int rel) {
+reset_state(
+   int rel
+) {
    if (rel) {
       for (int i = 0; i < INGREDIENTS_MAX; i++) {
          if (ingredients[i].name) {
@@ -71,7 +74,9 @@ parse_line(
  */
 
 long
-score(int *units) {
+score(
+   int *units
+) {
    long attributes[SCOREABLE_MAX];
    memset(attributes, 0, sizeof(attributes));
 
@@ -98,7 +103,9 @@ score(int *units) {
  */
 
 long
-calories(int *units) {
+calories(
+   int *units
+) {
    long r = 0;
    for (int i = 0; i < num_ingredients;  i++) {
       r += units[i] * ingredients[i].attributes[CAL];
@@ -113,7 +120,9 @@ calories(int *units) {
  */
 
 int
-partOne(char *fname) {
+partOne(
+   const char *fname
+) {
 
    FILE *ifile = fopen(fname, "r");
    if (!ifile) {
@@ -175,7 +184,9 @@ partOne(char *fname) {
  */
 
 int
-partTwo(char *fname) {
+partTwo(
+   const char *fname
+) {
    FILE *ifile;
 
    ifile = fopen(fname, "r");

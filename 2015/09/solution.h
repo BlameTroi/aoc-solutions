@@ -72,7 +72,7 @@ longestPath(void);
 
 void
 addDistance(
-   char *s
+   const char *s
 );
 
 
@@ -90,13 +90,13 @@ addDistance(
 
 int
 partOne(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 
 int
 partTwo(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 
