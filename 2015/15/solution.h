@@ -66,7 +66,7 @@ reset_state(
 
 void
 parse_line(
-   char *iline
+   const char *iline
 );
 
 long

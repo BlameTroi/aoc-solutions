@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TXBMISC_H_IMPLEMENTATION
+#define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
 
-#define TXBSTR_H_IMPLEMENTATION
+#define TXBSTR_IMPLEMENTATION
 #include "txbstr.h"
 
 #include "solution.h"
@@ -41,10 +41,12 @@ reset_state(int rel) {
  */
 
 void
-parse_line(char *iline) {
+parse_line(
+   const char *iline
+) {
    assert(num_ingredients < INGREDIENTS_MAX);
 
-   char **t = splitString(iline, " ,:\n");
+   const char **t = split_string(iline, " ,:\n");
 
    ingredient_t* g = &ingredients[num_ingredients];
    g->name = strdup(t[1]);
@@ -58,7 +60,7 @@ parse_line(char *iline) {
 
    num_ingredients += 1;
 
-   free(t[0]);
+   free((void *)t[0]);
    free(t);
 }
 

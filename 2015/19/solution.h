@@ -73,7 +73,9 @@ void
 reset_state(int rel);
 
 bool
-parse_line(char *iline);
+parse_line(
+   const char *iline
+);
 
 char *
 transformer(transform_t *t, char *s, int *pos);

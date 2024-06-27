@@ -8,9 +8,9 @@
 
 #include "solution.h"
 
-#define TXBMISC_H_IMPLEMENTATION
+#define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
-#define TXBSTR_H_IMPLEMENTATION
+#define TXBSTR_IMPLEMENTATION
 #include "txbstr.h"
 
 /*
@@ -123,7 +123,7 @@ partOne(char *fname) {
       return EXIT_FAILURE;
    }
 
-   char **list = splitString(iline, " ");
+   const char **list = split_string(iline, " ");
    char *see = strdup(list[1]);
    int n = strtol(list[2], NULL, 10);
    char *say;
@@ -137,7 +137,7 @@ partOne(char *fname) {
    printf("part one: %d\n", (int)strlen(say));
 
    free(say);
-   free(list[0]);
+   free((void *)list[0]);
    free(list);
 
    fclose(ifile);
@@ -166,7 +166,7 @@ partTwo(char *fname) {
       return EXIT_FAILURE;
    }
 
-   char **list = splitString(iline, " ");
+   const char **list = split_string(iline, " ");
    char *see = strdup(list[1]);
    int n = strtol(list[2], NULL, 10);
    /* for part two, increase repetitions by 10 */
@@ -182,7 +182,7 @@ partTwo(char *fname) {
    printf("part two: %d\n", (int)strlen(say));
 
    free(say);
-   free(list[0]);
+   free((void *)list[0]);
    free(list);
 
    fclose(ifile);

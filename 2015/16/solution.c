@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TXBSTR_H_IMPLEMENTATION
+#define TXBSTR_IMPLEMENTATION
 #include "txbstr.h"
 
 #define SOLUTION_IMPLEMENTATION
@@ -111,9 +111,11 @@ print_aunt(facts_t *aunt) {
  */
 
 void
-parse_line(char *iline) {
+parse_line(
+   const char *iline
+) {
    assert(num_aunts < AUNT_MAX);
-   char **t = splitString(iline, " :,\n");
+   const char **t = split_string(iline, " :,\n");
    facts_t *this = &aunts[num_aunts];
    this->id = strtol(t[2], NULL, 10);
    int i = 3;
@@ -122,7 +124,7 @@ parse_line(char *iline) {
       i += 2;
    }
    num_aunts += 1;
-   free(t[0]);
+   free((void *)t[0]);
    free(t);
 }
 
@@ -132,7 +134,9 @@ parse_line(char *iline) {
  */
 
 int
-get_data_ix(char *tag) {
+get_data_ix(
+   const char *tag
+) {
    int n = strlen(tag);
    for (int i = 0; i < DATA_MAX; i++) {
       if (strncmp(tag, map[i].tag, n) == 0) {
@@ -152,14 +156,16 @@ get_data_ix(char *tag) {
  */
 
 facts_t
-parse_condition(char *iline) {
+parse_condition(
+   const char *iline
+) {
    facts_t cond;
    cond.id = -1;
    for (int i = 0; i < DATA_MAX; i++) {
       cond.data[i] = NIL_VALUE;
    }
 
-   char **t = splitString(iline, " :,\n");
+   const char **t = split_string(iline, " :,\n");
 
    int i = 1;
    while (t[i] && strlen(t[i]) != 0) {
@@ -167,7 +173,7 @@ parse_condition(char *iline) {
       i += 2;
    }
 
-   free(t[0]);
+   free((void *)t[0]);
    free(t);
 
    return cond;

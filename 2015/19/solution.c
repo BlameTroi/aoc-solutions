@@ -9,11 +9,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TXBMISC_H_IMPLEMENTATION
+#define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
-#define TXBSTR_H_IMPLEMENTATION
+#define TXBSTR_IMPLEMENTATION
 #include "txbstr.h"
-#define TXBLISTD_H_IMPLEMENTATION
+#define TXBLISTD_IMPLEMENTATION
 #include "txblistd.h"
 
 #include "solution.h"
@@ -46,8 +46,8 @@ reset_state(int rel) {
    transformations_list.use_id = false;
    transformations_list.has_payload = true;
    transformations_list.dynamic_payload = true;
-   transformations_list.fnfree = free;
-   transformations_list.fncompare = payload_compare;
+   transformations_list.free_payload = free;
+   transformations_list.compare_payload = payload_compare;
    transformations_list.initialized = true;
    num_transforms = 0;
    memset(transforms, 0, sizeof(transforms));
@@ -66,7 +66,9 @@ reset_state(int rel) {
  */
 
 bool
-parse_line(char *iline) {
+parse_line(
+   const char *iline
+) {
 
    /* do we have a rule marker? */
    char *c = strchr(iline, '=');
@@ -76,7 +78,7 @@ parse_line(char *iline) {
 
    /* build the rule in the next available slot */
    assert(num_transforms < TRANSFORM_MAX);
-   char **t = splitString(iline, " \n");
+   const char **t = split_string(iline, " \n");
    transform_t *p = calloc(sizeof(transform_t), 1);
    transforms[num_transforms] = p;
    strncpy(p->from, t[1], sizeof(p->from));
@@ -86,7 +88,7 @@ parse_line(char *iline) {
    num_transforms += 1;
 
    /* housekeeping */
-   free(t[0]);
+   free((void *)t[0]);
    free(t);
 
    return true;

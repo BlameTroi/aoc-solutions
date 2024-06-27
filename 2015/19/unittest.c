@@ -61,12 +61,14 @@ load_input(void) {
          i += 1;
          continue;
       }
-      char **t = splitString(test_input[i], " \n");
+      const char **t = split_string(test_input[i], " \n");
       if (t[2] && strcmp(t[2], "=>") == 0) {
          parse_line(test_input[i]);
       } else {
          strncpy(base, test_input[i], sizeof(base));
       }
+      free((void *)t[0]);
+      free(t);
       i += 1;
    }
 }

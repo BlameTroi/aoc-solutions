@@ -8,11 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TXBMISC_H_IMPLEMENTATION
+#define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
-#define TXBPMUTE_H_IMPLEMENTATION
+#define TXBPMUTE_IMPLEMENTATION
 #include "txbpmute.h"
-#define TXBSTR_H_IMPLEMENTATION
+#define TXBSTR_IMPLEMENTATION
 #include "txbstr.h"
 
 #include "solution.h"
@@ -133,7 +133,9 @@ reset_state(int rel) {
    but you should be sure to free the string if you clear the list. */
 
 int
-add_node_name(char *s) {
+add_node_name(
+   const char *s
+) {
    assert(node_count <= NODES_MAX);
    node_names[node_count] = strdup(s);
    node_count += 1;
@@ -146,7 +148,9 @@ add_node_name(char *s) {
    assumes it is called as part of the load and parse process. */
 
 int
-node_index(char *s) {
+node_index(
+   const char *s
+) {
    if (node_count == 0) {
       return add_node_name(s);
    }
@@ -172,14 +176,16 @@ node_index(char *s) {
  */
 
 void
-parse_line(char *iline) {
+parse_line(
+   const char *iline
+) {
    const int from_tok = 1;
    const int to_tok = 11;
    const int delta_tok = 4;
    const int dir_tok = 3;
 
    char *s = strdup(iline);
-   char **t = splitString(s, " .\n");
+   const char **t = split_string(s, " .\n");
 
    int idx_from = node_index(t[from_tok]);
    int idx_to = node_index(t[to_tok]);
@@ -189,7 +195,7 @@ parse_line(char *iline) {
    }
 
    /* clean up and return */
-   free(t[0]);
+   free((void *)t[0]);
    free(t);
 }
 

@@ -68,7 +68,7 @@ typedef struct facts_t {
    tweaked in part two. */
 
 map_t map[DATA_MAX] = {
-   { "children", CHIL_IX , '='},
+   { "children", CHIL_IX, '='},
    { "cats", CATS_IX, '='},
    { "samoyeds", SAMO_IX, '=' },
    { "pomeranians", POME_IX, '=' },
@@ -94,14 +94,14 @@ facts_t aunts[AUNT_MAX];
 
 void
 reset_state(
-            int rel
-            );
+   int rel
+);
 
 
 void
 parse_line(
-           char *iline
-           );
+   const char *iline
+);
 
 
 /* an additional input is a set of conditions that we need to match
@@ -110,33 +110,33 @@ parse_line(
 
 facts_t
 parse_condition(
-                char *iline
-                );
+   const char *iline
+);
 
 
 /* get the index of a particular data item map entry by name */
 
 int
 get_data_ix(
-       char *s
-       );
+   const char *s
+);
 
 
 /* how many aunts match the condition? */
 
 int
 satisfy_count(
-        facts_t cond
-        );
+   facts_t cond
+);
 
 
 /* does the aunt at this index satisfy the condition? */
 
 int
 satisfies(
-          facts_t cond,
-          int ix
-        );
+   facts_t cond,
+   int ix
+);
 
 
 /* return the index of the first aunt that satisfies the condition
@@ -144,9 +144,9 @@ satisfies(
 
 int
 satisfy_ix(
-           facts_t cond,
-           int start
-           );
+   facts_t cond,
+   int start
+);
 
 
 /*
@@ -163,14 +163,14 @@ satisfy_ix(
 
 int
 partOne(
-      char *                       /* a file name */
-      );
+   char *                       /* a file name */
+);
 
 
 int
 partTwo(
-      char *                       /* a file name */
-      );
+   char *                       /* a file name */
+);
 
 
 /* end solution.h */

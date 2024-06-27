@@ -53,7 +53,9 @@ void
 reset_state(int free);
 
 void
-parse_line(char *line);
+parse_line(
+   const char *line
+);
 
 void
 iterate(void);

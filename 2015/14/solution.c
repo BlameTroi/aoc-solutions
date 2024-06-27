@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TXBMISC_H_IMPLEMENTATION
+#define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
 
-#define TXBSTR_H_IMPLEMENTATION
+#define TXBSTR_IMPLEMENTATION
 #include "txbstr.h"
 
 #include "solution.h"
@@ -45,10 +45,12 @@ reset_state(int rel) {
  */
 
 void
-parse_line(char *iline) {
+parse_line(
+   const char *iline
+) {
    assert(num_racers < RACERS_MAX);
    char *s = strdup(iline);
-   char **tokens = splitString(s, " .,\n");
+   const char **tokens = split_string(s, " .,\n");
 
    race_trace_t *r = &racers[num_racers];
    r->name = strdup(tokens[1]);
@@ -61,7 +63,7 @@ parse_line(char *iline) {
    r->ticks = r->burst;
 
    num_racers += 1;
-   free(tokens[0]);
+   free((void *)tokens[0]);
    free(tokens);
 }
 

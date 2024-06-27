@@ -3,8 +3,7 @@
 #define SOLUTION_H
 
 /*
- * this is another tsp problem, but we must consider two directions
- * instead of one.
+ * describe the day's problem
  *
  */
 
@@ -14,12 +13,8 @@
  */
 
 /* how long may a line in the test dataset be? */
-
 #define INPUT_LEN_MAX 255
 
-/* small dataset is 4, large dataset is 8 */
-
-#define NODES_MAX 10
 
 
 /*
@@ -31,31 +26,11 @@
  * data structures:
  */
 
-int node_count;
-
-char *node_names[NODES_MAX];
-
-int node_delta[NODES_MAX][NODES_MAX];
-
 
 /*
  * functions:
  */
 
-void
-reset_state(
-   int rel /* free any node_names? */
-);
-
-void
-parse_line(
-   const char *iline /* a line of input */
-);
-
-int
-node_index(
-   const char *s /* name in buffer */
-);
 
 /*
  * the code for each of the day's parts.
@@ -68,15 +43,16 @@ node_index(
  * returns EXIT_SUCCESS or EXIT_FAILURE.
  */
 
+
 int
 partOne(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 
 int
 partTwo(
-   char *                       /* a file name */
+   const char *                       /* a file name */
 );
 
 

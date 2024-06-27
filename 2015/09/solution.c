@@ -1,14 +1,14 @@
 /* solution.c -- aoc 2015 07 -- troy brumley */
 
-
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TXBMISC_H_IMPLEMENTATION
+#define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
-#define TXBSTR_H_IMPLEMENTATION
+#define TXBSTR_IMPLEMENTATION
 #include "txbstr.h"
-#define TXBPMUTE_H_IMPLEMENTATION
+#define TXBPMUTE_IMPLEMENTATION
 #include "txbpmute.h"
 
 #include "solution.h"
@@ -86,7 +86,9 @@ partTwo(char *fname) {
  */
 
 int
-indexOfLocation(char *s) {
+indexOfLocation(
+   const char *s
+) {
    int i;
    /* if it's already here, return it */
    for (i = 0; i < numLocations; i++) {
@@ -149,7 +151,7 @@ void
 addDistance(char *s) {
 
    /* first city in 1, second in 3, distance in 5 */
-   char **tokens = splitString(s, " \n");
+   const char **tokens = split_string(s, " \n");
 
    /* find in locations table -or- add new entry */
    int lx1 = indexOfLocation(tokens[1]);
@@ -166,7 +168,7 @@ addDistance(char *s) {
    }
 
    /* free the copy of the input record and then the token pointers */
-   free(tokens[0]);
+   free((void *)tokens[0]);
    free(tokens);
 }
 

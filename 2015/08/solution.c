@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TXBMISC_H_IMPLEMENTATION
+#define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
+
 #include "solution.h"
 
 
