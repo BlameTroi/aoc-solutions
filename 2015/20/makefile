@@ -26,47 +26,29 @@ LDFLAGS=
 
 
 # i don't really use these but for the sake of documentation:
-SRCS=driver.c solution.c unittest.c
+SRCS=driver.c solution.c
 HDRS=solution.h
-OBJS=driver.o solution.o unittest.o
+OBJS=driver.o solution.o
 
 
 # the targets you should ask for
-.PHONY: clean unit test all short long
+.PHONY: clean all short long
 
 
 # scrub ... dSYM isn't produced by my current build script, but
 # it can if you do a single file compile and link so i include
 # them as a reminder.
 clean:
-	rm -rf *.o *.dSYM/ unittest driver
+	rm -rf *.o *.dSYM/ driver
 
 
 # the work to solve the problem
 all: driver
 
 
-# test drive
-unit: unittest
-
-
 # the code that does the stuff
 solution.o: solution.c solution.h
 	$(CC) $(CFLAGS) -c solution.c
-
-
-# test harness
-unittest.o: unittest.c solution.h solution.c
-	$(CC) $(CFLAGS) -c unittest.c
-
-
-unittest: unittest.o solution.o
-	$(CC) $(CFLAGS) -o unittest unittest.o solution.o $(LDFLAGS)
-
-
-# run unit tests
-test:
-	./unittest
 
 
 # driver for actual runs

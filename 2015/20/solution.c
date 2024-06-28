@@ -1,10 +1,8 @@
-/* solution.c -- aoc 2015 13 -- troy brumley */
+/* solution.c -- aoc 2015 20 -- troy brumley */
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#define TXBMISC_IMPLEMENTATION
-#include "txbmisc.h"
+#include <string.h>
 
 #include "solution.h"
 
@@ -26,10 +24,28 @@ part_one(
 
    char iline[INPUT_LEN_MAX];
 
+   int target_presents = 0;
    while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+      target_presents = atol(iline);
    }
+   int last_elf = target_presents / 10;
+   int last_house = last_elf;
+   int house[last_house];
+   memset(house, 0, sizeof(house));
 
-   printf("part one: %d\n", 0);
+   int elf = 0;
+   int visit = 0;
+   while (elf < last_elf) {
+      elf += 1;
+      for (visit = elf; visit < last_house; visit += elf) {
+         house[visit] += elf * 10;
+      }
+   }
+   int i = 0;
+   while (house[i] < target_presents) {
+      i += 1;
+   }
+   printf("part one: %d\n", i);
 
    fclose(ifile);
    return EXIT_SUCCESS;
@@ -54,10 +70,32 @@ part_two(
    }
    char iline[INPUT_LEN_MAX];
 
+   int target_presents = 0;
    while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+      target_presents = atol(iline);
    }
+   int last_elf = target_presents / 11;
+   int last_house = last_elf;
+   int house[last_house];
+   memset(house, 0, sizeof(house));
 
-   printf("part two: %d\n", 0);
+   int elf = 0;
+   int visit = 0;
+   while (elf < last_elf) {
+      elf += 1;
+      visit = elf;
+      int visited = 0;
+      while (visit < last_house && visited < 50) {
+         house[visit] += elf * 11;
+         visited += 1;
+         visit += elf;
+      }
+   }
+   int i = 0;
+   while (house[i] < target_presents) {
+      i += 1;
+   }
+   printf("part two: %d\n", i);
 
    fclose(ifile);
    return EXIT_SUCCESS;

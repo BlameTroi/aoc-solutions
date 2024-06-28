@@ -1,4 +1,4 @@
-/* solution.h -- aoc 2015 13 -- troy brumley */
+/* solution.h -- aoc 2015 20 -- troy brumley */
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
