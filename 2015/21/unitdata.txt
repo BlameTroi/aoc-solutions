@@ -1,0 +1,8 @@
+Player:
+Hit Points: 8
+Damage: 5
+Armor: 2
+Boss:
+Hit Points: 12
+Damage: 7
+Armor: 2
