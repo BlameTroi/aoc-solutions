@@ -9,6 +9,13 @@
 #include "txbstr.h"
 #include "solution.h"
 
+/*
+ * local copies of data in solution
+ */
+
+int num_transforms;
+transform_t *transforms[TRANSFORM_MAX];
+char base[INPUT_LEN_MAX];
 
 /*
  * global/static data and constants.

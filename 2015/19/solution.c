@@ -200,9 +200,9 @@ part_one(
    while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
 
       /* input is ordered transform rules, blank line, and the base
-         text. if the line fails parsing, it is either blank or the
-         base text. it parsing requires enough code to hide
-         elsewhere. */
+       * text. if the line fails parsing, it is either blank or the
+       * base text. parsing it requires enough code to hide
+       * elsewhere. */
 
       if (parse_line(iline) == 0) {
          if (strlen(iline) > 1) {
@@ -213,22 +213,11 @@ part_one(
    }
 
    /* pass each transformation through the base and log each unique
-      transform created */
+    * transform created */
 
    for (int i = 0; i < num_transforms; i++) {
       long id = 0;
       int pos = 0;
-      /* char *try = transformer(transforms[i], base, &pos); */
-      /* while (try) { */
-      /*    if (dl_get(transformations_list, &id, &try)) { */
-      /*       /\* free(try); *\/ */
-      /*       try = transformer(transforms[i], base, &pos); */
-      /*       continue; */
-      /*    } */
-      /*    num_run += 1; */
-      /*    dl_insert(transformations_list, id, try); */
-      /*    try = transformer(transforms[i], base, &pos); */
-      /* } */
       void *try = (void *)transformer(transforms[i], base, &pos);
       while (try) {
          dl_insert(unique_transforms, id, try);
@@ -267,12 +256,12 @@ part_two(
    while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
 
       /* input is ordered transform rules, blank line, and the base
-         text. if the line fails parsing, it is either blank or the
-         base text. the parsing requires enough code to hide
-         elsewhere.
-
-         for part two, we should switch the from and to so we can work
-         from the base down to a single electron. */
+       * text. if the line fails parsing, it is either blank or the
+       * base text. the parsing requires enough code to hide
+       * elsewhere.
+       *
+       * for part two, we should switch the from and to so we can work
+       * from the base down to a single electron. */
 
       if (parse_line(iline)) {
          invert(transforms[num_transforms-1]);
@@ -313,12 +302,12 @@ part_two(
    }
 
    /* resist the urge to put this right before the shuffle() call. once
-      is sufficient. */
+    * is sufficient. */
 
    srand(time(NULL));
 
    /* a big loop with some blinking lights so you can be sure it's not
-      stuck. */
+    * stuck. */
 
    int churn = 0;
    int min_run = INT_MAX;

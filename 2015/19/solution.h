@@ -51,20 +51,6 @@ typedef struct transform_t {
 } transform_t;
 
 /*
- * data structures:
- */
-
-/* output transformations as an array of string pointers. grows dynamically by doubling in size. */
-
-int num_transforms;
-transform_t *transforms[TRANSFORM_MAX];
-
-char base[INPUT_LEN_MAX];
-
-int num_run;
-dlcb_t *transformations_list;
-
-/*
  * functions:
  */
 
