@@ -19,7 +19,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "txblistd.h"
+#include "txbdl.h"
 
 #define INPUT_LEN_MAX 1024
 
@@ -62,7 +62,7 @@ transform_t *transforms[TRANSFORM_MAX];
 char base[INPUT_LEN_MAX];
 
 int num_run;
-listd_control_t transformations_list;
+dlcb_t *transformations_list;
 
 /*
  * functions:
@@ -70,7 +70,7 @@ listd_control_t transformations_list;
 
 
 void
-reset_state(int rel);
+reset_state(bool rel);
 
 bool
 parse_line(

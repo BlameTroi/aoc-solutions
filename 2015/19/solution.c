@@ -13,17 +13,31 @@
 #include "txbmisc.h"
 #define TXBSTR_IMPLEMENTATION
 #include "txbstr.h"
-#define TXBLISTD_IMPLEMENTATION
-#include "txblistd.h"
+#define TXBABORT_IMPLEMENTATION
+#include "txbabort.h"
+#define TXBDL_IMPLEMENTATION
+#include "txbdl.h"
 
 #include "solution.h"
+
+/*
+ * output transformations stored as an array of string pointers. grows
+ * dynamically by doubling in size.
+ */
 
+int num_transforms;
+transform_t *transforms[TRANSFORM_MAX];
 
+char base[INPUT_LEN_MAX];
+
+int num_run = 0;
+dlcb_t *unique_transforms = NULL;
+
 /*
  * the usual utility functions
  */
 
-long
+int
 payload_compare(
    void *s1,
    void *s2) {
@@ -32,31 +46,32 @@ payload_compare(
 
 
 void
-reset_state(int rel) {
-   if (!rel) {
-      memset(&transformations_list, 0, sizeof(transformations_list));
-   }
+reset_state(bool rel) {
+
    if (rel) {
-      free_all_items(&transformations_list);
-      reset_listd_control(&transformations_list);
+      if (unique_transforms != NULL) {
+         dl_delete_all(unique_transforms);
+         dl_destroy(unique_transforms);
+         unique_transforms = NULL;
+      }
       for (int i = 0; i < TRANSFORM_MAX; i++) {
          if (transforms[i]) {
             free(transforms[i]);
          }
       }
    }
-   transformations_list.use_id = false;
-   transformations_list.has_payload = true;
-   transformations_list.dynamic_payload = true;
-   transformations_list.free_payload = free;
-   transformations_list.compare_payload = payload_compare;
-   transformations_list.initialized = true;
+
+   unique_transforms = dl_create_by_key(
+                          false,
+                          payload_compare,
+                          free);
+
    num_transforms = 0;
    memset(transforms, 0, sizeof(transforms));
    memset(base, 0, sizeof(base));
    num_run = 0;
 }
-
+
 /*
  * our input is a block of transformation rules (from => to), a blank
  * line, and the base text to run the rules against. if this line does
@@ -95,16 +110,17 @@ parse_line(
 
    return true;
 }
-
-
-/* transform one rule one time in a string. updates *pos to point to
-   next start point.
-
-   t -> a transform block
-   s -> a string
-   pos -> how far into s to start scanning for transform from value
-
-   returns NULL if no transform possible. value of pos updated. */
+
+/*
+ * transform one rule one time in a string. updates *pos to point to
+ * next start point.
+ *
+ * t -> a transform block
+ * s -> a string
+ * pos -> how far into s to start scanning for transform from value
+ *
+ * returns NULL if no transform possible. value of pos updated.
+ */
 
 char *
 transformer(
@@ -119,7 +135,7 @@ transformer(
    int slen = strlen(s);
 
    /* if we can do a transformation, this is the length of
-      the buffer we'll need for the output string. */
+    * the buffer we'll need for the output string. */
 
    size_t max_transform_len = strlen(s) + 1 /* NUL */ + t->to_len - t->from_len;
 
@@ -140,14 +156,14 @@ transformer(
    }
 
    /* no from string found, so nothing returned */
-
    return NULL;
 }
-
-
-/* for part two we want to work in reverse from the ending 'base'
-   string back to 'e'. flip the from and to of the transformation
-   rules. */
+
+/*
+ * for part two we want to work in reverse from the ending 'base'
+ * string back to 'e'. flip the from and to of the transformation
+ * rules.
+ */
 
 void
 invert(
@@ -162,38 +178,9 @@ invert(
    t->to_len = t->from_len;
    t->from_len = swap_len;
 }
-
-
-/* this comparison for qsort() is no longer used, but it's what i
-   tried when taking the greedy transformations first approach. sort
-   descending on from_len, ties probably don't matter, but length of
-   to descending followed by favoring anything over e. */
-
-int
-sort_inverted(
-   const void *t1,
-   const void *t2
-) {
-   int r = ((transform_t *)t2)->from_len - ((transform_t *)t1)->from_len;
-   if (r != 0) {
-      return r;
-   }
-   r = ((transform_t *)t2)->to_len - ((transform_t *)t1)->to_len;
-   if (r != 0) {
-      return r;
-   }
-   if (((transform_t *)t1)->to[0] == 'e') {
-      return 1;
-   } else if (((transform_t *)t2)->to[0] == 'e') {
-      return -1;
-   }
-   return 0;
-}
-
-
+
 /*
  * part one:
- *
  */
 
 int
@@ -208,7 +195,7 @@ part_one(
    }
 
    char iline[INPUT_LEN_MAX];
-   reset_state(0);
+   reset_state(false);
 
    while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
 
@@ -229,24 +216,29 @@ part_one(
       transform created */
 
    for (int i = 0; i < num_transforms; i++) {
+      long id = 0;
       int pos = 0;
-      char *try = transformer(transforms[i], base, &pos);
+      /* char *try = transformer(transforms[i], base, &pos); */
+      /* while (try) { */
+      /*    if (dl_get(transformations_list, &id, &try)) { */
+      /*       /\* free(try); *\/ */
+      /*       try = transformer(transforms[i], base, &pos); */
+      /*       continue; */
+      /*    } */
+      /*    num_run += 1; */
+      /*    dl_insert(transformations_list, id, try); */
+      /*    try = transformer(transforms[i], base, &pos); */
+      /* } */
+      void *try = (void *)transformer(transforms[i], base, &pos);
       while (try) {
-         if (find_item(&transformations_list, try)) {
-            free(try);
-            try = transformer(transforms[i], base, &pos);
-            continue;
-         }
-         num_run += 1;
-         listd_item_t *item = make_item(&transformations_list, try);
-         add_item(&transformations_list, item);
+         dl_insert(unique_transforms, id, try);
          try = transformer(transforms[i], base, &pos);
       }
    }
 
-   printf("part one: %d\n", num_run);
+   printf("part one: %d\n", dl_count(unique_transforms));
 
-   reset_state(1);
+   reset_state(true);
 
    fclose(ifile);
    return EXIT_SUCCESS;
@@ -293,24 +285,24 @@ part_two(
    }
 
    /* where in part one we were looking for how many unique
-      transformations we can make, in part two we want to know how
-      long it takes to get from one single electron to the final
-      molecule in the input. i don't see an elegant way to do this, so
-      we'll churn things in order and see what we get.
-
-      there are two different approaches to take with the
-      transformations. sorting by descending length of the inverted
-      from text should more quickly consume the base string. just be
-      sure to leave the to 'e' rules at the end.
-
-      another approach is to randomize the input. i tried both and am
-      happier with the randomized approach. the sort code straight
-      forward but unless the data is cooked for the problem, i don't
-      see it as a general solution. */
-
-   /* for either the sort or the shuffle, keep the 'e' transforms at
-      the end of the rule list. the come at the end of the provied
-      rules. */
+    * transformations we can make, in part two we want to know how
+    * long it takes to get from one single electron to the final
+    * molecule in the input. i don't see an elegant way to do this, so
+    * we'll churn things in order and see what we get.
+    *
+    * there are two different approaches to take with the
+    * transformations. sorting by descending length of the inverted
+    * from text should more quickly consume the base string. just be
+    * sure to leave the to 'e' rules at the end.
+    *
+    * another approach is to randomize the input. i tried both and am
+    * happier with the randomized approach. the sort code was straight
+    * forward but unless the data is cooked for the problem, i don't
+    * see it as a general solution.
+    *
+    * for either the sort or the shuffle, keep the 'e' transforms at
+    * the end of the rule list. the come at the end of the provied
+    * rules. */
 
    int trimmed = 0;
    for (int i = 0; i < num_transforms; i++) {
