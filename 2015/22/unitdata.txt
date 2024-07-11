@@ -1,0 +1,6 @@
+Player:
+Hit Points: 10
+Mana: 250
+Boss:
+Hit Points: 13
+Damage: 8
