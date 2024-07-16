@@ -17,7 +17,7 @@
    "lowercase_intrinsics": true,
    "use_signature_help": false,
 
-   "hover_signature": false,
+   "hover_signature": true,
    "hover_language": "fortran90",
 
    "max_line_length": -1,
@@ -30,5 +30,5 @@
 
    "symbol_skip_mem": false,
 
-   "enable_code_actions": false
+   "enable_code_actions": true
 }

@@ -7,6 +7,25 @@ There's nothing special here, just me using AoC as writing prompts. The goal is 
 This is about practice and habit. I'll certainly learn other things along the way, but the goal is to keep the fingers moving writing code.
 
 
+## Progress
+
+Year    Stars
+2015    50
+2016
+2017
+2018
+2019
+2020
+2021
+2022    30
+2023    22
+2024
+
+## TODO
+
+Some text files are in org format, some in markdown, but I'll be slowly converting verything to plain text. Neither org nor markdown really get it done for me.
+
+
 ## Project Structure
 
 root
@@ -37,6 +56,9 @@ The site asks that we not post the full datasets in public view. I have them in 
 
 I'm using 1980ish tooling with a very vanilla Emacs, text files, and old school structured programming. Objects? We don't need no stinking objects.
 
+I started out in Pascal, switched to Fortran, and then to C. I redid the Pascal code in Fortran but then switched to C and plan to stick with plain old C99 from here on out. Free Pascal is too bound up in Lazarus, Delphi isn't cross platform. While modern Fortran rocks, I'm an assembler programmer at heart, so working down at C level just feels right.
+
+
 ### Pascal
 
 The compiler is Free Pascal 3.22 in with runtime checks enabled, a limited number of extensions, and usually ShortStrings. Integers are cast to 64 bits--I prefer a dash of retro with my code, but I'm not a purist.
@@ -48,6 +70,7 @@ The compiler is Free Pascal 3.22 in with runtime checks enabled, a limited numbe
 * `break` and `continue` are available in loops, `exit` is available for early exit from procedures and functions, but I steadfastly refuse to use `result`.
 * boolean evaluation short circuiting is disabled as it's non-standard in a way that is visible in the code.
 
+
 ### Fortran
 
 About half way through the 2022 and 2023 I decided to switch to Fortran. I've been meaning give Fortran a try for a while and after seeing enough of the present state of the compilers and standards I feel they are superior to Pascal for my needs. I still love Pascal, but the direction of Delphi and Lazarus is heavy objects and forms based. I'm more comfortable at lower levels.
@@ -56,13 +79,16 @@ The general approach is the same as with Pascal, but given the strong standards 
 
 There are two compilers I am alternating between: gfortran 13.2 and lfortran. lfortran is still in a pre-beta state but as gfortran and lldb on MacOs don't work without jumping through hoops, I expect to use lfortran if I have to use a debugger.
 
+
 ### C
 
-I started on 2015 using `C`. At this time clang 15 is the version Apple provides. All my code is compiled with `-Wall --std=c99`.
+I started on 2015 using `C`. At this time clang 15 is the version Apple provides. All my code is compiled with `-Wall -O0 -g3 -fsanitize=address --std=c99`.
+
 
 ### Editor/IDE
 
 Emacs, eglot, clangd, fortls, treesitter, fprettify, and astyle for the win.
+
 
 ## Dependencies
 
