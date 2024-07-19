@@ -21,9 +21,9 @@ part_one(
       return EXIT_FAILURE;
    }
 
-   char iline[INPUT_LEN_MAX];
+   char iline[INPUT_LINE_MAX];
 
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+   while (fgets(iline, INPUT_LINE_MAX - 1, ifile)) {
    }
 
    printf("part one: %d\n", 0);
@@ -49,9 +49,9 @@ part_two(
       fprintf(stderr, "error: could not open file: %s\n", fname);
       return EXIT_FAILURE;
    }
-   char iline[INPUT_LEN_MAX];
+   char iline[INPUT_LINE_MAX];
 
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+   while (fgets(iline, INPUT_LINE_MAX - 1, ifile)) {
    }
 
    printf("part two: %d\n", 0);

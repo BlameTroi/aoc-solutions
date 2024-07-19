@@ -19,7 +19,7 @@
  */
 
 
-FILE *testdata = NULL;
+FILE *datafile = NULL;
 
 /*
  * minunit setup and teardown of infrastructure.
@@ -28,15 +28,15 @@ FILE *testdata = NULL;
 void
 test_setup(void) {
    reset_all();
-   testdata = fopen("unitdata.txt", "r");
-   if (!testdata) {
+   datafile = fopen("unitdata.txt", "r");
+   if (!datafile) {
       mu_fail("could not open test data file!");
    }
 }
 
 void
 test_teardown(void) {
-   fclose(testdata);
+   fclose(datafile);
 }
 
 
@@ -46,13 +46,13 @@ test_teardown(void) {
 
 MU_TEST(test_read) {
 
-   mob_t *boss = read_mob("Boss", testdata);
+   mob_t *boss = read_mob("Boss", datafile);
    mu_should(boss);
    mu_should(boss->hp == 12);
    mu_should(boss->damage == 7);
    mu_should(boss->armor == 2);
 
-   mob_t *player = read_mob("Player", testdata);
+   mob_t *player = read_mob("Player", datafile);
    mu_should(player);
    mu_should(player->hp == 8);
    mu_should(player->damage == 5);
