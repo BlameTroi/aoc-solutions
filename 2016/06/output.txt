@@ -1,0 +1,5 @@
+./driver /Users/troi/projects/aoc/datasets/2016/06/dataset.txt
+part one: wkbvmikb
+
+part two: evakwaga
+
