@@ -1,0 +1,10 @@
+./driver /Users/troi/projects/aoc/datasets/2016/08/dataset.txt
+
+XXXX_XXXX_XXXX_X___XX__X_XXXX_XXX__XXXX__XXX___XX_
+X____X____X____X___XX_X__X____X__X_X______X_____X_
+XXX__XXX__XXX___X_X_XX___XXX__X__X_XXX____X_____X_
+X____X____X______X__X_X__X____XXX__X______X_____X_
+X____X____X______X__X_X__X____X_X__X______X__X__X_
+XXXX_X____XXXX___X__X__X_X____X__X_X_____XXX__XX__
+part one: 115
+part two: 0
