@@ -5,6 +5,11 @@
 
 #define INPUT_LINE_MAX 4096
 
+#include <stdio.h>
+
+size_t
+expand(const char *);
+
 int
 part_one(
    const char *                       /* a file name */

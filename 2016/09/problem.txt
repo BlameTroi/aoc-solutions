@@ -88,7 +88,7 @@ another way to get its decompressed length.
 What is the decompressed length of the file using this improved
 format?
 
-Answer: 
+Answer: 10964557606
 
 (i knew this was coming but i did a real decompression instead of
 just calculating so i would write initial read_stream and

@@ -1,0 +1,4 @@
+./driver /Users/troi/projects/aoc/datasets/2016/09/dataset.txt
+input length: 19201
+part one: 98135
+part two: 10964557606
