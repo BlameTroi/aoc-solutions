@@ -90,6 +90,7 @@ format?
 
 Answer: 10964557606
 
-(i knew this was coming but i did a real decompression instead of
-just calculating so i would write initial read_stream and
-string_buffer implementations. shouldn't be too difficult to recover).
+(i knew this was coming but i did a real decompression instead
+of just calculating so i would write initial read_stream and
+string_buffer implementations. shouldn't be too difficult to
+recover).
