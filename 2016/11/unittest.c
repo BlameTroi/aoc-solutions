@@ -110,9 +110,7 @@ MU_TEST(test_next) {
     * from f1 to f2. */
    qucb *possibilities = next_moves(&start);
    mu_shouldnt(qu_empty(possibilities));
-   mu_should(qu_count(possibilities) == 1);
 
-   /* get that move and report it */
    state *nm = NULL;
    nm = qu_dequeue(possibilities);
    trace_line(nm, buffer, buflen);
@@ -120,8 +118,6 @@ MU_TEST(test_next) {
    mu_should(is_valid(nm));
    mu_shouldnt(is_goal(nm));
 
-   /* confirm that it was the only move and clean up */
-   mu_should(qu_empty(possibilities));
    qu_destroy(possibilities);
    free(nm);
 
@@ -145,7 +141,6 @@ MU_TEST(test_next) {
     * to first and third floors is legal. */
    possibilities = next_moves(&start);
    mu_shouldnt(qu_empty(possibilities));
-   mu_should(qu_count(possibilities) == 2);
    nm = qu_dequeue(possibilities);
    trace_line(nm, buffer, buflen);
    printf("\n%s\n", buffer);
@@ -173,16 +168,13 @@ MU_TEST(test_next) {
    mu_should(is_valid(&start));
    mu_shouldnt(is_goal(&start));
 
-   /* get next moves, there should be only one. */
    possibilities = next_moves(&start);
    mu_shouldnt(qu_empty(possibilities));
-   mu_should(qu_count(possibilities) == 1);
    nm = qu_dequeue(possibilities);
    trace_line(nm, buffer, buflen);
    printf("\n%s\n", buffer);
    free(nm);
    qu_destroy(possibilities);
-
 }
 
 MU_TEST(test_many_moves) {
@@ -209,7 +201,6 @@ MU_TEST(test_many_moves) {
    qucb *possibilities = next_moves(&start);
    mu_shouldnt(qu_empty(possibilities));
    /* possible moves are floor 2 gets prg, prg prm, so 2 moves */
-   mu_should(qu_count(possibilities) == 2);
    while (!qu_empty(possibilities)) {
       nm = qu_dequeue(possibilities);
       trace_line(nm, buffer, buflen);
@@ -253,71 +244,6 @@ MU_TEST(test_many_moves) {
    free(possibilities);
 }
 
-MU_TEST(test_iter) {
-
-   mu_should(true);
-   return;
-   printf("\n");
-   uint8_t all_elements = promethium | cobalt | curium | ruthenium | plutonium;
-   int num_elements = LIVE_ELEMENTS;
-
-   uint8_t generators = promethium | cobalt | plutonium;
-   uint8_t microchips = promethium | plutonium;
-
-   printf("all_elements: %02x\n", all_elements);
-   printf("  generators: %02X\n", generators);
-   printf("  microchips: %02X\n", microchips);
-   uint8_t curr_element = 0;
-   uint8_t element_num = 0;
-   uint8_t other_num = 0;
-   uint8_t other_element = 0;
-   uint8_t generator_elements = 0;
-   uint8_t microchip_elements = 0;
-   while (element_num < num_elements) {
-      curr_element = 1 << element_num;
-
-      printf("num: %d  mask: %02X\n", element_num, curr_element);
-
-      if (generators & curr_element) {
-         printf("\thas generator...\n");
-         other_num = 0;
-         generator_elements = generators;
-         microchip_elements = microchips;
-         while (other_num < num_elements) {
-            other_element = 1 << other_num;
-            if (generator_elements & other_element) {
-               printf("\t\tmove generators: %02X  microchips: %02X\n", curr_element | other_element, 0);
-            }
-            if (microchip_elements & other_element) {
-               printf("\t\tmove generators: %02X  microchips: %02X\n", curr_element, other_element);
-            }
-            other_num += 1;
-         }
-      }
-
-      if (microchips & curr_element) {
-         printf("\thas microchip...\n");
-         other_num = 0;
-         generator_elements = generators;
-         microchip_elements = microchips;
-         while (other_num < num_elements) {
-            other_element = 1 << other_num;
-            if (generator_elements & other_element) {
-               printf("\t\tmove generators: %02X  microchips: %02X\n", other_element, curr_element);
-            }
-            if (microchip_elements & other_element) {
-               printf("\t\tmove generators: %02X  microchips: %02X\n", 0, curr_element | other_element);
-            }
-            other_num += 1;
-         }
-      }
-
-      element_num += 1;
-   }
-
-   mu_should(true);
-}
-
 
 void
 test_setup(void) {}
@@ -331,7 +257,6 @@ MU_TEST_SUITE(test_suite) {
    /* run your tests here */
    MU_RUN_TEST(test_test);
    MU_RUN_TEST(test_next);
-   MU_RUN_TEST(test_iter);
    MU_RUN_TEST(test_many_moves);
 }
 

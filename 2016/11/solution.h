@@ -43,6 +43,10 @@
 #define plutonium  (uint8_t)(1 << 4)
 #define LIVE_ELEMENTS 5
 
+#define elerium    (uint8_t)(1 << 5)
+#define dilithium  (uint8_t)(1 << 6)
+#define PART_TWO_ELEMENTS 7
+
 #define hydrogen   (uint8_t)(1 << 0)
 #define lithium    (uint8_t)(1 << 1)
 #define SAMPLE_ELEMENTS 2
