@@ -6,99 +6,146 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "txbqu.h"
+
 #define INPUT_LINE_MAX 4096
 
 /*
  * since the data would all fit in 16 bits, i opted for using bitwise
  * operations.
  *
- * interestingly, #defines of the form 0x00000001 don't work as i expect.
- * one misses the rational mainframe memory layout.
+ * interestingly, #defines of the form 0x00000001 don't work as i
+ * expect. one misses the rational mainframe memory layout.
  *
  * there are five elements in the live data, and two in the sample.
  * each element has a generator paired with a microchip.
+ *
+ * as i (along with almost everyone else it seems) struggled with the
+ * problem performance, i finally learned that the element names are
+ * not significant when checking for duplicate moves, and that the
+ * distinction only comes into play when generating a possible move.
+ *
+ * i'm doing my third tear-it-up-and-try-again. i'm keeping bit
+ * storage but splitting generators and microchips into separate
+ * fields. the savings over an array are negligible, but i want the
+ * practice.
  */
 
-typedef uint16_t element;
+/*
+ * there are five 'elements' in the live problem, and two in the
+ * illustrative sample. a byte is enough. elements start at bit 0.
+ */
 
-/* elements in live */
-#define   promethium  (1 << 0)
-#define   cobalt      (1 << 1)
-#define   curium      (1 << 2)
-#define   ruthenium   (1 << 3)
-#define   plutonium   (1 << 4)
+#define promethium (uint8_t)(1 << 0)
+#define cobalt     (uint8_t)(1 << 1)
+#define curium     (uint8_t)(1 << 2)
+#define ruthenium  (uint8_t)(1 << 3)
+#define plutonium  (uint8_t)(1 << 4)
+#define LIVE_ELEMENTS 5
 
-/* elements in sample */
-#define   hydrogen    (1 << 5)
-#define   lithium     (1 << 6)
+#define hydrogen   (uint8_t)(1 << 0)
+#define lithium    (uint8_t)(1 << 1)
+#define SAMPLE_ELEMENTS 2
 
-/* convert via shift to and from generator or microchip. microchip is
- * actually unshifted and the from/to_microchip macros end up doing
- * nothing, but the symmetry makes the code read better and would be
- * more maintainable if bit assignments changed. */
-
-#define   to_generator(e)   (element)((e) << 8)
-#define   to_microchip(e)   (element)(e)
-#define   from_generator(e) (element)((e) >> 8)
-#define   from_microchip(e) (element)(e)
-
-/* collected */
-
-#define all_elements (element)(promethium | cobalt | curium | ruthenium | plutonium | hydrogen | lithium)
-#define all_as_microchips (element)to_microchip(all_elements)
-#define all_as_generators (element)to_generator(all_elements)
-#define all_as_parts (element)(all_as_microchips | all_as_generators)
-
-typedef struct printable printable;
-struct printable {
-   element e;
-   char *name;
-   char *gen;
-   char *chip;
-};
-
-printable *
-get_printable(
-   element
-);
+#define MASK_FOR(e)   (uint8_t)(1 << (e))
 
 /* the floors of the building. */
-enum level { f1 = 0, f2 = 1, f3 = 2, f4 = 3 };
+enum e_levels { f1 = 0, f2 = 1, f3 = 2, f4 = 3 };
 #define LEVEL_DIM 4
 
+/* the set of possible elements. */
+enum e_element { e1 = 0, e2 = 1, e3 = 2, e4 = 3, e5 = 4 };
+
 /* state of a move */
-typedef struct move move;
-struct move {
+typedef struct state state;
+struct state {
    int no;
-   int elevator;
-   element parts[LEVEL_DIM];
+   uint8_t elevator;
+   uint8_t microchips[LEVEL_DIM];
+   uint8_t generators[LEVEL_DIM];
 };
 
-void
-init_and_load(
-   move *,
-   bool use_live
+char *
+trace_line(
+   state *m,
+   char *buffer,
+   int buflen
+);
+
+/*
+ * the apparent key to understanding the problem is to not worry so
+ * much about specific elements as long as you've paired microchips
+ * and generators that you move. so count of each should be
+ * sufficient.
+ */
+
+typedef struct dupcheck dupcheck;
+struct dupcheck {
+   uint8_t elevator;
+   uint8_t counts[LEVEL_DIM][2];
+};
+
+dupcheck
+state_as_dupcheck(
+   state *m
 );
 
 bool
+id_duplicate(
+   state *m
+);
+
+/*
+ * query a move state.
+ */
+
+bool
 is_valid(
-   move *m
+   state *m
 );
 
 bool
 is_goal(
-   move *m
+   state *m
+);
+
+bool
+is_duplicate(
+   state *m
+);
+
+/*
+ * generate a valid next move.
+ */
+
+qucb *
+next_moves(
+   state *m
+);
+
+/*
+ * work the moves.
+ */
+
+void
+init_and_load(
+   state *,
+   bool use_live
+);
+
+int
+seek_r(
+   state *m
 );
 
 int
 seek_goal(
-   move *start
+   state *start
 );
 
-void
-report(
-   move *m
-);
+/*
+ * mains for each problem part.
+ */
 
 int
 part_one(

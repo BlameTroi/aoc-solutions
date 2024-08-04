@@ -6,6 +6,8 @@
  * while honoring restrictions (a match rule instead of size
  * ordering).
  *
+ * actually the class of problems is 'river crossing'.
+ *
  * what is the fewest number of moves required to get all parts to
  * the top floor of a four floor fabrication lab?
  *
@@ -45,6 +47,24 @@
  * know if it will make any runtime difference, but fiddling bits is
  * something that needs to be done from time to time, so practice is
  * worthwhile.
+ *
+ * conclusions on part one:
+ *
+ * i and most everyone i've seen mention it on reddit or the web
+ * regard this as a bitch of a problem to compute. there are so many
+ * paths that if you don't figure out how to prune the search it just
+ * takes too long.
+ *
+ * like hours or days depending on your system and language. many found
+ * it quicker to write a 'game' interface and solve the problem manually.
+ *
+ * i tripped myself up a few times with byte ordering when i was working
+ * through this, which slowed me down considerably, but even if i'd done
+ * that right from the start i don't know that i would have figured out
+ * the trick--which is that you don't need to compare every item to
+ * prune duplicate paths from the search. the 'elements' of the two
+ * kinds of only matters so long as the chip-generator constraint is
+ * satisfied.
  */
 
 #include <assert.h>
@@ -58,140 +78,104 @@
 #define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
 
-/*
- * a few globals
- */
-
-/* running best result (fewest moves) seen */
-
-int best = 0;
-
-/* an overly large cache to remember moves already tried, no range checking */
-
-typedef struct move_for_dupcheck move_for_dupcheck;
-struct move_for_dupcheck {
-   int elevator;
-   int counts[LEVEL_DIM]; /* do we need to separate by gen or chip? */
-};
-
-static move_for_dupcheck attempted[100000];
-static int attempts = 0;
-
-/* all the possible bits on for generators and microchips */
-
-element all_possible_parts = (all_as_generators | all_as_microchips);
+#define TXBQU_IMPLEMENTATION
+#include "txbqu.h"
 
 /*
- * avoid chasing duplicate paths, if we have already seen a particular
- * configuration, skip it.
+ * the number of distinct elements in the problem is the key
+ * information. there are two in the illustrative sample and five in
+ * the live data (see solution.h defines). each element will have
+ * corresponding microchips and generators.
  *
- * while it seems possible to have to cycle someting past a block and
- * thus repeat, i deem it unlikely enough to clip.
+ * num_elements will restrict the number of elements we check so we
+ * don't waste cycles on impossible configurations.
  */
+
+static int num_elements = 0;
+static uint8_t all_elements = 0;
 
 /*
- * compare two move states.
+ * avoid chasing duplicate paths. if we have already seen a particular
+ * configuration, skip it. as long as a move state is legal, we only
+ * care about the number of items on each floor for checking. at least
+ * that's the reddit hive mind wisdom.
  */
 
-bool
-are_same(
-   move *a,
-   move *b
-) {
-   return a->elevator == b->elevator &&
-          a->parts[f1] == b->parts[f1] &&
-          a->parts[f2] == b->parts[f2] &&
-          a->parts[f3] == b->parts[f3] &&
-          a->parts[f4] == b->parts[f4];
+static dupcheck *duplicates = NULL;
+static int num_duplicates = 0;
+static int duplicates_skipped = 0;
+#define DUPLICATES_MAX 10000
+
+void
+init_duplicates(int size) {
+   if (duplicates) {
+      free(duplicates);
+      duplicates = NULL;
+      num_duplicates = 0;
+   }
+   duplicates = malloc((1 + size) * sizeof(dupcheck));
+   memset(duplicates, 0, (1 + size) * sizeof(dupcheck));
+   num_duplicates = 0;
+   duplicates_skipped = 0;
 }
 
-/*
- * have we seen this move before? no attempt to order, just check them
- * all.
- */
+dupcheck
+state_as_dupcheck(
+   state *m
+) {
+   dupcheck dm;
+   memset(&dm, 0, sizeof(dupcheck));
+   dm.elevator = m->elevator;
+   dm.counts[f4][0] = one_bits_in(m->microchips[f4]);
+   dm.counts[f4][1] = one_bits_in(m->generators[f4]);
+   dm.counts[f3][0] = one_bits_in(m->microchips[f3]);
+   dm.counts[f3][1] = one_bits_in(m->generators[f3]);
+   dm.counts[f2][0] = one_bits_in(m->microchips[f2]);
+   dm.counts[f2][1] = one_bits_in(m->generators[f2]);
+   dm.counts[f1][0] = one_bits_in(m->microchips[f1]);
+   dm.counts[f1][1] = one_bits_in(m->generators[f1]);
+   return dm;
+}
+
+void
+add_duplicate(state *m) {
+   duplicates[num_duplicates] = state_as_dupcheck(m);
+   num_duplicates += 1;
+}
 
 bool
-already_tried(move *m) {
-   move_for_dupcheck mfd;
-   mfd.elevator = m->elevator;
-   mfd.counts[f1] = one_bits_in(m->parts[f1]);
-   mfd.counts[f2] = one_bits_in(m->parts[f2]);
-   mfd.counts[f3] = one_bits_in(m->parts[f3]);
-   mfd.counts[f4] = one_bits_in(m->parts[f4]);
-   for (int i = 0; i < attempts+1; i++) {
-      move_for_dupcheck *p = &attempted[i];
-      if (mfd.elevator == p->elevator &&
-            mfd.counts[f1] == p->counts[f2] &&
-            mfd.counts[f2] == p->counts[f2] &&
-            mfd.counts[f3] == p->counts[f3] &&
-            mfd.counts[f4] == p->counts[f4]) {
+is_duplicate(state *m) {
+   dupcheck dm = state_as_dupcheck(m);
+   for (int i = 0; i < num_duplicates; i++) {
+      if (memcmp(&duplicates[i], &dm, sizeof(dupcheck)) == 0) {
          return true;
       }
    }
-   attempts += 1;
-   attempted[attempts] = mfd;
    return false;
 }
 
 /*
- * debug print support
+ * trace output support.
  */
 
-printable printables[] = {
-   { promethium, "Promethium", "PrG", "PrM" },
-   { cobalt, "Cobalt", "CoG", "CoM" },
-   { curium, "Curium", "CuG", "CuM" },
-   { ruthenium, "Ruthenium", "RuG", "RuM" },
-   { plutonium, "Plutonium", "PlG", "PlM" },
-   { hydrogen, "Hydrogen", "HyG", "HyM" },
-   { lithium, "Lithium", "LiG", "LiM" },
-   { 0, "Error", "Err", "Err" }
-};
-
-printable *
-get_printable(element e) {
-   printable *p = printables;
-   while (!(p->e & e)) {
-      p += 1;
-   }
-   return p;
-}
-
-void
-report(move *m) {
-   printf("\nmove %d\n", m->no);
-   if (is_goal(m)) {
-      printf("*** goal ***\n");
-   }
-   printf("%s\n", is_valid(m) ? "valid" : "INVALID");
-   for (int i = f1; i <= f4; i++) {
-      printf(" %d |%c| ", i+1, i == m->elevator ? 'E' : ' ');
-      element e = 1;
-      while (e & all_elements) {
-         printable *p = get_printable(e);
-         if (p->e) {
-            printf(" %s %s",
-                   m->parts[i] & (to_generator(e)) ? p->gen : "   ",
-                   m->parts[i] & (to_microchip(e)) ? p->chip : "   ");
-         }
-         e = e << 1;
-      }
-      printf("\n");
-   }
-   printf("\n");
-}
-
-void
-report_sl(move *m, char *buffer, int maxlen) {
+char *
+trace_line(
+   state *m,
+   char *buffer,
+   int maxlen
+) {
    snprintf(
       buffer, maxlen,
-      "%3d %c %c %1d  %04X %04X %04X %04X",
-      m->no,
+      "%c%c  %5d  %c[%02X %02X]  %c[%02X %02X]  %c[%02X %02X]  %c[%02X %02X]",
       is_goal(m) ? 'G' : ' ',
       is_valid(m) ? ' ' : 'E',
-      m->elevator+1,
-      m->parts[f1], m->parts[f2], m->parts[f3], m->parts[f4]
+      m->no,
+      m->elevator == f1 ? '>' : ' ', m->microchips[f1], m->generators[f1],
+      m->elevator == f2 ? '>' : ' ', m->microchips[f2], m->generators[f2],
+      m->elevator == f3 ? '>' : ' ', m->microchips[f3], m->generators[f3],
+      m->elevator == f4 ? '>' : ' ', m->microchips[f4], m->generators[f4]
    );
+   return buffer;
 }
 
 /*
@@ -206,26 +190,13 @@ report_sl(move *m, char *buffer, int maxlen) {
  */
 
 bool
-is_valid(move *m) {
-
-   /* i want to unroll this loop. at each level if there are
-    * microchips, there must be a matching generator for each
-    * microchip if there are any generators. */
-
-   for (int i = f1; i <= f4; i++) {
-      if (m->parts[i] == 0) {
-         continue;
-      }
-      element generators = from_generator((m->parts[i] & all_as_generators));
-      element microchips = from_microchip((m->parts[i] & all_as_microchips));
-      if (generators == 0 || microchips == 0 || generators == microchips) {
-         continue;
-      }
-      if ((microchips & generators) != microchips) {
+is_valid(state *m) {
+   for (int f = f1; f <= f4; f++) {
+      if (m->generators[f] != 0 &&
+            (m->microchips[f] & m->generators[f]) != m->microchips[f]) {
          return false;
       }
    }
-
    return true;
 }
 
@@ -234,148 +205,395 @@ is_valid(move *m) {
  */
 
 bool
-is_goal(move *m) {
+is_goal(
+   state *m
+) {
    return m->elevator == f4 &&
-          m->parts[f4] != 0 &&
-          m->parts[f1] == 0 &&
-          m->parts[f2] == 0 &&
-          m->parts[f3] == 0;
+          m->microchips[f4] != 0 && m->generators[f4] != 0 &&
+          m->microchips[f3] == 0 && m->generators[f3] == 0 &&
+          m->microchips[f2] == 0 && m->generators[f2] == 0 &&
+          m->microchips[f1] == 0 && m->generators[f1] == 0;
 }
 
 /*
- * recursively seek to reach the goal of everything on the fourth
- * floor.
+ * from a given valid start state, provide a queue of possible valid
+ * next states. caller is responsible for deallocating the returned
+ * queue via qu_destroy().
  *
- * seeking along a path is pruned if we come to an already tried
- * configuration,
- *
- * seeking along a path is pruned if we have taken more steps that the
- * best attempt so far.
- *
- * move legality is checked at entry instead of before each recursive
- * call.
- *
- * returns number of moves to goal or INT_MAX for any pruning or
- * error.
+ * candidate moves are created by cloning the current state and then
+ * making all the possible moves of one and two items from that
+ * state.
  */
 
-static int seekers = 0;
+/* small helpers */
+static state *
+move_up(state *m, uint8_t microchips, uint8_t generators) {
+   state *nm = malloc(sizeof(*nm));
+   memcpy(nm, m, sizeof(*nm));
+   nm->no += 1;
+   nm->elevator += 1;
+   nm->microchips[nm->elevator] |= microchips;
+   nm->generators[nm->elevator] |= generators;
+   nm->microchips[m->elevator] ^= microchips;
+   nm->generators[m->elevator] ^= generators;
+   return nm;
+}
+static state *
+move_down(state *m, uint8_t microchips, uint8_t generators) {
+   state *nm = malloc(sizeof(*nm));
+   memcpy(nm, m, sizeof(*nm));
+   nm->no += 1;
+   nm->elevator -= 1;
+   nm->microchips[nm->elevator] |= microchips;
+   nm->generators[nm->elevator] |= generators;
+   nm->microchips[m->elevator] ^= microchips;
+   nm->generators[m->elevator] ^= generators;
+   return nm;
+}
 
-int
-seek_r(
-   move *m
-) {
-   m->no += 1;
-   seekers += 1;
-   int seeker = seekers;
-   char buffer[255];
-   memset(buffer, 0, 255);
-   report_sl(m, buffer, 254);
-   printf(">>>seek_r %3d %s\n", seeker, buffer);
-
-   if (m->no > best) {
-      printf("<<<seek_r %3d pruned, %d > %d\n", seeker, m->no, best);
-      return INT_MAX;
-   }
-   if (is_goal(m)) {
-      best = min(best, m->no);
-      printf("<<<seek_r %3d done, goal state reached at %d\n", seeker, m->no);
-      return best;
-   }
-   if (!is_valid(m)) {
-      printf("<<<seek_r %3d pruned %d is an invalid state\n", seeker, m->no);
-      return INT_MAX;
-   }
-   if (already_tried(m)) {
-      printf("<<<seek_r %3d pruned %d is a duplicate state\n", seeker, m->no);
-      return INT_MAX;
-   }
-
-   /* i don't see a bfs approach here so we'll just hit everything that
-    * is possible from a valid position. */
+qucb *
+next_moves(state *m) {
+   assert(is_valid(m));
+   qucb *q = qu_create();
 
    /* moves are restricted to one floor in any legal direction. */
    int v = m->elevator;
    bool can_go_up = v < f4;
    bool can_go_down = v > f1;
-   move nm;
 
-   int num_parts = one_bits_in(m->parts[v]);
-   assert(num_parts);
+   /* how many of each type are on the current floor? */
+   int chips = one_bits_in(m->microchips[v]);
+   int gens = one_bits_in(m->generators[v]);
 
-   if (num_parts == 1) {
-      if (can_go_up) {
-         nm = *m;
-         nm.elevator += 1;
-         nm.parts[nm.elevator] |= nm.parts[v];
-         nm.parts[v] = 0;
-         best = min(best, seek_r(&nm));
-      }
-      if (can_go_down) {
-         nm = *m;
-         nm.elevator -= 1;
-         nm.parts[nm.elevator] |= nm.parts[v];
-         nm.parts[v] = 0;
-         best = min(best, seek_r(&nm));
-      }
-      printf("<<<seek_r %3d %s  best: %d\n", seeker, buffer, best);
-      return best;
-   }
+   /* new move buffer. */
+   state *nm = NULL;
 
-   /* more than one item on the floor, try to move every possible
-    * combination of one or two items from what we have. */
+   /* /\* i did the "no iteration" cases first for testing, and am leaving */
+   /*  * them in even though the iteration would also get the job done. */
+   /*  * */
+   /*  * if there's only one item on the floor, or one of each kind, */
+   /*  * there's no need to do anything more so there are early return */
+   /*  * points. */
+   /*  * */
+   /*  * each return has an assert that at least one valid move was */
+   /*  * created. *\/ */
 
-   int possible_masks = 0;
-   int checked_masks = 0;
-   element odometer = 1;
-   while (odometer) {
-      if (one_bits_in(odometer) < 3) {
-         possible_masks += 1;
-         if ((m->parts[v] & odometer) == odometer) {
-            checked_masks += 1;
-            if (can_go_up) {
-               nm = *m;
-               nm.elevator += 1;
-               nm.parts[nm.elevator] |= odometer;
-               nm.parts[v] ^= odometer;
-               best = min(best, seek_r(&nm));
+   /* /\* if there's just one microchip on the floor, move it *\/ */
+
+   /* if (chips == 1) { */
+   /*    if (can_go_up) { */
+   /*       nm = move_up(m, m->microchips[v], 0); */
+   /*       if (is_valid(nm)) { */
+   /*          qu_enqueue(q, nm); */
+   /*       } else { */
+   /*          free(nm); */
+   /*       } */
+   /*       nm = NULL; */
+   /*    } */
+   /*    if (can_go_down) { */
+   /*       nm = move_down(m, m->microchips[v], 0); */
+   /*       if (is_valid(nm)) { */
+   /*          qu_enqueue(q, nm); */
+   /*       } else { */
+   /*          free(nm); */
+   /*       } */
+   /*       nm = NULL; */
+   /*    } */
+   /*    /\* microchip without generator, we're done. *\/ */
+   /*    if (gens == 0) { */
+   /*       assert(!qu_empty(q)); */
+   /*       return q; */
+   /*    } */
+   /* } */
+
+   /* /\* as with the lone microchip, so with the lone generator. *\/ */
+
+   /* if (gens == 1) { */
+   /*    if (can_go_up) { */
+   /*       nm = move_up(m, 0, m->generators[v]); */
+   /*       if (is_valid(nm)) { */
+   /*          qu_enqueue(q, nm); */
+   /*       } else { */
+   /*          free(nm); */
+   /*       } */
+   /*       nm = NULL; */
+   /*    } */
+   /*    if (can_go_down) { */
+   /*       nm = move_down(m, 0, m->generators[v]); */
+   /*       if (is_valid(nm)) { */
+   /*          qu_enqueue(q, nm); */
+   /*       } else { */
+   /*          free(nm); */
+   /*       } */
+   /*       nm = NULL; */
+   /*    } */
+   /*    /\* generator without microchip, we're done. *\/ */
+   /*    if (chips == 0) { */
+   /*       assert(!qu_empty(q)); */
+   /*       return q; */
+   /*    } */
+   /* } */
+
+   /* /\* if we had one of each, also move them together. *\/ */
+
+   /* if (chips == 1 && gens == 1) { */
+   /*    if (can_go_up) { */
+   /*       nm = move_up(m, m->microchips[v], m->generators[v]); */
+   /*       if (is_valid(nm)) { */
+   /*          qu_enqueue(q, nm); */
+   /*       } else { */
+   /*          free(nm); */
+   /*       } */
+   /*       nm = NULL; */
+   /*    } */
+   /*    if (can_go_down) { */
+   /*       nm = move_down(m, m->microchips[v], m->generators[v]); */
+   /*       if (is_valid(nm)) { */
+   /*          qu_enqueue(q, nm); */
+   /*       } else { */
+   /*          free(nm); */
+   /*       } */
+   /*       nm = NULL; */
+   /*    } */
+   /*    /\* and there is nothing left to do so return. *\/ */
+   /*    assert(!qu_empty(q)); */
+   /*    return q; */
+   /* } */
+
+   /* otherwise there's some looping to do */
+
+   uint8_t generators = m->generators[v];
+   uint8_t microchips = m->microchips[v];
+
+   uint8_t this_element = 0;
+   uint8_t this_num = 0;
+   uint8_t other_num = 0;
+   uint8_t other_element = 0;
+
+   while (this_num < num_elements) {
+      this_element = 1 << this_num;
+
+      /* is there a generator for this element? */
+      if (generators & this_element) {
+
+         /* yes, first move only it. */
+         if (can_go_up) {
+            nm = move_up(m, 0, this_element);
+            if (is_valid(nm)) {
+               qu_enqueue(q, nm);
+            } else {
+               free(nm);
             }
-            if (can_go_down) {
-               nm = *m;
-               nm.elevator -= 1;
-               nm.parts[nm.elevator] |= odometer;
-               nm.parts[v] ^= odometer;
-               best = min(best, seek_r(&nm));
+            nm = NULL;
+         }
+         if (can_go_down) {
+            nm = move_down(m, 0, this_element);
+            if (is_valid(nm)) {
+               qu_enqueue(q, nm);
+            } else {
+               free(nm);
             }
+            nm = NULL;
+         }
+
+         /* now move it and one of everything else on the floor */
+         other_num = 0;
+
+         while (other_num < num_elements) {
+            other_element = 1 << other_num;
+
+            /* if there's a generator for the other element element, move it and
+             * this one. there will be an extra move created but it will be
+             * a duplicate and ignored. */
+
+            if (generators & other_element) {
+               if (can_go_up) {
+                  nm = move_up(m, 0, this_element | other_element);
+                  if (is_valid(nm)) {
+                     qu_enqueue(q, nm);
+                  } else {
+                     free(nm);
+                  }
+                  nm = NULL;
+               }
+               if (can_go_down) {
+                  nm = move_down(m, 0, this_element | other_element);
+                  if (is_valid(nm)) {
+                     qu_enqueue(q, nm);
+                  } else {
+                     free(nm);
+                  }
+                  nm = NULL;
+               }
+            }
+
+            /* and now move the generator and any microchip. */
+
+            if (microchips & other_element) {
+               if (can_go_up) {
+                  nm = move_up(m, other_element, this_element);
+                  if (is_valid(nm)) {
+                     qu_enqueue(q, nm);
+                  } else {
+                     free(nm);
+                  }
+                  nm = NULL;
+               }
+               if (can_go_down) {
+                  nm = move_down(m, other_element, this_element);
+                  if (is_valid(nm)) {
+                     qu_enqueue(q, nm);
+                  } else {
+                     free(nm);
+                  }
+                  nm = NULL;
+               }
+            }
+            other_num += 1;
          }
       }
-      odometer += 1;
+
+      /* and now do all that stuff above from a microchip perspective.
+       * so, is there a microchip for this element? */
+
+      if (microchips & this_element) {
+         /* yes, first move only it. */
+         if (can_go_up) {
+            nm = move_up(m, this_element, 0);
+            if (is_valid(nm)) {
+               qu_enqueue(q, nm);
+            } else {
+               free(nm);
+            }
+            nm = NULL;
+         }
+         if (can_go_down) {
+            nm = move_down(m, this_element, 0);
+            if (is_valid(nm)) {
+               qu_enqueue(q, nm);
+            } else {
+               free(nm);
+            }
+            nm = NULL;
+         }
+
+         /* now move it and one of everything else on the floor */
+         other_num = 0;
+
+         while (other_num < num_elements) {
+            other_element = 1 << other_num;
+
+            /* if there's a generator for the other element element, move it
+             * and this microchip. */
+
+            if (generators & other_element) {
+               if (can_go_up) {
+                  nm = move_up(m, this_element, other_element);
+                  if (is_valid(nm)) {
+                     qu_enqueue(q, nm);
+                  } else {
+                     free(nm);
+                  }
+                  nm = NULL;
+               }
+               if (can_go_down) {
+                  nm = move_down(m, this_element, other_element);
+                  if (is_valid(nm)) {
+                     qu_enqueue(q, nm);
+                  } else {
+                     free(nm);
+                  }
+                  nm = NULL;
+               }
+            }
+
+            /* and now move the generator and any microchip. as with the
+             * generator way above, a duplicate will appear here but it
+             * will be pruned later. */
+
+            if (microchips & other_element) {
+               if (can_go_up) {
+                  nm = move_up(m, other_element | this_element, 0);
+                  if (is_valid(nm)) {
+                     qu_enqueue(q, nm);
+                  } else {
+                     free(nm);
+                  }
+                  nm = NULL;
+               }
+               if (can_go_down) {
+                  nm = move_down(m, other_element | this_element, 0);
+                  if (is_valid(nm)) {
+                     qu_enqueue(q, nm);
+                  } else {
+                     free(nm);
+                  }
+                  nm = NULL;
+               }
+            }
+            other_num += 1;
+         }
+      }
+
+      this_num += 1;
    }
 
-   /* printf("odometer           %04X\n", odometer); */
-   /* printf("all elements       %04X\n", all_elements); */
-   /* printf("all as microchips  %04X\n", all_as_microchips); */
-   /* printf("all as generators  %04X\n", all_as_generators); */
-   /* printf("all as parts       %04X\n", all_as_parts); */
-   /* printf("all_possible_parts %04X\n", all_possible_parts); */
-   /* printf("possibles          %4d\n", possible_masks); */
-   /* printf("checked            %4d\n", checked_masks); */
-
-   printf("<<<seek_r %3d %s  best: %d\n", seeker, buffer, best);
-
-   return best;
+   assert(!qu_empty(q));
+   return q;
 }
+
+/*
+ * seek a path to the goal state of everything on the fourth floor.
+ *
+ * seeking along a path is pruned if we come to an already tried
+ * configuration,
+ */
 
 int
 seek_goal(
-   move *start
+   state *start
 ) {
-   seekers = 0;
-   best = INT_MAX;
-   best = seek_r(start);
-   printf("seek goal = logged moves %d  result %d\n", attempts, best);
 
-   return best;
+   qucb *trials = qu_create();
+   init_duplicates(DUPLICATES_MAX); /* wastefully large */
+
+   state *copy = malloc(sizeof(state));
+   memcpy(copy, start, sizeof(state));
+
+   qu_enqueue(trials, copy);
+   add_duplicate(copy);
+
+   char buffer[256];
+   memset(buffer, 0, 256);
+
+   state *m = NULL;
+   while (!qu_empty(trials)) {
+      m = qu_dequeue(trials);
+      printf("%s\n", trace_line(m, buffer, 255));
+      if (is_goal(m)) {
+         printf("\nGOAL\n");
+         printf("num_duplicates %d\n", num_duplicates);
+         printf("duplicates_skipped %d\n", duplicates_skipped);
+         /* TODO leak and reporting */
+         break;
+      }
+      qucb *possibilities = next_moves(m);
+      while (!qu_empty(possibilities)) {
+         state *next = qu_dequeue(possibilities);
+         if (is_duplicate(next)) {
+            duplicates_skipped += 1;
+            free(next);
+            next = NULL;
+         } else {
+            add_duplicate(next);
+            qu_enqueue(trials, next);
+            next = NULL;
+         }
+      }
+      qu_destroy(possibilities);
+   }
+
+   return m->no;
 }
 
 /*
@@ -384,12 +602,9 @@ seek_goal(
 
 void
 init_and_load(
-   move *m,
+   state *m,
    bool use_live
 ) {
-
-   attempts = -1;
-   memset(attempted, 0, sizeof(attempts));
 
    memset(m, 0, sizeof(*m));
    m->no = 0;
@@ -402,9 +617,12 @@ init_and_load(
           2     cog cug rug plg
           3     com cum rum plm
           4 nil */
-      m->parts[f1] = to_generator(promethium) | to_microchip(promethium);
-      m->parts[f2] = to_generator(cobalt | curium | ruthenium | plutonium);
-      m->parts[f3] = to_microchip(cobalt | curium | ruthenium | plutonium);
+      m->generators[f1] = promethium;
+      m->microchips[f1] = promethium;
+      m->generators[f2] = cobalt | curium | ruthenium | plutonium;
+      m->microchips[f3] = cobalt | curium | ruthenium | plutonium;
+      all_elements = promethium | cobalt | curium | ruthenium | plutonium;
+      num_elements = LIVE_ELEMENTS;
    }
 
    /* for the exmaple run from the site, two elements */
@@ -414,9 +632,11 @@ init_and_load(
           2     hyg
           3     lig
           4 nil */
-      m->parts[f1] = to_microchip(hydrogen | lithium);
-      m->parts[f2] = to_generator(hydrogen);
-      m->parts[f3] = to_generator(lithium);
+      m->microchips[f1] = hydrogen | lithium;
+      m->generators[f2] = hydrogen;
+      m->generators[f3] = lithium;
+      all_elements = hydrogen | lithium;
+      num_elements = SAMPLE_ELEMENTS;
    }
 }
 
@@ -429,12 +649,8 @@ part_one(
    const char *fname
 ) {
 
-   /* using sample i got 20 as a result, which is higher than optimal, but it's
-    * a start. trying live next. that fails at the moment, switching back to
-    * smaple. */
-
-   move start;
-   init_and_load(&start, false);
+   state start;
+   init_and_load(&start, true);
    int res = seek_goal(&start);
 
    printf("part one: %d\n", res);
@@ -460,28 +676,3 @@ part_two(
 
    return EXIT_SUCCESS;
 }
-/* element generator_elements = from_generator(m->parts[v] & all_as_generators); */
-/* element microchip_elements = from_microchip(m->parts[v] & all_as_microchips); */
-/* int num_microchips = one_bits_in(microchip_elements); */
-/* int num_generators = one_bits_in(generator_elements); */
-
-/* for one part, it's a quick check */
-
-/* if (num_parts == 1) { */
-/*    if (can_go_up) { */
-/*       nm = *m; */
-/*       nm.elevator += 1; */
-/*       nm.parts[nm.elevator] |= nm.parts[v]; */
-/*       nm.parts[v] = 0; */
-/*       best = min(best, seek_r(&nm)); */
-/*    } */
-/*    if (can_go_down) { */
-/*       nm = *m; */
-/*       nm.elevator -= 1; */
-/*       nm.parts[nm.elevator] |= nm.parts[v]; */
-/*       nm.parts[v] = 0; */
-/*       best = min(best, seek_r(&nm)); */
-/*    } */
-/*    /\* nothing else to do with from here so *\/ */
-/*    return best; */
-/* } */
