@@ -10,10 +10,12 @@
 
 #define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
-#define TXBPQ_IMPLEMENTATION
-#include "txbpq.h"
 #define TXBQU_IMPLEMENTATION
 #include "txbqu.h"
+#define TXBABORT_IMPLEMENTATION
+#include "txbabort.h"
+#define TXBDL_IMPLEMENTATION
+#include "txbdl.h"
 
 /*
  * generate a maze of a particular size using a peculiar algorithm.
@@ -69,6 +71,28 @@ equal_maze_coordinate(const maze_coordinate *a, const maze_coordinate *b) {
       return false;
    }
    return a->row == b->row && a->col == b->col;
+}
+
+/*
+ * comparison of coordinates using the < =0 > conventions. closer to
+ * origin is less than, higher slope is greater than. assumes only
+ * positive coordinates.
+ */
+
+int
+compare_maze_coordinate(void *a, void *b) {
+   const maze_coordinate *ma = a;
+   const maze_coordinate *mb = b;
+   if (equal_maze_coordinate(ma, mb)) {
+      return 0;
+   }
+   int da = ma->row + ma->col;
+   int db = mb->row + mb->col;
+   int c = da - db;
+   if (c == 0) {
+      c = mb->row - ma->row;
+   }
+   return c;
 }
 
 /*
@@ -352,7 +376,7 @@ print_distances(const maze *m, int *distances) {
  */
 
 int
-shortest_path(const maze *m, const maze_coordinate from, const maze_coordinate to) {
+shortest_path_length(const maze *m, const maze_coordinate from, const maze_coordinate to) {
    int dist = -INT_MAX;
    int *distances = malloc((m->rows + 1) * (m->cols + 1) * sizeof(int));
    memset(distances, -1, (m->rows + 1) * (m->cols + 1) * sizeof(int));
@@ -393,6 +417,51 @@ shortest_path(const maze *m, const maze_coordinate from, const maze_coordinate t
    return dist;
 }
 
+dlcb *
+cells_within_path_length(
+   const maze *m,
+   const maze_coordinate from,
+   const maze_coordinate to,
+   int max_path_length
+) {
+   dlcb *dl = dl_create_by_key(false, compare_maze_coordinate, free);
+   int *distances = malloc((m->rows + 1) * (m->cols + 1) * sizeof(int));
+   memset(distances, -1, (m->rows + 1) * (m->cols + 1) * sizeof(int));
+   qucb *wq = qu_create();
+   qu_enqueue(wq, dup_maze_coordinate(&from));
+   distances[offset(m, &from)] = 0;
+
+   while (!qu_empty(wq)) {
+      maze_coordinate *c = qu_dequeue(wq);
+      qucb *adj = open_adjacent_maze_cells(m, c);
+      while (!qu_empty(adj)) {
+         maze_coordinate *a = qu_dequeue(adj);
+         /* printf("[%d,%d %c dist=%d]", a->row, a->col, glyph_at(m, a), distances[offset(m, a)]); */
+         if (distances[offset(m, a)] < 0) {
+            distances[offset(m, a)] = distances[offset(m, c)] + 1;
+            qu_enqueue(wq, a);
+         } else {
+            free(a);
+         }
+      }
+      /* printf("\n"); */
+      qu_destroy(adj);
+      if (distances[offset(m, c)] <= max_path_length) {
+         dl_insert(dl, 0, (void *)c);
+      } else {
+         free(c);
+      }
+   }
+   while (!qu_empty(wq)) {
+      qu_dequeue(wq);
+   }
+   qu_destroy(wq);
+   /* print_distances(m, distances); */
+   free(distances);
+
+   return dl;
+}
+
 /*
  * part one: how many steps to get from a particular point a to
  * a point b.
@@ -411,7 +480,7 @@ part_one(
       39, 31
    };
 
-   int dist = shortest_path(m, from, to);
+   int dist = shortest_path_length(m, from, to);
 
    printf("part one: %d\n", dist);
 
@@ -437,9 +506,12 @@ part_two(
       39, 31
    };
 
-   int dist = shortest_path(m, from, to);
+   dlcb *dl = cells_within_path_length(m, from, to, 50);
 
-   printf("part two: %d\n", 0);
+   printf("part two: %d\n", dl_count(dl));
+
+   dl_delete_all(dl);
+   dl_destroy(dl);
 
    return EXIT_SUCCESS;
 }

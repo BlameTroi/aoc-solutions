@@ -28,9 +28,15 @@ MU_TEST(test_test) {
    maze_coordinate from = {1, 1};
    maze_coordinate to = {4, 7};
 
-   int d = shortest_path(m, from, to);
+   int d = shortest_path_length(m, from, to);
 
    printf("%d\n", d);
+
+   dlcb *dl = cells_within_path_length(m, from, to, 5);
+   printf("\n%d\n", dl_count(dl));
+   dl_delete_all(dl);
+   dl_destroy(dl);
+
    destroy_maze(m);
 
    m = create_maze(50, 50, 1350);
@@ -43,12 +49,16 @@ MU_TEST(test_test) {
       39, 31
    };
 
-   d = shortest_path(m, from, to);
+   d = shortest_path_length(m, from, to);
    printf("\n%d\n", d);
 
-   d = shortest_path(m, to, from);
+   d = shortest_path_length(m, to, from);
    printf("\n%d\n", d);
 
+   dl = cells_within_path_length(m, from, to, 50);
+   printf("\n%d\n", dl_count(dl));
+   dl_delete_all(dl);
+   dl_destroy(dl);
    destroy_maze(m);
    mu_should(true);
    mu_shouldnt(false);

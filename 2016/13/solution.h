@@ -7,6 +7,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include "txbdl.h"
 
 /*
  * a maze ing control block.
@@ -84,10 +85,18 @@ print_maze(
 );
 
 int
-shortest_path(
+shortest_path_length(
    const maze *m,
    const maze_coordinate from,
    const maze_coordinate to
+);
+
+dlcb *
+cells_within_path_length(
+   const maze *m,
+   const maze_coordinate from,
+   const maze_coordinate to,
+   int max_path
 );
 
 int
