@@ -3,9 +3,11 @@
 /*  because you should always make an effort to test first! */
 
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "minunit.h"
 #include "solution.h"
+#include "txbdl.h"
 
 int num_args;
 char **the_args;
