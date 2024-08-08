@@ -1,0 +1,5 @@
+salt: abc
+key: x  index: 18 contains: 888 valid: no  quint: x
+key: 1  index: 39 contains: eee valid: yes quint: 816 contains eeeee
+key: 2  index: 92 contains: 999 valid: yes quint:  200 contains 99999
+key: 64 index: 22728 valid: yes

@@ -1,0 +1,3 @@
+./driver ahsbgdzn
+part one: 23890
+part two: 22696
