@@ -1,0 +1,31 @@
+sample:
+Disc #1 has 5 positions; at time=0, it is at position 4. 0->4
+Disc #2 has 2 positions; at time=0, it is at position 1. 0->1
+
+5 * 2 = 10
+
+0 fails
+5 works
+
+live:
+Disc #1 has 13 positions; at time=0, it is at position 10.   drop when at 12
+Disc #2 has 17 positions; at time=0, it is at position 15.   and when at 16 - 1
+Disc #3 has 19 positions; at time=0, it is at position 17.   and when at 18 - 2
+Disc #4 has 7 positions; at time=0, it is at position 1.     and when at 6  - 3
+Disc #5 has 5 positions; at time=0, it is at position 0.     and when at 4  - 4
+Disc #6 has 3 positions; at time=0, it is at position 1.     and when at 2  - 5
+
+notes:
+
+it's prime numbers and factors, but with the proviso that you
+need to consider the drop time. it takes one tick to traverse
+a level. must pass through 0.
+
+probably works best bottom to top.
+
+any particular arrangement will repeat by factors
+
+13 * 17 * 19 * 7 * 5 * 3 = 440895
+
+reference:
+learn the chinese remainder algorithm
