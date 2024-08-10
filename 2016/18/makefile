@@ -13,15 +13,14 @@
 
 # where to find test data:
 YEAR=2016
-MONTH=17
+MONTH=18
 DATADIR=$(HOME)/projects/aoc/datasets/$(YEAR)/$(MONTH)
 
 
 # compiler and linker:
 CC=clang
 # CFLAGS=-Wall -g3 -std=c99
-# CFLAGS=-fsanitize=address -Wall -g3 -O0 -std=c99
-CFLAGS=-Wall -O2 -std=c99
+CFLAGS=-fsanitize=address -Wall -g3 -O0 -std=c99
 # LDFLAGS=-lm
 LDFLAGS=
 

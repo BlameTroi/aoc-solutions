@@ -1,0 +1,23 @@
+.^^.^.^^^^
+
+the above starting row should produce
+the following map.
+
+. = safe tile
+^ = trap
+
+
+.^^.^.^^^^
+^^^...^..^
+^.^^.^.^^.
+..^^...^^^
+.^^^^.^^.^
+^^..^.^^..
+^^^^..^^^.
+^..^^^^.^^
+.^^^..^.^^
+^^.^^^..^^
+
+In ten rows, this larger example has 38 safe tiles.
+
+

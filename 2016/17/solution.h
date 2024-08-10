@@ -17,14 +17,17 @@
 
 #define GOOD_PASSCODE_1 "ihgpwlah"
 #define GOOD_PATH_1 "DDRRRD"
+#define GOOD_LONGEST_1 370
 
 #define GOOD_PASSCODE_2 "kglvqrro"
 #define GOOD_PATH_2 "DDUDRLRRUDRD"
+#define GOOD_LONGEST_2 492
 
 #define GOOD_PASSCODE_3 "ulqzkmiv"
 #define GOOD_PATH_3 "DRURDRUDDLLDLUURRDULRLDUUDDDRR"
+#define GOOD_LONGEST_3 830
 
-/* the assigned passcode for part 1 */
+/* the assigned passcode for parts one and two */
 
 #define LIVE_PASSCODE   "awrkjxxr"
 
@@ -47,6 +50,8 @@ struct maze_state {
    int col;
    const char *passcode;
    sbcb *moves;          /* moves to get to this state, UDLR */
+   char last_move;       /* can be extracted from moves, but meh */
+   int count_moves;      /* same observation */
    bool are_current;     /* are the available directions current? */
    bool up;              /* possible directions based on moves and salt */
    bool down;
@@ -67,14 +72,26 @@ at_end(
    const maze_state *m
 );
 
+void
+get_position(
+   maze_state *m,
+   int *row,
+   int *col
+);
+
 const char *
-get_current_path(
+get_move_history(
    const maze_state *m
 );
 
-bool
+maze_state *
 find_shortest_path(
-   maze_state *m
+   const maze_state *m
+);
+
+maze_state *
+find_longest_path(
+   const maze_state *m
 );
 
 maze_state *
@@ -112,7 +129,7 @@ can_move(
 );
 
 int
-possible_moves(
+number_of_possible_moves(
    maze_state *m
 );
 
