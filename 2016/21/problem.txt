@@ -96,3 +96,7 @@ Answer: bdgheacf  correct but i used someone else's python code, like
                   most everyone i'm stuck on reversing the rotate
 		  based on position. i've got an idea still to try
 		  so i've still got work to do here.
+
+                  i'm thinking my root problem is trying to undo via
+		  editing the commands. when i return to this i will
+		  switch away from that approach.

@@ -282,7 +282,8 @@ undoer(char *password, int n, char *cmd) {
          /* TODO none of these work reliably even for people with
           * the same passwords to hash or unhash. so they are all
           * somewhat input dependent. brute force may be the answer
-          * and i still have to try that. ... in the queue. */
+          * and i still have to try that. ... in the queue.
+          * this one is frustrating ... */
          /* rotate based on position of letter f
           * more thought needed for based on position */
          /* it appears that the resulting position of the letter
@@ -293,8 +294,16 @@ undoer(char *password, int n, char *cmd) {
           * [7, 7, 2, 6, 1, 5, 0, 4]
           *  1  1  5  2  7  3  0  4
           * {0: 7, 1: 0, 2: 4, 3: 1, 4: 5, 5: 2, 6: 6, 7: 3}
+          0 -> 1
+         1 -> 2
+         2 -> 3
+         3 -> 4
+         4 -> 6
+         5 -> 7
+         6 -> 0
+         7 -> 1
           */
-         int xlate_rot[] = { 7, 0, 4, 1, 5, 2, 6, 3 };
+         int xlate_rot[] = { 1, 2, 3, 4, 6, 7, 0, 1 };
          /*    { 0, 1 } */
          /*    { 1, 1 }, */
          /*    { 2, 5 }, */
@@ -312,7 +321,7 @@ undoer(char *password, int n, char *cmd) {
          /*       break; */
          /*    } */
          /* } */
-         snprintf(undo, strlen(cmd) * 3 - 1, "rotate right %d steps", left);
+         snprintf(undo, strlen(cmd) * 3 - 1, "rotate left %d steps", left);
       } else {
          /* input in error, but we'll let it fall through. */
       }

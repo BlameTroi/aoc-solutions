@@ -2,6 +2,7 @@
 
 /*  because you should always make an effort to test first! */
 
+#include <assert.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
@@ -264,6 +265,43 @@ MU_TEST(test_rotate) {
    free(password);
 }
 
+MU_TEST(test_indices) {
+   char *original = dup_string("01234567");
+   char *rotated = dup_string("01234567");
+   char *trial = dup_string("01234567");
+
+   int n = strlen(original);
+   int indices[] = { -1, -1, -1, -1, -1, -1, -1, -1 };
+
+   for (int based = 0; based < 8; based++) {
+      bool solved = false;
+      strcpy(rotated, original);
+      rotate_position(rotated, n, '0' + based);
+      printf("\nsolving %s based %c %s ", original, '0' + based, rotated);
+      int x = 0;
+      while (!solved && x < 8) {
+         strcpy(trial, rotated);
+         rotate_right(trial, n, x);
+         printf("%c", '0' + x);
+         if (equal_string(trial, original)) {
+            solved = true;
+            indices[based] = x;
+            printf("<");
+         }
+         x += 1;
+      }
+      if (!solved) {
+         printf("**error**");
+      }
+   }
+
+   printf("\nindex table:\n");
+   for (int based = 0; based < 8; based++) {
+      printf("%d -> %d\n", based, indices[based]);
+   }
+
+}
+
 /*
  * sample test shell.
  */
@@ -285,6 +323,7 @@ MU_TEST_SUITE(test_suite) {
    MU_RUN_TEST(test_sample);
    MU_RUN_TEST(test_undo);
    MU_RUN_TEST(test_rotate);
+   MU_RUN_TEST(test_indices);
 }
 
 /*
