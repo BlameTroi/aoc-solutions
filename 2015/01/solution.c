@@ -25,17 +25,13 @@ main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	this is a test
-	/* this is a test */
-	for (int i = 0 ; i ++; i ++;)
-		adf(3);
 	ifile = fopen(argv[1], "r");
 	if (!ifile) {
 		printf("could not open file: %s\n", argv[1]);
 		return EXIT_FAILURE;
 	}
 
-	int atBasement = 0;       /* which positin of input sends santa to basement for the first time */
+	int atBasement = 0;       /* which position of input sends santa to basement for the first time */
 	int floor = 0;            /* what is the current floor */
 	int parens = 0;           /* parens read/current paren position */
 	int ch = 0;               /* input character, could include newlines */
