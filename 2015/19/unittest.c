@@ -22,12 +22,12 @@ char base[INPUT_LEN_MAX];
  */
 
 char *test_input[] = {
-   "H => HO",
-   "H => OH",
-   "O => HH",
-   "",
-   "HOH",
-   NULL
+	"H => HO",
+	"H => OH",
+	"O => HH",
+	"",
+	"HOH",
+	NULL
 };
 
 /*
@@ -47,13 +47,15 @@ char *test_input[] = {
  */
 
 void
-test_setup(void) {
-   reset_state(0);
+test_setup(void)
+{
+	reset_state(0);
 }
 
 void
-test_teardown(void) {
-   reset_state(1);
+test_teardown(void)
+{
+	reset_state(1);
 }
 
 /*
@@ -61,71 +63,73 @@ test_teardown(void) {
  */
 
 void
-load_input(void) {
-   int i = 0;
-   while (test_input[i]) {
-      if (strlen(test_input[i]) == 0) {
-         i += 1;
-         continue;
-      }
-      const char **t = split_string(test_input[i], " \n");
-      if (t[2] && strcmp(t[2], "=>") == 0) {
-         parse_line(test_input[i]);
-      } else {
-         strncpy(base, test_input[i], sizeof(base));
-      }
-      free((void *)t[0]);
-      free(t);
-      i += 1;
-   }
+load_input(void)
+{
+	int i = 0;
+	while (test_input[i]) {
+		if (strlen(test_input[i]) == 0) {
+			i += 1;
+			continue;
+		}
+		const char **t = split_string(test_input[i], " \n");
+		if (t[2] && strcmp(t[2], "=>") == 0)
+			parse_line(test_input[i]);
+		else
+			strncpy(base, test_input[i], sizeof(base));
+		free((void *)t[0]);
+		free(t);
+		i += 1;
+	}
 }
 
 /*
  * sample test shell.
  */
 
-MU_TEST(test_parse) {
-   load_input();
-   mu_assert_int_eq(3, num_transforms);
-   mu_assert_string_eq("HOH", base);
+MU_TEST(test_parse)
+{
+	load_input();
+	mu_assert_int_eq(3, num_transforms);
+	mu_assert_string_eq("HOH", base);
 }
 
-MU_TEST(test_transforms) {
-   load_input();
+MU_TEST(test_transforms)
+{
+	load_input();
 
-   mu_assert_string_eq("H", transforms[0]->from);
-   mu_assert_string_eq("HO", transforms[0]->to);
-   mu_assert_string_eq("H", transforms[1]->from);
-   mu_assert_string_eq("OH", transforms[1]->to);
-   mu_assert_string_eq("O", transforms[2]->from);
-   mu_assert_string_eq("HH", transforms[2]->to);
+	mu_assert_string_eq("H", transforms[0]->from);
+	mu_assert_string_eq("HO", transforms[0]->to);
+	mu_assert_string_eq("H", transforms[1]->from);
+	mu_assert_string_eq("OH", transforms[1]->to);
+	mu_assert_string_eq("O", transforms[2]->from);
+	mu_assert_string_eq("HH", transforms[2]->to);
 
-   int pos = 0;
-   char *temp = NULL;
+	int pos = 0;
+	char *temp = NULL;
 
-   pos = 0;
-   temp = transformer(transforms[0], base, &pos);
-   mu_assert_string_eq("HOOH", temp);
-   mu_assert_int_eq(1, pos);
-   free(temp);
-   temp = transformer(transforms[0], base, &pos);
-   mu_assert_string_eq("HOHO", temp);
-   free(temp);
-   temp = transformer(transforms[0], base, &pos);
-   mu_assert_int_eq(0, (long)temp);
+	pos = 0;
+	temp = transformer(transforms[0], base, &pos);
+	mu_assert_string_eq("HOOH", temp);
+	mu_assert_int_eq(1, pos);
+	free(temp);
+	temp = transformer(transforms[0], base, &pos);
+	mu_assert_string_eq("HOHO", temp);
+	free(temp);
+	temp = transformer(transforms[0], base, &pos);
+	mu_assert_int_eq(0, (long)temp);
 
-   pos = 0;
-   temp = transformer(transforms[1], base, &pos);
-   mu_assert_string_eq("OHOH", temp);
-   free(temp);
-   temp =  transformer(transforms[1], base, &pos);
-   mu_assert_string_eq("HOOH", temp);
-   free(temp);
+	pos = 0;
+	temp = transformer(transforms[1], base, &pos);
+	mu_assert_string_eq("OHOH", temp);
+	free(temp);
+	temp =  transformer(transforms[1], base, &pos);
+	mu_assert_string_eq("HOOH", temp);
+	free(temp);
 
-   pos = 0;
-   temp = transformer(transforms[2], base, &pos);
-   mu_assert_string_eq("HHHH", temp);
-   free(temp);
+	pos = 0;
+	temp = transformer(transforms[2], base, &pos);
+	mu_assert_string_eq("HHHH", temp);
+	free(temp);
 }
 
 /*
@@ -134,16 +138,17 @@ MU_TEST(test_transforms) {
  * to create the suite in the editor, but for now it's just a matter
  * of doing it manually.
  */
-MU_TEST_SUITE(test_suite) {
+MU_TEST_SUITE(test_suite)
+{
 
-   /* always have a setup and teardown, even if they */
-   /* do nothing. */
+	/* always have a setup and teardown, even if they */
+	/* do nothing. */
 
-   MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
+	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
-   /* run your tests here */
-   MU_RUN_TEST(test_parse);
-   MU_RUN_TEST(test_transforms);
+	/* run your tests here */
+	MU_RUN_TEST(test_parse);
+	MU_RUN_TEST(test_transforms);
 
 
 }
@@ -154,8 +159,9 @@ MU_TEST_SUITE(test_suite) {
  */
 
 int
-main(int argc, char *argv[]) {
-   MU_RUN_SUITE(test_suite);
-   MU_REPORT();
-   return MU_EXIT_CODE;
+main(int argc, char *argv[])
+{
+	MU_RUN_SUITE(test_suite);
+	MU_REPORT();
+	return MU_EXIT_CODE;
 }

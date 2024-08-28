@@ -42,32 +42,33 @@
 
 int
 part_one(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   /* get enough storage to load the whole file, is about 27K */
-   struct stat istat;
-   if (fstat(ifile->_file, &istat)) {
-      printf("error trying to stat file\n");
-      return EXIT_FAILURE;
-   }
+	/* get enough storage to load the whole file, is about 27K */
+	struct stat istat;
+	if (fstat(ifile->_file, &istat)) {
+		printf("error trying to stat file\n");
+		return EXIT_FAILURE;
+	}
 
-   char *buf = calloc(istat.st_size + 32, 1);
-   assert(buf);
-   fread(buf, istat.st_size, 1, ifile);
+	char *buf = calloc(istat.st_size + 32, 1);
+	assert(buf);
+	fread(buf, istat.st_size, 1, ifile);
 
-   int sum = sumNumbers(buf, NULL);
-   printf("part one: %d\n", sum);
+	int sum = sumNumbers(buf, NULL);
+	printf("part one: %d\n", sum);
 
-   free(buf);
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	free(buf);
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -78,34 +79,35 @@ part_one(
 
 int
 part_two(
-   const char *fname
-) {
-   FILE *ifile;
+        const char *fname
+)
+{
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   /* get enough storage to load the whole file, is about 27K */
-   struct stat istat;
-   if (fstat(ifile->_file, &istat)) {
-      printf("error trying to stat file\n");
-      return EXIT_FAILURE;
-   }
+	/* get enough storage to load the whole file, is about 27K */
+	struct stat istat;
+	if (fstat(ifile->_file, &istat)) {
+		printf("error trying to stat file\n");
+		return EXIT_FAILURE;
+	}
 
-   char *buf = calloc(istat.st_size + 32, 1);
-   assert(buf);
-   fread(buf, istat.st_size, 1, ifile);
+	char *buf = calloc(istat.st_size + 32, 1);
+	assert(buf);
+	fread(buf, istat.st_size, 1, ifile);
 
-   int scrubbed = scrubObjects(buf, "red");
-   int sum = sumNumbers(buf, NULL);
-   printf("part two: %d\n(scrubbed %d)\n", sum, scrubbed);
+	int scrubbed = scrubObjects(buf, "red");
+	int sum = sumNumbers(buf, NULL);
+	printf("part two: %d\n(scrubbed %d)\n", sum, scrubbed);
 
-   free(buf);
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	free(buf);
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -118,10 +120,11 @@ isValid(char c);
 
 bool
 isValid(
-   char c
-) {
-   return isdigit(c) ||
-          c == '-';
+        char c
+)
+{
+	return isdigit(c) ||
+	       c == '-';
 }
 
 /*
@@ -138,87 +141,83 @@ isValid(
 
 int
 scrubObjects(
-   char *s,
-   char *a
-) {
-   /* quick guards */
-   if (s == NULL || *s == '\0' | strlen(s) <= strlen(a)+3) {
-      return 0;
-   }
+        char *s,
+        char *a
+)
+{
+	/* quick guards */
+	if (s == NULL || *s == '\0' | strlen(s) <= strlen(a)+3)
+		return 0;
 
-   int scrubbed = 0;
+	int scrubbed = 0;
 
-   /* construct proper string for search ':"a"' */
-   char *valAttribute = calloc(3 + strlen(a) + 1, 1);
-   valAttribute[0] = ':';
-   valAttribute[1] = '"';
-   int i = 0;
-   while (a[i]) {
-      valAttribute[i+2] = a[i];
-      i += 1;
-   }
-   valAttribute[i+2] = '"';
+	/* construct proper string for search ':"a"' */
+	char *valAttribute = calloc(3 + strlen(a) + 1, 1);
+	valAttribute[0] = ':';
+	valAttribute[1] = '"';
+	int i = 0;
+	while (a[i]) {
+		valAttribute[i+2] = a[i];
+		i += 1;
+	}
+	valAttribute[i+2] = '"';
 
-   /* prime the pump and start searching. as we are looking for the
-      attribute without whitespace, there's no need to worry about the
-      attribute value being a string in an array or as a key within an
-      object. */
+	/* prime the pump and start searching. as we are looking for the
+	   attribute without whitespace, there's no need to worry about the
+	   attribute value being a string in an array or as a key within an
+	   object. */
 
-   char *pos = strstr(s, valAttribute);
-   while (pos) {
+	char *pos = strstr(s, valAttribute);
+	while (pos) {
 
-      /* find the start of the current object, {, assuming that there
-         are no braces in strings. */
+		/* find the start of the current object, {, assuming that there
+		   are no braces in strings. */
 
-      int nesting = 0;
-      char *bwd = pos - 1;
-      while (bwd >= s) {
-         if (*bwd == '{' && nesting == 0) {
-            break;
-         }
-         if (*bwd == '}') {
-            nesting += 1;
-         } else if (*bwd == '{') {
-            nesting -= 1;
-         }
-         bwd -= 1;
-      }
-      assert(bwd >= s);
+		int nesting = 0;
+		char *bwd = pos - 1;
+		while (bwd >= s) {
+			if (*bwd == '{' && nesting == 0)
+				break;
+			if (*bwd == '}')
+				nesting += 1;
+			else if (*bwd == '{')
+				nesting -= 1;
+			bwd -= 1;
+		}
+		assert(bwd >= s);
 
-      /* find the end of the current object, }, again assuming that
-         there are no braces in strings. yes, i should have keep track
-         of depth so i could have strted the scan at pos, but meh. */
+		/* find the end of the current object, }, again assuming that
+		   there are no braces in strings. yes, i should have keep track
+		   of depth so i could have strted the scan at pos, but meh. */
 
-      nesting = 0;
-      char *fwd = bwd + 1;
-      while (*fwd) {
-         if (*fwd == '}' && nesting == 0) {
-            break;
-         }
-         if (*fwd == '{') {
-            nesting += 1;
-         } else if (*fwd == '}') {
-            nesting -= 1;
-         }
-         fwd += 1;
-      }
-      assert(*fwd == '}');
+		nesting = 0;
+		char *fwd = bwd + 1;
+		while (*fwd) {
+			if (*fwd == '}' && nesting == 0)
+				break;
+			if (*fwd == '{')
+				nesting += 1;
+			else if (*fwd == '}')
+				nesting -= 1;
+			fwd += 1;
+		}
+		assert(*fwd == '}');
 
-      /* remove the object by overwriting it with blanks */
-      fwd += 1;
-      memset(bwd, ' ', fwd - bwd);
-      scrubbed += 1;
+		/* remove the object by overwriting it with blanks */
+		fwd += 1;
+		memset(bwd, ' ', fwd - bwd);
+		scrubbed += 1;
 
-      /* and keep searching */
-      pos = strstr(fwd, valAttribute);
-   }
+		/* and keep searching */
+		pos = strstr(fwd, valAttribute);
+	}
 
-   /* in a general solution i'd use a real parser and also do things
-      like look for whitespace, but the aoc data is helpful here so
-      we're done. */
+	/* in a general solution i'd use a real parser and also do things
+	   like look for whitespace, but the aoc data is helpful here so
+	   we're done. */
 
-   free(valAttribute);
-   return scrubbed;
+	free(valAttribute);
+	return scrubbed;
 }
 
 
@@ -229,28 +228,28 @@ scrubObjects(
 
 int
 sumNumbers(
-   char *from,
-   char *to
-) {
-   int sum = 0;
+        char *from,
+        char *to
+)
+{
+	int sum = 0;
 
-   const char *beg = from;
-   char *end = from;
+	const char *beg = from;
+	char *end = from;
 
-   if (to == NULL) {
-      to = from + strlen(from);
-   }
+	if (to == NULL)
+		to = from + strlen(from);
 
-   while (*from && from <= to) {
-      if (!isValid(*from)) {
-         from += 1;
-         continue;
-      }
-      beg = from;
-      int cur = strtol(beg, &end, 10);
-      sum += cur;
-      from = end;
-   }
+	while (*from && from <= to) {
+		if (!isValid(*from)) {
+			from += 1;
+			continue;
+		}
+		beg = from;
+		int cur = strtol(beg, &end, 10);
+		sum += cur;
+		from = end;
+	}
 
-   return sum;
+	return sum;
 }

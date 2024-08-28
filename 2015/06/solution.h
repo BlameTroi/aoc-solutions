@@ -25,37 +25,37 @@
 
 /* coordinate block */
 typedef struct coord_t {
-   int x;
-   int y;
+	int x;
+	int y;
 } coord_t;
 
 
 /* use a grid of booleans */
 typedef struct lights_t {
-   long lit;                            /* number of lights lit */
-   long intensity;                      /* total intensity if in analog mode */
-   void (*fnon)(struct lights_t *, coord_t);   /* pointers to proper on/off/toggle */
-   void (*fnoff)(struct lights_t *, coord_t);  /* implementations for the grid mode */
-   void (*fntog)(struct lights_t *, coord_t);
-   int bulb[1000][1000];                /* the lights in the grid */
-   int digital;                         /* digital (part_one) or analog (part_two) */
+	long lit;                            /* number of lights lit */
+	long intensity;                      /* total intensity if in analog mode */
+	void (*fnon)(struct lights_t *, coord_t);   /* pointers to proper on/off/toggle */
+	void (*fnoff)(struct lights_t *, coord_t);  /* implementations for the grid mode */
+	void (*fntog)(struct lights_t *, coord_t);
+	int bulb[1000][1000];                /* the lights in the grid */
+	int digital;                         /* digital (part_one) or analog (part_two) */
 } lights_t;
 
 
 /* commands symbolically */
 typedef enum cmd_e {
-   e_invalid,
-   e_on,
-   e_off,
-   e_toggle
+	e_invalid,
+	e_on,
+	e_off,
+	e_toggle
 } cmd_e;
 
 
 /* command block */
 typedef struct cmd_t {
-   cmd_e cmd;
-   coord_t p0;
-   coord_t p1;
+	cmd_e cmd;
+	coord_t p0;
+	coord_t p1;
 } cmd_t;
 
 
@@ -65,22 +65,22 @@ typedef struct cmd_t {
 /* let there be lights */
 lights_t *
 initGrid(
-   int                /* 1 = use digital interface, 0 = use analog interface */
+        int                /* 1 = use digital interface, 0 = use analog interface */
 );
 
 
 /* entropy wins */
 void
 freeGrid(
-   lights_t *          /* light grid */
+        lights_t *          /* light grid */
 );
 
 
 /* parse command line into our command structure */
 cmd_t
 parseCmd(
-   const char *,       /* command line text */
-   int                 /* length to consume, makes buffered reads easier */
+        const char *,       /* command line text */
+        int                 /* length to consume, makes buffered reads easier */
 );
 
 
@@ -89,7 +89,7 @@ parseCmd(
  */
 long
 numberOn(
-   lights_t *          /* light grid */
+        lights_t *          /* light grid */
 );
 
 
@@ -98,7 +98,7 @@ numberOn(
  */
 long
 totalIntensity(
-   lights_t *          /* light grid */
+        lights_t *          /* light grid */
 );
 
 /*
@@ -108,38 +108,38 @@ totalIntensity(
  */
 void
 turnOnD(
-   lights_t *,           /* light grid */
-   coord_t               /* where */
+        lights_t *,           /* light grid */
+        coord_t               /* where */
 );
 
 void
 turnOffD(
-   lights_t *,          /* light grid */
-   coord_t              /* where */
+        lights_t *,          /* light grid */
+        coord_t              /* where */
 );
 
 void
 toggleD(
-   lights_t *,           /* light grid */
-   coord_t               /* where */
+        lights_t *,           /* light grid */
+        coord_t               /* where */
 );
 
 void
 turnOnA(
-   lights_t *,           /* light grid */
-   coord_t               /* where */
+        lights_t *,           /* light grid */
+        coord_t               /* where */
 );
 
 void
 turnOffA(
-   lights_t *,          /* light grid */
-   coord_t              /* where */
+        lights_t *,          /* light grid */
+        coord_t              /* where */
 );
 
 void
 toggleA(
-   lights_t *,           /* light grid */
-   coord_t               /* where */
+        lights_t *,           /* light grid */
+        coord_t               /* where */
 );
 
 /*
@@ -147,14 +147,14 @@ toggleA(
  */
 bool
 isLit(
-   lights_t *,            /* light grid */
-   coord_t                /* where */
+        lights_t *,            /* light grid */
+        coord_t                /* where */
 );
 
 int
 intensity(
-   lights_t *,        /* light grid */
-   coord_t            /* where */
+        lights_t *,        /* light grid */
+        coord_t            /* where */
 );
 
 
@@ -163,8 +163,8 @@ intensity(
  */
 void
 doCmd(
-   lights_t *,            /* light grid */
-   cmd_t                  /* parsed command line */
+        lights_t *,            /* light grid */
+        cmd_t                  /* parsed command line */
 );
 
 
@@ -181,12 +181,12 @@ doCmd(
 
 int
 part_one(
-   const char *
+        const char *
 );
 
 int
 part_two(
-   const char *
+        const char *
 );
 
 /* end solution.h */

@@ -19,17 +19,17 @@
  */
 
 void
-reset_state(int rel) {
-   if (rel) {
-      for (int i = 0; i < RACERS_MAX; i++) {
-         if (racers[i].name) {
-            free(racers[i].name);
-         }
-      }
-   }
-   memset(racers, 0, sizeof(racers));
-   timer = 0;
-   num_racers = 0;
+reset_state(int rel)
+{
+	if (rel) {
+		for (int i = 0; i < RACERS_MAX; i++) {
+			if (racers[i].name)
+				free(racers[i].name);
+		}
+	}
+	memset(racers, 0, sizeof(racers));
+	timer = 0;
+	num_racers = 0;
 }
 
 
@@ -46,25 +46,26 @@ reset_state(int rel) {
 
 void
 parse_line(
-   const char *iline
-) {
-   assert(num_racers < RACERS_MAX);
-   char *s = strdup(iline);
-   const char **tokens = split_string(s, " .,\n");
+        const char *iline
+)
+{
+	assert(num_racers < RACERS_MAX);
+	char *s = strdup(iline);
+	const char **tokens = split_string(s, " .,\n");
 
-   race_trace_t *r = &racers[num_racers];
-   r->name = strdup(tokens[1]);
-   r->speed = strtol(tokens[4], NULL, 10);
-   r->burst = strtol(tokens[7], NULL, 10);
-   r->rest = strtol(tokens[14], NULL, 10);
+	race_trace_t *r = &racers[num_racers];
+	r->name = strdup(tokens[1]);
+	r->speed = strtol(tokens[4], NULL, 10);
+	r->burst = strtol(tokens[7], NULL, 10);
+	r->rest = strtol(tokens[14], NULL, 10);
 
-   /* start off flying */
-   r->flying = 1;
-   r->ticks = r->burst;
+	/* start off flying */
+	r->flying = 1;
+	r->ticks = r->burst;
 
-   num_racers += 1;
-   free((void *)tokens[0]);
-   free(tokens);
+	num_racers += 1;
+	free((void *)tokens[0]);
+	free(tokens);
 }
 
 /*
@@ -72,29 +73,28 @@ parse_line(
  */
 
 void
-iterate(void) {
+iterate(void)
+{
 
-   for (int i = 0; i < num_racers; i++) {
-      race_trace_t *r = &racers[i];
-      /* flying or resting? */
-      if (r->flying) {
-         r->distance += r->speed;
-      }
-      /* decrement state timer */
-      r->ticks -= 1;
-      /* state change? */
-      if (r->ticks == 0) {
-         /* get next state's duration */
-         if (r->flying) {
-            r->ticks = r->rest;
-         } else {
-            r->ticks = r->burst;
-         }
-         r->flying = !r->flying;
-      }
-   }
+	for (int i = 0; i < num_racers; i++) {
+		race_trace_t *r = &racers[i];
+		/* flying or resting? */
+		if (r->flying)
+			r->distance += r->speed;
+		/* decrement state timer */
+		r->ticks -= 1;
+		/* state change? */
+		if (r->ticks == 0) {
+			/* get next state's duration */
+			if (r->flying)
+				r->ticks = r->rest;
+			else
+				r->ticks = r->burst;
+			r->flying = !r->flying;
+		}
+	}
 
-   timer += 1;
+	timer += 1;
 }
 
 
@@ -105,43 +105,41 @@ iterate(void) {
  */
 
 int
-run_race_distance(int ticks) {
-   int max_distance = 0;
+run_race_distance(int ticks)
+{
+	int max_distance = 0;
 
-   for (int i = 0; i < ticks; i++) {
-      iterate();
-   }
+	for (int i = 0; i < ticks; i++)
+		iterate();
 
-   for (int i = 0; i < num_racers; i++) {
-      max_distance = max(max_distance, racers[i].distance);
-   }
+	for (int i = 0; i < num_racers; i++)
+		max_distance = max(max_distance, racers[i].distance);
 
-   return max_distance;
+	return max_distance;
 }
 
 
 int
-run_race_score(int ticks) {
-   int max_score = 0;
+run_race_score(int ticks)
+{
+	int max_score = 0;
 
-   for (int i = 0; i < ticks; i++) {
-      iterate();
-      int leader = 0;
-      for (int j = 0; j < num_racers; j++) {
-         if (racers[j].distance > racers[leader].distance) {
-            leader = j;
-         }
-      }
-      racers[leader].score += 1;
-   }
+	for (int i = 0; i < ticks; i++) {
+		iterate();
+		int leader = 0;
+		for (int j = 0; j < num_racers; j++) {
+			if (racers[j].distance > racers[leader].distance)
+				leader = j;
+		}
+		racers[leader].score += 1;
+	}
 
-   for (int i = 0; i < num_racers; i++) {
-      max_score = max(max_score, racers[i].score);
-   }
+	for (int i = 0; i < num_racers; i++)
+		max_score = max(max_score, racers[i].score);
 
-   /* off by one */
+	/* off by one */
 
-   return max_score;
+	return max_score;
 }
 
 /*
@@ -151,31 +149,31 @@ run_race_score(int ticks) {
 
 int
 part_one(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   char iline[INPUT_LEN_MAX];
+	char iline[INPUT_LEN_MAX];
 
-   reset_state(0);
+	reset_state(0);
 
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      parse_line(iline);
-   }
+	while (fgets(iline, INPUT_LEN_MAX - 1, ifile))
+		parse_line(iline);
 
-   int duration = (num_racers == 2) ? 1000 : 2503;
+	int duration = (num_racers == 2) ? 1000 : 2503;
 
-   printf("part one: %d\n", run_race_distance(duration));
+	printf("part one: %d\n", run_race_distance(duration));
 
-   reset_state(1);
+	reset_state(1);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -186,29 +184,29 @@ part_one(
 
 int
 part_two(
-   const char *fname
-) {
-   FILE *ifile;
+        const char *fname
+)
+{
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
-   char iline[INPUT_LEN_MAX];
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
+	char iline[INPUT_LEN_MAX];
 
-   reset_state(0);
+	reset_state(0);
 
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      parse_line(iline);
-   }
+	while (fgets(iline, INPUT_LEN_MAX - 1, ifile))
+		parse_line(iline);
 
-   int duration = (num_racers == 2) ? 1000 : 2503;
+	int duration = (num_racers == 2) ? 1000 : 2503;
 
-   printf("part two: %d\n", run_race_score(duration));
+	printf("part two: %d\n", run_race_score(duration));
 
-   reset_state(1);
+	reset_state(1);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }

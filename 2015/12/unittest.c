@@ -19,11 +19,13 @@
  */
 
 void
-test_setup(void) {
+test_setup(void)
+{
 }
 
 void
-test_teardown(void) {
+test_teardown(void)
+{
 }
 
 
@@ -62,141 +64,155 @@ with the value "red". Do this only for objects ({...}), not arrays
 */
 
 
-MU_TEST(test_single_object) {
-   char *s;
+MU_TEST(test_single_object)
+{
+	char *s;
 
-   /* simple object: no red attribute */
-   s = "{\"a\":1,\"b\":2,\"c\":\"blue\",\"d\":3}";
-   s = strdup(s);
-   mu_assert_int_eq(0, scrubObjects(s, "red"));
-   mu_assert_int_eq(6, sumNumbers(s, NULL));
-   free(s);
+	/* simple object: no red attribute */
+	s = "{\"a\":1,\"b\":2,\"c\":\"blue\",\"d\":3}";
+	s = strdup(s);
+	mu_assert_int_eq(0, scrubObjects(s, "red"));
+	mu_assert_int_eq(6, sumNumbers(s, NULL));
+	free(s);
 
-   /* simple object: red attribute */
-   s = "{\"a\":1,\"b\":2,\"c\":\"red\",\"d\":3}";
-   s = strdup(s);
-   mu_assert_int_eq(1, scrubObjects(s, "red"));
-   mu_assert_int_eq(0, sumNumbers(s, NULL));
-   free(s);
+	/* simple object: red attribute */
+	s = "{\"a\":1,\"b\":2,\"c\":\"red\",\"d\":3}";
+	s = strdup(s);
+	mu_assert_int_eq(1, scrubObjects(s, "red"));
+	mu_assert_int_eq(0, sumNumbers(s, NULL));
+	free(s);
 }
 
-MU_TEST(test_array_object_red_blue) {
-   char *s = "[1,{\"c\":\"red\",\"b\":2},3]";
-   s = strdup(s);
-   mu_assert_int_eq(1, scrubObjects(s, "red"));
-   mu_assert_int_eq(4, sumNumbers(s, NULL));
-   free(s);
+MU_TEST(test_array_object_red_blue)
+{
+	char *s = "[1,{\"c\":\"red\",\"b\":2},3]";
+	s = strdup(s);
+	mu_assert_int_eq(1, scrubObjects(s, "red"));
+	mu_assert_int_eq(4, sumNumbers(s, NULL));
+	free(s);
 
-   s = "[1,{\"c\":\"blue\",\"b\":2},3]";
-   s = strdup(s);
-   mu_assert_int_eq(0, scrubObjects(s, "red"));
-   mu_assert_int_eq(6, sumNumbers(s, NULL));
-   free(s);
-}
-
-
-MU_TEST(test_array_red_string) {
-   char *s = "[1,\"red\",5]";
-   s = strdup(s);
-   mu_assert_int_eq(0, scrubObjects(s, "red"));
-   mu_assert_int_eq(6, sumNumbers(s, NULL)); /* freestanding red in object doesn't matter */
+	s = "[1,{\"c\":\"blue\",\"b\":2},3]";
+	s = strdup(s);
+	mu_assert_int_eq(0, scrubObjects(s, "red"));
+	mu_assert_int_eq(6, sumNumbers(s, NULL));
+	free(s);
 }
 
 
+MU_TEST(test_array_red_string)
+{
+	char *s = "[1,\"red\",5]";
+	s = strdup(s);
+	mu_assert_int_eq(0, scrubObjects(s, "red"));
+	mu_assert_int_eq(6, sumNumbers(s, NULL)); /* freestanding red in object doesn't matter */
+}
 
-MU_TEST_SUITE(test_suite_structured) {
-   MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
-   MU_RUN_TEST(test_single_object);
-   MU_RUN_TEST(test_array_object_red_blue);
-   MU_RUN_TEST(test_array_red_string);
+
+MU_TEST_SUITE(test_suite_structured)
+{
+	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
+
+	MU_RUN_TEST(test_single_object);
+	MU_RUN_TEST(test_array_object_red_blue);
+	MU_RUN_TEST(test_array_red_string);
 
 }
 
 /* these are the unstructured stream tests */
 #define FULL 1
 
-MU_TEST(test_1) {
-   char *s = "1";
-   mu_assert_int_eq(1, sumNumbers(s, NULL));
+MU_TEST(test_1)
+{
+	char *s = "1";
+	mu_assert_int_eq(1, sumNumbers(s, NULL));
 }
 
-MU_TEST(test_2) {
-   char *s = "2";
-   mu_assert_int_eq(2, sumNumbers(s, NULL));
+MU_TEST(test_2)
+{
+	char *s = "2";
+	mu_assert_int_eq(2, sumNumbers(s, NULL));
 }
-MU_TEST(test_empty) {
-   char *s = "";
-   mu_assert_int_eq(0, sumNumbers(s, NULL));
-}
-
-MU_TEST(test_no_digits) {
-   char *s = "[]{}";
-   mu_assert_int_eq(0, sumNumbers(s, NULL));
+MU_TEST(test_empty)
+{
+	char *s = "";
+	mu_assert_int_eq(0, sumNumbers(s, NULL));
 }
 
-MU_TEST(test_single_digit) {
-   char *s = "9";
-   mu_assert_int_eq(9, sumNumbers(s, NULL));
+MU_TEST(test_no_digits)
+{
+	char *s = "[]{}";
+	mu_assert_int_eq(0, sumNumbers(s, NULL));
 }
 
-MU_TEST(test_embedded) {
-   char *s = "[1,2,3]";
-   mu_assert_int_eq(6, sumNumbers(s, NULL));
-   s = "{\"a\":2,\"b\":4}";
-   mu_assert_int_eq(6, sumNumbers(s, NULL));
+MU_TEST(test_single_digit)
+{
+	char *s = "9";
+	mu_assert_int_eq(9, sumNumbers(s, NULL));
 }
 
-MU_TEST(test_negative) {
-   char *s = "[1,-1]";
-   mu_assert_int_eq(0, sumNumbers(s, NULL));
+MU_TEST(test_embedded)
+{
+	char *s = "[1,2,3]";
+	mu_assert_int_eq(6, sumNumbers(s, NULL));
+	s = "{\"a\":2,\"b\":4}";
+	mu_assert_int_eq(6, sumNumbers(s, NULL));
 }
 
-MU_TEST(test_two_negative) {
-   char *s = "-2,-3";
-   mu_assert_int_eq(-5, sumNumbers(s, NULL));
+MU_TEST(test_negative)
+{
+	char *s = "[1,-1]";
+	mu_assert_int_eq(0, sumNumbers(s, NULL));
 }
 
-
-MU_TEST(test_substring) {
-   char *s = "b=7+3*(-4);";
-   char *t = s;
-   while (*t != '(') {
-      t += 1;
-   }
-   mu_assert_int_eq(10, sumNumbers(s, t));
-   mu_assert_int_eq(6, sumNumbers(s, NULL));
+MU_TEST(test_two_negative)
+{
+	char *s = "-2,-3";
+	mu_assert_int_eq(-5, sumNumbers(s, NULL));
 }
 
 
-MU_TEST_SUITE(test_suite_unstructured) {
+MU_TEST(test_substring)
+{
+	char *s = "b=7+3*(-4);";
+	char *t = s;
+	while (*t != '(')
+		t += 1;
+	mu_assert_int_eq(10, sumNumbers(s, t));
+	mu_assert_int_eq(6, sumNumbers(s, NULL));
+}
 
-   /* always have a setup and teardown, even if they */
-   /* do nothing. */
 
-   MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
+MU_TEST_SUITE(test_suite_unstructured)
+{
 
-   /* is it plugged in? */
+	/* always have a setup and teardown, even if they */
+	/* do nothing. */
 
-   MU_RUN_TEST(test_1);
-   MU_RUN_TEST(test_2);
-   MU_RUN_TEST(test_empty);
-   MU_RUN_TEST(test_no_digits);
-   MU_RUN_TEST(test_single_digit);
-   MU_RUN_TEST(test_embedded);
-   MU_RUN_TEST(test_negative);
-   MU_RUN_TEST(test_two_negative);
-   MU_RUN_TEST(test_substring);
+	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
+
+	/* is it plugged in? */
+
+	MU_RUN_TEST(test_1);
+	MU_RUN_TEST(test_2);
+	MU_RUN_TEST(test_empty);
+	MU_RUN_TEST(test_no_digits);
+	MU_RUN_TEST(test_single_digit);
+	MU_RUN_TEST(test_embedded);
+	MU_RUN_TEST(test_negative);
+	MU_RUN_TEST(test_two_negative);
+	MU_RUN_TEST(test_substring);
 
 }
 
 
 int
-main(int argc, char *argv[]) {
-   if (FULL) {
-      MU_RUN_SUITE(test_suite_unstructured);
-   };
-   MU_RUN_SUITE(test_suite_structured);
-   MU_REPORT();
-   return MU_EXIT_CODE;
+main(int argc, char *argv[])
+{
+	if (FULL)
+		MU_RUN_SUITE(test_suite_unstructured);
+	;
+	MU_RUN_SUITE(test_suite_structured);
+	MU_REPORT();
+	return MU_EXIT_CODE;
 }

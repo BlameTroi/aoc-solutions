@@ -31,7 +31,7 @@
  */
 
 typedef struct page_t {
-   char p[DIMENSION_MAX][DIMENSION_MAX];
+	char p[DIMENSION_MAX][DIMENSION_MAX];
 } page_t;
 
 
@@ -68,8 +68,8 @@ reset_state(int rel);
 
 bool
 stuck_p(
-   int row,
-   int col
+        int row,
+        int col
 );
 
 
@@ -80,8 +80,8 @@ stuck_p(
 
 bool
 on_p(
-   int row,
-   int col
+        int row,
+        int col
 );
 
 
@@ -91,8 +91,8 @@ on_p(
 
 int
 neighbors_on(
-   int row,
-   int col
+        int row,
+        int col
 );
 
 
@@ -104,8 +104,8 @@ neighbors_on(
 
 bool
 decide(
-   int row,
-   int col
+        int row,
+        int col
 );
 
 
@@ -116,14 +116,14 @@ decide(
 
 void
 turn_on(
-   int row,
-   int col
+        int row,
+        int col
 );
 
 void
 turn_off(
-   int row,
-   int col
+        int row,
+        int col
 );
 
 
@@ -158,13 +158,13 @@ flip_pages(void);
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

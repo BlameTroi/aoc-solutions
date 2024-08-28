@@ -37,32 +37,32 @@
  */
 
 gear_t weapons[] = {
-   { "Weapon", "Dagger", 8, 4, 0 },
-   { "Weapon", "Shortsword", 10, 5, 0 },
-   { "Weapon", "Warhammer", 25, 6, 0 },
-   { "Weapon", "Longsword", 40, 7, 0 },
-   { "Weapon", "Greataxe", 74, 8, 0 },
+	{ "Weapon", "Dagger", 8, 4, 0 },
+	{ "Weapon", "Shortsword", 10, 5, 0 },
+	{ "Weapon", "Warhammer", 25, 6, 0 },
+	{ "Weapon", "Longsword", 40, 7, 0 },
+	{ "Weapon", "Greataxe", 74, 8, 0 },
 };
 const int weapons_max = sizeof(weapons) / sizeof(gear_t);
 
 gear_t armors[] = {
-   { "Armor", "NULL", 0, 0 },
-   { "Armor", "Leather", 13, 0, 1 },
-   { "Armor", "Chainmail", 31, 0, 2 },
-   { "Armor", "Splintmail", 53, 0, 3 },
-   { "Armor", "Bandedmail", 75, 0, 4 },
-   { "Armor", "Platemail", 102, 0, 5 },
+	{ "Armor", "NULL", 0, 0 },
+	{ "Armor", "Leather", 13, 0, 1 },
+	{ "Armor", "Chainmail", 31, 0, 2 },
+	{ "Armor", "Splintmail", 53, 0, 3 },
+	{ "Armor", "Bandedmail", 75, 0, 4 },
+	{ "Armor", "Platemail", 102, 0, 5 },
 };
 const int armors_max = sizeof(armors) / sizeof(gear_t);
 
 gear_t rings[] = {
-   { "Ring", "NULL", 0, 0, 0 },
-   { "Ring", "Damage +1", 25, 1, 0 },
-   { "Ring", "Damage +2", 50, 2, 0 },
-   { "Ring", "Damage +3", 100, 3, 0 },
-   { "Ring", "Defense +1", 20, 0, 1 },
-   { "Ring", "Defense +2", 40, 0, 2 },
-   { "Ring", "Defense +3", 80, 0, 3 },
+	{ "Ring", "NULL", 0, 0, 0 },
+	{ "Ring", "Damage +1", 25, 1, 0 },
+	{ "Ring", "Damage +2", 50, 2, 0 },
+	{ "Ring", "Damage +3", 100, 3, 0 },
+	{ "Ring", "Defense +1", 20, 0, 1 },
+	{ "Ring", "Defense +2", 40, 0, 2 },
+	{ "Ring", "Defense +3", 80, 0, 3 },
 };
 const int rings_max = sizeof(rings) / sizeof(gear_t);
 
@@ -83,26 +83,27 @@ set_t gear_sets[sets_max];
 
 void
 update_set_stats(
-   set_t *p
-) {
-   assert(p);
-   p->total_cost = p->weapon->cost;
-   p->total_damage = p->weapon->damage;
-   p->total_armor = 0;
-   if (p->armor != NULL) {
-      p->total_cost += p->armor->cost;
-      p->total_armor += p->armor->armor;
-   }
-   if (p->ring_one != NULL) {
-      p->total_cost += p->ring_one->cost;
-      p->total_armor += p->ring_one->armor;
-      p->total_damage += p->ring_one->damage;
-   }
-   if (p->ring_two != NULL) {
-      p->total_cost += p->ring_two->cost;
-      p->total_armor += p->ring_two->armor;
-      p->total_damage += p->ring_two->damage;
-   }
+        set_t *p
+)
+{
+	assert(p);
+	p->total_cost = p->weapon->cost;
+	p->total_damage = p->weapon->damage;
+	p->total_armor = 0;
+	if (p->armor != NULL) {
+		p->total_cost += p->armor->cost;
+		p->total_armor += p->armor->armor;
+	}
+	if (p->ring_one != NULL) {
+		p->total_cost += p->ring_one->cost;
+		p->total_armor += p->ring_one->armor;
+		p->total_damage += p->ring_one->damage;
+	}
+	if (p->ring_two != NULL) {
+		p->total_cost += p->ring_two->cost;
+		p->total_armor += p->ring_two->armor;
+		p->total_damage += p->ring_two->damage;
+	}
 }
 
 /*
@@ -115,50 +116,50 @@ update_set_stats(
 
 void
 generate_gear_sets(
-   void
-) {
+        void
+)
+{
 
-   int curr_set = 0;
+	int curr_set = 0;
 
-   int weapon_ix = 0;
-   int armor_ix = 0;
-   int ring_one_ix = 0;
-   int ring_two_ix = 0;
+	int weapon_ix = 0;
+	int armor_ix = 0;
+	int ring_one_ix = 0;
+	int ring_two_ix = 0;
 
-   bool not_done = true;
+	bool not_done = true;
 
-   while (not_done) {
+	while (not_done) {
 
-      /* skip duplicate rings when building gear sets */
-      if (ring_one_ix != ring_two_ix ||       /* rings must not be the same */
-            ring_one_ix == 0) {               /* unless they are the null ring */
-         set_t *p = &gear_sets[curr_set];
-         p->weapon = &weapons[weapon_ix];
-         p->armor = &armors[armor_ix];
-         p->ring_one = &rings[ring_one_ix];
-         p->ring_two = &rings[ring_two_ix];
-         update_set_stats(p);
-         curr_set += 1;
-      }
+		/* skip duplicate rings when building gear sets */
+		if (ring_one_ix != ring_two_ix ||       /* rings must not be the same */
+		    ring_one_ix == 0) {               /* unless they are the null ring */
+			set_t *p = &gear_sets[curr_set];
+			p->weapon = &weapons[weapon_ix];
+			p->armor = &armors[armor_ix];
+			p->ring_one = &rings[ring_one_ix];
+			p->ring_two = &rings[ring_two_ix];
+			update_set_stats(p);
+			curr_set += 1;
+		}
 
-      /* odometerish increment */
-      ring_two_ix += 1;
-      if (ring_two_ix == rings_max) {
-         ring_two_ix = 0;
-         ring_one_ix += 1;
-         if (ring_one_ix == rings_max) {
-            ring_one_ix = 0;
-            armor_ix += 1;
-            if (armor_ix == armors_max) {
-               armor_ix = 0;
-               weapon_ix += 1;
-               if (weapon_ix == weapons_max) {
-                  not_done = false;
-               }
-            }
-         }
-      }
-   }
+		/* odometerish increment */
+		ring_two_ix += 1;
+		if (ring_two_ix == rings_max) {
+			ring_two_ix = 0;
+			ring_one_ix += 1;
+			if (ring_one_ix == rings_max) {
+				ring_one_ix = 0;
+				armor_ix += 1;
+				if (armor_ix == armors_max) {
+					armor_ix = 0;
+					weapon_ix += 1;
+					if (weapon_ix == weapons_max)
+						not_done = false;
+				}
+			}
+		}
+	}
 }
 
 /*
@@ -169,15 +170,16 @@ generate_gear_sets(
 
 void
 update_mob_stats(
-   mob_t *mob
-) {
-   mob->curr_hp = mob->hp;
-   mob->damage = mob->equipped->weapon->damage +
-                 (mob->equipped->ring_one ? mob->equipped->ring_one->damage : 0) +
-                 (mob->equipped->ring_two ? mob->equipped->ring_two->damage : 0);
-   mob->armor = (mob->equipped->armor ? mob->equipped->armor->armor : 0) +
-                (mob->equipped->ring_one ? mob->equipped->ring_one->armor : 0) +
-                (mob->equipped->ring_two ? mob->equipped->ring_two->armor : 0);
+        mob_t *mob
+)
+{
+	mob->curr_hp = mob->hp;
+	mob->damage = mob->equipped->weapon->damage +
+	              (mob->equipped->ring_one ? mob->equipped->ring_one->damage : 0) +
+	              (mob->equipped->ring_two ? mob->equipped->ring_two->damage : 0);
+	mob->armor = (mob->equipped->armor ? mob->equipped->armor->armor : 0) +
+	             (mob->equipped->ring_one ? mob->equipped->ring_one->armor : 0) +
+	             (mob->equipped->ring_two ? mob->equipped->ring_two->armor : 0);
 }
 
 /*
@@ -188,31 +190,32 @@ update_mob_stats(
 
 void
 strip_mob(
-   mob_t *mob
-) {
-   assert(mob);
-   assert(mob->equipped->weapon &&
-          strcmp(mob->tag, "Boss") != 0);
-   if (mob->equipped->weapon) {
-      mob->damage -= mob->equipped->weapon->damage;
-      mob->equipped->weapon = NULL;
-   }
-   if (mob->armor) {
-      mob->armor -= mob->equipped->armor->armor;
-      mob->equipped->armor = NULL;
-   }
-   if (mob->equipped->ring_one) {
-      mob->armor -= mob->equipped->ring_one->armor;
-      mob->damage -= mob->equipped->ring_one->damage;
-      mob->equipped->ring_one = NULL;
-   }
-   if (mob->equipped->ring_two) {
-      mob->armor -= mob->equipped->ring_two->armor;
-      mob->damage -= mob->equipped->ring_two->damage;
-      mob->equipped->ring_two = NULL;
-   }
-   assert(mob->armor == 0);
-   assert(mob->damage == 0);
+        mob_t *mob
+)
+{
+	assert(mob);
+	assert(mob->equipped->weapon &&
+	       strcmp(mob->tag, "Boss") != 0);
+	if (mob->equipped->weapon) {
+		mob->damage -= mob->equipped->weapon->damage;
+		mob->equipped->weapon = NULL;
+	}
+	if (mob->armor) {
+		mob->armor -= mob->equipped->armor->armor;
+		mob->equipped->armor = NULL;
+	}
+	if (mob->equipped->ring_one) {
+		mob->armor -= mob->equipped->ring_one->armor;
+		mob->damage -= mob->equipped->ring_one->damage;
+		mob->equipped->ring_one = NULL;
+	}
+	if (mob->equipped->ring_two) {
+		mob->armor -= mob->equipped->ring_two->armor;
+		mob->damage -= mob->equipped->ring_two->damage;
+		mob->equipped->ring_two = NULL;
+	}
+	assert(mob->armor == 0);
+	assert(mob->damage == 0);
 }
 
 /*
@@ -233,57 +236,57 @@ strip_mob(
 
 mob_t *
 read_mob(
-   char *tag,
-   FILE *from
-) {
-   /* per `man 3 rewind`, while rewind does not return an error,
-    * we can check to see if one occured this way. */
-   errno = 0;
-   rewind(from);
-   assert(errno == 0);
+        char *tag,
+        FILE *from
+)
+{
+	/* per `man 3 rewind`, while rewind does not return an error,
+	 * we can check to see if one occured this way. */
+	errno = 0;
+	rewind(from);
+	assert(errno == 0);
 
-   /* position to requested mob tag. */
-   char iline[INPUT_LEN_MAX];
-   const char **tokens = NULL;
-   bool found = false;
+	/* position to requested mob tag. */
+	char iline[INPUT_LEN_MAX];
+	const char **tokens = NULL;
+	bool found = false;
 
-   while (!found && fgets(iline, INPUT_LEN_MAX - 1, from)) {
-      tokens = split_string(iline, ": ");
-      if (tokens[1] && strcmp(tokens[1], tag) == 0) {
-         found = true;
-      }
-   }
+	while (!found && fgets(iline, INPUT_LEN_MAX - 1, from)) {
+		tokens = split_string(iline, ": ");
+		if (tokens[1] && strcmp(tokens[1], tag) == 0)
+			found = true;
+	}
 
-   assert(found);
+	assert(found);
 
-   /* read in values until eof or unknown tag found */
-   mob_t *mob = malloc(sizeof(mob_t));
-   memset(mob, 0, sizeof(mob_t));
-   mob->tag = tag;
+	/* read in values until eof or unknown tag found */
+	mob_t *mob = malloc(sizeof(mob_t));
+	memset(mob, 0, sizeof(mob_t));
+	mob->tag = tag;
 
-   while (fgets(iline, INPUT_LEN_MAX - 1, from)) {
-      tokens = split_string(iline, ": ");
-      if (tokens[1] &&
-            strcmp(tokens[1], "Hit") == 0 &&
-            strcmp(tokens[2], "Points") == 0) {
-         mob->hp = atol(tokens[3]);
-         mob->curr_hp = mob->hp;
-         continue;
-      }
-      if (tokens[1] &&
-            strcmp(tokens[1], "Damage") == 0) {
-         mob->damage = atol(tokens[2]);
-         continue;
-      }
-      if (tokens[1] &&
-            strcmp(tokens[1], "Armor") == 0) {
-         mob->armor = atol(tokens[2]);
-         continue;
-      }
-      break;
-   }
+	while (fgets(iline, INPUT_LEN_MAX - 1, from)) {
+		tokens = split_string(iline, ": ");
+		if (tokens[1] &&
+		    strcmp(tokens[1], "Hit") == 0 &&
+		    strcmp(tokens[2], "Points") == 0) {
+			mob->hp = atol(tokens[3]);
+			mob->curr_hp = mob->hp;
+			continue;
+		}
+		if (tokens[1] &&
+		    strcmp(tokens[1], "Damage") == 0) {
+			mob->damage = atol(tokens[2]);
+			continue;
+		}
+		if (tokens[1] &&
+		    strcmp(tokens[1], "Armor") == 0) {
+			mob->armor = atol(tokens[2]);
+			continue;
+		}
+		break;
+	}
 
-   return mob;
+	return mob;
 
 }
 
@@ -294,9 +297,10 @@ read_mob(
 
 void
 ready_mob(
-   mob_t *mob
-) {
-   mob->curr_hp = mob->hp;
+        mob_t *mob
+)
+{
+	mob->curr_hp = mob->hp;
 }
 
 /*
@@ -307,10 +311,11 @@ ready_mob(
 
 int
 hit(
-   mob_t *aggressor,
-   mob_t *defender
-) {
-   return max(1, aggressor->damage - defender->armor);
+        mob_t *aggressor,
+        mob_t *defender
+)
+{
+	return max(1, aggressor->damage - defender->armor);
 }
 
 /*
@@ -321,59 +326,55 @@ hit(
 
 mob_t *
 battle(
-   mob_t *player,
-   mob_t *boss,
-   bool print
-) {
-   assert(player &&
-          player->equipped->weapon &&
-          player->hp > 0);
-   ready_mob(player);
+        mob_t *player,
+        mob_t *boss,
+        bool print
+)
+{
+	assert(player &&
+	       player->equipped->weapon &&
+	       player->hp > 0);
+	ready_mob(player);
 
-   assert(boss &&
-          boss->hp > 0);
-   ready_mob(boss);
+	assert(boss &&
+	       boss->hp > 0);
+	ready_mob(boss);
 
-   if (print) {
-      printf("\nare you not entertained?\n");
-   }
+	if (print)
+		printf("\nare you not entertained?\n");
 
-   /* continue until someone dies */
+	/* continue until someone dies */
 
-   player->equipped->total_hits = 0;
+	player->equipped->total_hits = 0;
 
-   while (true) {
+	while (true) {
 
-      /* player hits boss */
-      int player_hit = hit(player, boss);
-      player->equipped->total_hits += 1;
-      boss->curr_hp -= player_hit;
-      if (print) {
-         printf("player hits boss for %d leaving boss with %d hp\n", player_hit, boss->curr_hp);
-      }
-      if (boss->curr_hp < 1) {
-         if (print) {
-            printf("boss is dead\n");
-         }
-         return player;
-      }
+		/* player hits boss */
+		int player_hit = hit(player, boss);
+		player->equipped->total_hits += 1;
+		boss->curr_hp -= player_hit;
+		if (print)
+			printf("player hits boss for %d leaving boss with %d hp\n", player_hit, boss->curr_hp);
+		if (boss->curr_hp < 1) {
+			if (print)
+				printf("boss is dead\n");
+			return player;
+		}
 
-      /* boss hits player */
-      int boss_hit = hit(boss, player);
-      player->curr_hp -= boss_hit;
-      player->equipped->final_hp = player->curr_hp;
-      if (print) {
-         printf("boss hits player for %d leaving player with %d hp\n", boss_hit, player->curr_hp);
-      }
-      if (player->curr_hp < 1) {
-         if (print) {
-            printf("player is dead\n");
-         }
-         return boss;
-      }
+		/* boss hits player */
+		int boss_hit = hit(boss, player);
+		player->curr_hp -= boss_hit;
+		player->equipped->final_hp = player->curr_hp;
+		if (print)
+			printf("boss hits player for %d leaving player with %d hp\n", boss_hit, player->curr_hp);
+		if (player->curr_hp < 1) {
+			if (print)
+				printf("player is dead\n");
+			return boss;
+		}
 
-      /* and the beat goes on ... */
-   }
+		/* and the beat goes on ... */
+	}
 }
 
 /*
@@ -383,10 +384,11 @@ battle(
 
 void
 reset_all(
-   void
-) {
-   memset(gear_sets, 0, sizeof(gear_sets));
-   generate_gear_sets();
+        void
+)
+{
+	memset(gear_sets, 0, sizeof(gear_sets));
+	generate_gear_sets();
 }
 
 /*
@@ -396,59 +398,60 @@ reset_all(
 
 int
 part_one(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   reset_all();
+	reset_all();
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
-   mob_t *player = read_mob("Player", ifile);
-   mob_t *boss = read_mob("Boss", ifile);
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
+	mob_t *player = read_mob("Player", ifile);
+	mob_t *boss = read_mob("Boss", ifile);
 
-   int player_wins = 0;
-   int player_min_cost = 99999;
-   int player_max_cost = -1;
-   int player_min_hp = 99999;
-   int player_max_hp = -1;
-   int boss_wins = 0;
-   int boss_min_hp = 99999;
-   int boss_max_hp = -1;
-   int boss_win_player_min_cost = 99999;
-   int boss_win_player_max_cost = -1;
-   for (int i = 0; i < sets_max; i++) {
-      if (gear_sets[i].weapon) { /* unused slots will have no weapon */
-         player->equipped = &gear_sets[i];
-         update_mob_stats(player);
-         ready_mob(player);
-         ready_mob(boss);
-         /* printf("*** battle %d ***\n", i); */
-         mob_t *victor = battle(player, boss, false);
-         if (victor == player) {
-            player_wins += 1;
-            player_max_cost = max(player_max_cost, player->equipped->total_cost);
-            player_min_cost = min(player_min_cost, player->equipped->total_cost);
-            player_min_hp = min(player_min_hp, player->curr_hp);
-            player_max_hp = max(player_max_hp, player->curr_hp);
-         } else {
-            boss_wins += 1;
-            boss_min_hp = min(boss_min_hp, boss->curr_hp);
-            boss_max_hp = max(boss_max_hp, boss->curr_hp);
-            boss_win_player_min_cost = min(boss_win_player_min_cost, player->equipped->total_cost);
-            boss_win_player_max_cost = max(boss_win_player_max_cost, player->equipped->total_cost);
-         }
-         strip_mob(player);
-      }
-   }
+	int player_wins = 0;
+	int player_min_cost = 99999;
+	int player_max_cost = -1;
+	int player_min_hp = 99999;
+	int player_max_hp = -1;
+	int boss_wins = 0;
+	int boss_min_hp = 99999;
+	int boss_max_hp = -1;
+	int boss_win_player_min_cost = 99999;
+	int boss_win_player_max_cost = -1;
+	for (int i = 0; i < sets_max; i++) {
+		if (gear_sets[i].weapon) { /* unused slots will have no weapon */
+			player->equipped = &gear_sets[i];
+			update_mob_stats(player);
+			ready_mob(player);
+			ready_mob(boss);
+			/* printf("*** battle %d ***\n", i); */
+			mob_t *victor = battle(player, boss, false);
+			if (victor == player) {
+				player_wins += 1;
+				player_max_cost = max(player_max_cost, player->equipped->total_cost);
+				player_min_cost = min(player_min_cost, player->equipped->total_cost);
+				player_min_hp = min(player_min_hp, player->curr_hp);
+				player_max_hp = max(player_max_hp, player->curr_hp);
+			} else {
+				boss_wins += 1;
+				boss_min_hp = min(boss_min_hp, boss->curr_hp);
+				boss_max_hp = max(boss_max_hp, boss->curr_hp);
+				boss_win_player_min_cost = min(boss_win_player_min_cost, player->equipped->total_cost);
+				boss_win_player_max_cost = max(boss_win_player_max_cost, player->equipped->total_cost);
+			}
+			strip_mob(player);
+		}
+	}
 
-   printf("part one: %d\n", player_min_cost);
-   printf("part two: %d\n", boss_win_player_max_cost);
+	printf("part one: %d\n", player_min_cost);
+	printf("part two: %d\n", boss_win_player_max_cost);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -460,8 +463,9 @@ part_one(
 
 int
 part_two(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

@@ -70,20 +70,20 @@
  */
 
 typedef struct coord_t {
-   int x;                     /* current coordinates */
-   int y;
+	int x;                     /* current coordinates */
+	int y;
 } coord_t;
 
 
 /* grid is a block of storage to hold gift counters. */
 
 typedef struct grid_t {
-   size_t atLeastOnce;       /* how many cells visited */
-   int minx;                 /* range of cells visited */
-   int maxx;
-   int miny;
-   int maxy;
-   uint16_t cell[2*X_ADJ+1][2*Y_ADJ+1];
+	size_t atLeastOnce;       /* how many cells visited */
+	int minx;                 /* range of cells visited */
+	int maxx;
+	int miny;
+	int maxy;
+	uint16_t cell[2*X_ADJ+1][2*Y_ADJ+1];
 } grid_t;
 
 grid_t *grid;
@@ -93,14 +93,15 @@ grid_t *grid;
  * create the grid, initialized appropriately.
  */
 void
-makeGrid(void) {
-   grid = calloc(sizeof(grid_t), 1);
-   assert(grid);
-   grid->atLeastOnce = 0;
-   grid->minx = X_MAX+1;
-   grid->maxx = -X_MAX-1;
-   grid->miny = Y_MAX+1;
-   grid->maxy = -Y_MAX-1;
+makeGrid(void)
+{
+	grid = calloc(sizeof(grid_t), 1);
+	assert(grid);
+	grid->atLeastOnce = 0;
+	grid->minx = X_MAX+1;
+	grid->maxx = -X_MAX-1;
+	grid->miny = Y_MAX+1;
+	grid->maxy = -Y_MAX-1;
 }
 
 
@@ -108,9 +109,10 @@ makeGrid(void) {
  * release the grid.
  */
 void
-freeGrid(void) {
-   free(grid);
-   grid = NULL;
+freeGrid(void)
+{
+	free(grid);
+	grid = NULL;
 }
 
 
@@ -119,13 +121,14 @@ freeGrid(void) {
  */
 void
 adjustCoords(
-   int *x,
-   int *y
-) {
-   assert(X_MIN < *x && *x < X_MAX);
-   assert(Y_MIN < *y && *y < Y_MAX);
-   *x = *x + X_ADJ;
-   *y = *y + Y_ADJ;
+        int *x,
+        int *y
+)
+{
+	assert(X_MIN < *x && *x < X_MAX);
+	assert(Y_MIN < *y && *y < Y_MAX);
+	*x = *x + X_ADJ;
+	*y = *y + Y_ADJ;
 }
 
 
@@ -134,11 +137,12 @@ adjustCoords(
  */
 uint16_t
 getGrid(
-   int x,
-   int y
-) {
-   adjustCoords(&x, &y);
-   return grid->cell[x][y];
+        int x,
+        int y
+)
+{
+	adjustCoords(&x, &y);
+	return grid->cell[x][y];
 }
 
 
@@ -148,22 +152,22 @@ getGrid(
  */
 void
 incGrid(
-   int x,
-   int y
-) {
-   /* min and max are pre-adjustment */
-   grid->minx = min(grid->minx, x);
-   grid->maxx = max(grid->maxx, x);
-   grid->miny = min(grid->miny, y);
-   grid->maxy = max(grid->maxy, y);
-   /* map coordinates to 0 based */
-   adjustCoords(&x, &y);
-   /* count first visits */
-   if (grid->cell[x][y] == 0) {
-      grid->atLeastOnce += 1;
-   }
-   /* count gifts left */
-   grid->cell[x][y] += 1;
+        int x,
+        int y
+)
+{
+	/* min and max are pre-adjustment */
+	grid->minx = min(grid->minx, x);
+	grid->maxx = max(grid->maxx, x);
+	grid->miny = min(grid->miny, y);
+	grid->maxy = max(grid->maxy, y);
+	/* map coordinates to 0 based */
+	adjustCoords(&x, &y);
+	/* count first visits */
+	if (grid->cell[x][y] == 0)
+		grid->atLeastOnce += 1;
+	/* count gifts left */
+	grid->cell[x][y] += 1;
 }
 
 
@@ -172,65 +176,66 @@ incGrid(
  */
 int
 main(
-   int argc,
-   const char **argv
-) {
-   FILE *ifile;
-   coord_t santa = {0, 0};
-   coord_t robot = {0, 0};
-   size_t moves = 0;     /* how many? */
-   int ch;               /* an input command */
+        int argc,
+        const char **argv
+)
+{
+	FILE *ifile;
+	coord_t santa = {0, 0};
+	coord_t robot = {0, 0};
+	size_t moves = 0;     /* how many? */
+	int ch;               /* an input command */
 
-   makeGrid();
+	makeGrid();
 
-   if (argc < 2) {
-      printf("usage: %s path-to-input\n", argv[0]);
-      return EXIT_FAILURE;
-   }
+	if (argc < 2) {
+		printf("usage: %s path-to-input\n", argv[0]);
+		return EXIT_FAILURE;
+	}
 
-   ifile = fopen(argv[1], "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", argv[1]);
-      return EXIT_FAILURE;
-   }
+	ifile = fopen(argv[1], "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", argv[1]);
+		return EXIT_FAILURE;
+	}
 
-   /* prime the pump. we start at 0,0 and have left */
-   /* a gift there. */
-   incGrid(santa.x, santa.y);
-   incGrid(robot.x, robot.y);
-   coord_t *who = &santa;
-   while (EOF != (ch = fgetc(ifile))) {
-      switch (ch) {
-      case N:
-         who->y += 1;
-         break;
-      case E:
-         who->x += 1;
-         break;
-      case S:
-         who->y -= 1;
-         break;
-      case W:
-         who->x -= 1;
-         break;
-      default:
-         printf("illegal input %c %x, ignored!\n", ch, ch);
-         continue;
-      }
-      moves += 1;
-      incGrid(who->x, who->y);
-      /* comment out the following update of who for */
-      /* part one result. */
-      who = who == &santa ? &robot : &santa;
-   }
+	/* prime the pump. we start at 0,0 and have left */
+	/* a gift there. */
+	incGrid(santa.x, santa.y);
+	incGrid(robot.x, robot.y);
+	coord_t *who = &santa;
+	while (EOF != (ch = fgetc(ifile))) {
+		switch (ch) {
+		case N:
+			who->y += 1;
+			break;
+		case E:
+			who->x += 1;
+			break;
+		case S:
+			who->y -= 1;
+			break;
+		case W:
+			who->x -= 1;
+			break;
+		default:
+			printf("illegal input %c %x, ignored!\n", ch, ch);
+			continue;
+		}
+		moves += 1;
+		incGrid(who->x, who->y);
+		/* comment out the following update of who for */
+		/* part one result. */
+		who = who == &santa ? &robot : &santa;
+	}
 
-   printf("moves: %zu\n", moves);
-   printf("x range: %d, %d\n", grid->minx, grid->maxx);
-   printf("y range: %d, %d\n", grid->miny, grid->maxy);
-   printf("cells visited at least once: %zu\n", grid->atLeastOnce);
+	printf("moves: %zu\n", moves);
+	printf("x range: %d, %d\n", grid->minx, grid->maxx);
+	printf("y range: %d, %d\n", grid->miny, grid->maxy);
+	printf("cells visited at least once: %zu\n", grid->atLeastOnce);
 
-   fclose(ifile);
-   freeGrid();
+	fclose(ifile);
+	freeGrid();
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

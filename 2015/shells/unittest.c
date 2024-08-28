@@ -20,11 +20,13 @@
  */
 
 void
-test_setup(void) {
+test_setup(void)
+{
 }
 
 void
-test_teardown(void) {
+test_teardown(void)
+{
 }
 
 
@@ -32,11 +34,12 @@ test_teardown(void) {
  * sample test shell.
  */
 
-MU_TEST(test_created) {
-   int want=4;
-   int got=7;
-   mu_assert_int_eq(want, got);
-   mu_assert(1, "just do something");
+MU_TEST(test_created)
+{
+	int want=4;
+	int got=7;
+	mu_assert_int_eq(want, got);
+	mu_assert(1, "just do something");
 }
 
 
@@ -46,14 +49,15 @@ MU_TEST(test_created) {
  * to create the suite in the editor, but for now it's just a matter
  * of doing it manually.
  */
-MU_TEST_SUITE(test_suite) {
+MU_TEST_SUITE(test_suite)
+{
 
-   /* always have a setup and teardown, even if they */
-   /* do nothing. */
+	/* always have a setup and teardown, even if they */
+	/* do nothing. */
 
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
-   /* run your tests here */
+	/* run your tests here */
 	MU_RUN_TEST(test_created);
 
 }
@@ -64,7 +68,8 @@ MU_TEST_SUITE(test_suite) {
  */
 
 int
-main(int argc, char *argv[]) {
+main(int argc, char *argv[])
+{
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;

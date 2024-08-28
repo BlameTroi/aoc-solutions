@@ -22,21 +22,21 @@ extern int max_packages;
 
 unsigned long
 try_permutation(
-   const char *,
-   int
+        const char *,
+        int
 );
 
 unsigned long
 try_combination(
-   const char *,
-   int
+        const char *,
+        int
 );
 
 bool
 load_data(
-   const char *,
-   bool,
-   int);
+        const char *,
+        bool,
+        int);
 
 void
 zero_data(void);
@@ -54,13 +54,13 @@ zero_data(void);
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

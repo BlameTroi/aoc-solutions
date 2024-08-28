@@ -41,7 +41,7 @@
 
 int
 compiledStringLength(
-   const char *
+        const char *
 );
 
 
@@ -50,7 +50,7 @@ compiledStringLength(
 
 int
 sourceStringLength(
-   const char *
+        const char *
 );
 
 
@@ -61,7 +61,7 @@ sourceStringLength(
 
 char *
 encodedString(
-   const char *
+        const char *
 );
 
 
@@ -70,7 +70,7 @@ encodedString(
 
 int
 encodedStringLength(
-   const char *
+        const char *
 );
 
 
@@ -88,13 +88,13 @@ encodedStringLength(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 /* end solution.h */

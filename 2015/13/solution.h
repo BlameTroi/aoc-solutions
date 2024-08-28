@@ -44,17 +44,17 @@ int node_delta[NODES_MAX][NODES_MAX];
 
 void
 reset_state(
-   int rel /* free any node_names? */
+        int rel /* free any node_names? */
 );
 
 void
 parse_line(
-   const char *iline /* a line of input */
+        const char *iline /* a line of input */
 );
 
 int
 node_index(
-   const char *s /* name in buffer */
+        const char *s /* name in buffer */
 );
 
 /*
@@ -70,13 +70,13 @@ node_index(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

@@ -15,8 +15,8 @@
 
 int
 scrubObjects(
-   char *s,             /* string buffer */
-   char *a              /* attribute that triggers scrub */
+        char *s,             /* string buffer */
+        char *a              /* attribute that triggers scrub */
 );
 
 /* s is a valid json string which may contain whitespace (as after
@@ -25,8 +25,8 @@ scrubObjects(
 
 int
 sumNumbers(
-   char *from,    /* start in string buffer */
-   char *to       /* end in string buffer, or NULL end of string */
+        char *from,    /* start in string buffer */
+        char *to       /* end in string buffer, or NULL end of string */
 );
 
 
@@ -44,13 +44,13 @@ sumNumbers(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

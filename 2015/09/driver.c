@@ -12,24 +12,25 @@
 
 int
 main(
-   int argc,
-   const char ** argv
-) {
+        int argc,
+        const char **argv
+)
+{
 
-   if (argc < 2) {
-      printf("usage: %s path-to-input\n", argv[0]);
-      return EXIT_FAILURE;
-   }
+	if (argc < 2) {
+		printf("usage: %s path-to-input\n", argv[0]);
+		return EXIT_FAILURE;
+	}
 
-   if (part_one(argv[1]) != EXIT_SUCCESS) {
-      printf("error in part one\n");
-      return EXIT_FAILURE;
-   }
+	if (part_one(argv[1]) != EXIT_SUCCESS) {
+		printf("error in part one\n");
+		return EXIT_FAILURE;
+	}
 
-   if (part_two(argv[1]) != EXIT_SUCCESS) {
-      printf("error in part two\n");
-      return EXIT_FAILURE;
-   }
+	if (part_two(argv[1]) != EXIT_SUCCESS) {
+		printf("error in part two\n");
+		return EXIT_FAILURE;
+	}
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

@@ -15,49 +15,48 @@
 
 int
 compiledStringLength(
-   const char *c
-) {
-   int i = 0;
+        const char *c
+)
+{
+	int i = 0;
 
-   /* skip the opening quote */
-   if (*c == '"') {
-      c++;
-   }
+	/* skip the opening quote */
+	if (*c == '"')
+		c++;
 
-   /* count each character up until ending \0, then trim that last
-      quote off the count as well. */
-   while (*c) {
-      i += 1;
-      switch (*c) {
-      case '\\':
-         c += 1;
-         switch (*c) {
-         case '\\':
-         case '\"':
-            c += 1;
-            break;
-         case 'x':
-            c += 3;
-            break;
-         default:
-            assert(NULL);
-         }
-         break;
-      default:
-         c += 1;
-      }
-   }
+	/* count each character up until ending \0, then trim that last
+	   quote off the count as well. */
+	while (*c) {
+		i += 1;
+		switch (*c) {
+		case '\\':
+			c += 1;
+			switch (*c) {
+			case '\\':
+			case '\"':
+				c += 1;
+				break;
+			case 'x':
+				c += 3;
+				break;
+			default:
+				assert(NULL);
+			}
+			break;
+		default:
+			c += 1;
+		}
+	}
 
-   /* is the prior character a quote or newline? */
-   if (*(c-1) == '\n') {
-      i -= 1;
-      c -= 1;
-   }
-   if (*(c-1) == '"') {
-      i -= 1;
-   }
+	/* is the prior character a quote or newline? */
+	if (*(c-1) == '\n') {
+		i -= 1;
+		c -= 1;
+	}
+	if (*(c-1) == '"')
+		i -= 1;
 
-   return i;
+	return i;
 }
 
 
@@ -65,21 +64,22 @@ compiledStringLength(
 
 int
 sourceStringLength(
-   const char *c
-) {
-   int i = 0;
-   while (*c) {
-      switch (*c) {
-      case ' ':
-      case '\n':
-         break;
-      default:
-         i += 1;
-      }
-      c += 1;
-   }
+        const char *c
+)
+{
+	int i = 0;
+	while (*c) {
+		switch (*c) {
+		case ' ':
+		case '\n':
+			break;
+		default:
+			i += 1;
+		}
+		c += 1;
+	}
 
-   return i;
+	return i;
 }
 
 
@@ -103,90 +103,90 @@ sourceStringLength(
 
 char *
 encodedString(
-   const char *c
-) {
+        const char *c
+)
+{
 
-   /* pathological case first */
+	/* pathological case first */
 
-   if (strlen(c) == 0) {
-      return strdup("\"\"");
-   }
+	if (strlen(c) == 0)
+		return strdup("\"\"");
 
-   /* copy and encode character by character. our buffer size guess
-      should be big enough, but if not the buffer will be reallocated
-      as needed */
+	/* copy and encode character by character. our buffer size guess
+	   should be big enough, but if not the buffer will be reallocated
+	   as needed */
 
-   int buflen = max(strlen(c)*4 + 2 + 1, 32);
-   char *buf = malloc(buflen);
-   int bufidx = 0;
+	int buflen = max(strlen(c)*4 + 2 + 1, 32);
+	char *buf = malloc(buflen);
+	int bufidx = 0;
 
-   /* opening quote */
+	/* opening quote */
 
-   buf[bufidx] = '"';
-   bufidx += 1;
+	buf[bufidx] = '"';
+	bufidx += 1;
 
-   /* for each character */
+	/* for each character */
 
-   while (*c) {
+	while (*c) {
 
-      /* resize if we need to, the 8 byte pad is more than
-         enough for a trailing escaped character (2 bytes)
-         and the closing quote and \0 (another 2 bytes). */
+		/* resize if we need to, the 8 byte pad is more than
+		   enough for a trailing escaped character (2 bytes)
+		   and the closing quote and \0 (another 2 bytes). */
 
-      if (buflen - bufidx < 8) {
-         buf = realloc(buf, buflen * 2);
-         buflen *= 2;
-      }
+		if (buflen - bufidx < 8) {
+			buf = realloc(buf, buflen * 2);
+			buflen *= 2;
+		}
 
-      /* ignore whitespace, in our input that's only newlines */
+		/* ignore whitespace, in our input that's only newlines */
 
-      if (*c == '\n') {
-         c += 1;
-         continue;
-      }
+		if (*c == '\n') {
+			c += 1;
+			continue;
+		}
 
-      /* handle the easy stuff first */
+		/* handle the easy stuff first */
 
-      if (*c != '\\' && *c != '"') {
-         buf[bufidx] = *c;
-         bufidx += 1;
-         c += 1;
-         continue;
-      }
+		if (*c != '\\' && *c != '"') {
+			buf[bufidx] = *c;
+			bufidx += 1;
+			c += 1;
+			continue;
+		}
 
-      /* escape quotes and slashes */
+		/* escape quotes and slashes */
 
-      /* a backslash becomes two backslashes */
+		/* a backslash becomes two backslashes */
 
-      if (*c == '\\') {
-         buf[bufidx] = *c;
-         buf[bufidx+1] = *c;
-         bufidx += 2;
-         c += 1;
-         continue;
-      }
+		if (*c == '\\') {
+			buf[bufidx] = *c;
+			buf[bufidx+1] = *c;
+			bufidx += 2;
+			c += 1;
+			continue;
+		}
 
-      /* a quote becomes a backslash quote */
+		/* a quote becomes a backslash quote */
 
-      if (*c == '"') {
-         buf[bufidx] = '\\';
-         buf[bufidx+1] = *c;
-         bufidx += 2;
-         c += 1;
-         continue;
-      }
+		if (*c == '"') {
+			buf[bufidx] = '\\';
+			buf[bufidx+1] = *c;
+			bufidx += 2;
+			c += 1;
+			continue;
+		}
 
-      /* this should be impossible to reach */
+		/* this should be impossible to reach */
 
-      assert(NULL);
-   }
+		assert(NULL);
+	}
 
-   /* closing quote and trailing null byte */
+	/* closing quote and trailing null byte */
 
-   buf[bufidx] = '"';
-   buf[bufidx+1] = '\0';
+	buf[bufidx] = '"';
+	buf[bufidx+1] = '\0';
 
-   return buf;
+	return buf;
 }
 
 
@@ -196,9 +196,10 @@ encodedString(
 
 int
 encodedStringLength(
-   const char *c
-) {
-   return strlen(c);
+        const char *c
+)
+{
+	return strlen(c);
 }
 
 
@@ -209,30 +210,31 @@ encodedStringLength(
 
 int
 part_one(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   char iline[INPUT_LEN_MAX];
+	char iline[INPUT_LEN_MAX];
 
-   int compiledSize = 0;
-   int sourceSize = 0;
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      compiledSize += compiledStringLength(iline);
-      sourceSize += sourceStringLength(iline);
-   }
+	int compiledSize = 0;
+	int sourceSize = 0;
+	while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+		compiledSize += compiledStringLength(iline);
+		sourceSize += sourceStringLength(iline);
+	}
 
-   printf("source size: %d\n", sourceSize);
-   printf("compiled size: %d\n", compiledSize);
-   printf("part one: %d\n", sourceSize - compiledSize);
+	printf("source size: %d\n", sourceSize);
+	printf("compiled size: %d\n", compiledSize);
+	printf("part one: %d\n", sourceSize - compiledSize);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -243,30 +245,31 @@ part_one(
 
 int
 part_two(
-   const char *fname
-) {
-   FILE *ifile;
+        const char *fname
+)
+{
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
-   char iline[INPUT_LEN_MAX];
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
+	char iline[INPUT_LEN_MAX];
 
-   int originalSize = 0;
-   int encodedSize = 0;
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      originalSize += strlen(iline) - 1; /* drop newline */
-      char *encoded = encodedString(iline);
-      encodedSize += encodedStringLength(encoded);
-      free(encoded);
-   }
+	int originalSize = 0;
+	int encodedSize = 0;
+	while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+		originalSize += strlen(iline) - 1; /* drop newline */
+		char *encoded = encodedString(iline);
+		encodedSize += encodedStringLength(encoded);
+		free(encoded);
+	}
 
-   printf("original size: %d\n", originalSize);
-   printf("encoded size: %d\n", encodedSize);
-   printf("part two: %d\n", encodedSize - originalSize);
+	printf("original size: %d\n", originalSize);
+	printf("encoded size: %d\n", encodedSize);
+	printf("part two: %d\n", encodedSize - originalSize);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }

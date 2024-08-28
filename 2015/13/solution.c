@@ -27,38 +27,36 @@ evaluate(int[]);
 
 int
 part_one(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   reset_state(0);
+	reset_state(0);
 
-   char iline[INPUT_LEN_MAX];
+	char iline[INPUT_LEN_MAX];
 
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      parse_line(iline);
-   }
+	while (fgets(iline, INPUT_LEN_MAX - 1, ifile))
+		parse_line(iline);
 
-   int path[NODES_MAX];
-   for (int i = 0; i < node_count; i++) {
-      path[i] = i;
-   }
+	int path[NODES_MAX];
+	for (int i = 0; i < node_count; i++)
+		path[i] = i;
 
-   int max_happiness = evaluate(path);
-   while (permute_next(node_count, path)) {
-      max_happiness = max(max_happiness, evaluate(path));
-   }
+	int max_happiness = evaluate(path);
+	while (permute_next(node_count, path))
+		max_happiness = max(max_happiness, evaluate(path));
 
-   printf("part one: %d\n", max_happiness);
+	printf("part one: %d\n", max_happiness);
 
-   reset_state(1);
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	reset_state(1);
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -69,46 +67,44 @@ part_one(
 
 int
 part_two(
-   const char *fname
-) {
-   FILE *ifile;
+        const char *fname
+)
+{
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   reset_state(0); /* should have been properly reset by part one, but ... */
+	reset_state(0); /* should have been properly reset by part one, but ... */
 
-   char iline[INPUT_LEN_MAX];
+	char iline[INPUT_LEN_MAX];
 
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      parse_line(iline);
-   }
+	while (fgets(iline, INPUT_LEN_MAX - 1, ifile))
+		parse_line(iline);
 
-   /* for part two, we add ourself to the seating arrangement but all the
-      happiness deltas between you and everyone else is 0. so, add a row
-      and column for yusef, the table has room, and run with the process
-      again with. it seems this should be no change, but there is. */
+	/* for part two, we add ourself to the seating arrangement but all the
+	   happiness deltas between you and everyone else is 0. so, add a row
+	   and column for yusef, the table has room, and run with the process
+	   again with. it seems this should be no change, but there is. */
 
-   node_index("yusef");
+	node_index("yusef");
 
-   int path[NODES_MAX];
-   for (int i = 0; i < node_count; i++) {
-      path[i] = i;
-   }
+	int path[NODES_MAX];
+	for (int i = 0; i < node_count; i++)
+		path[i] = i;
 
-   int max_happiness = evaluate(path);
-   while (permute_next(node_count, path)) {
-      max_happiness = max(max_happiness, evaluate(path));
-   }
+	int max_happiness = evaluate(path);
+	while (permute_next(node_count, path))
+		max_happiness = max(max_happiness, evaluate(path));
 
-   printf("part two: %d\n", max_happiness);
+	printf("part two: %d\n", max_happiness);
 
-   reset_state(1);
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	reset_state(1);
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -118,15 +114,15 @@ part_two(
  */
 
 void
-reset_state(int rel) {
-   node_count = 0;
-   for (int i = 0; i < NODES_MAX; i++) {
-      if (rel && node_names[i]) {
-         free(node_names[i]);
-      }
-      node_names[i] = NULL;
-      memset(node_delta[i], 0, sizeof(node_delta[i]));
-   }
+reset_state(int rel)
+{
+	node_count = 0;
+	for (int i = 0; i < NODES_MAX; i++) {
+		if (rel && node_names[i])
+			free(node_names[i]);
+		node_names[i] = NULL;
+		memset(node_delta[i], 0, sizeof(node_delta[i]));
+	}
 }
 
 
@@ -138,12 +134,13 @@ reset_state(int rel) {
 
 int
 add_node_name(
-   const char *s
-) {
-   assert(node_count <= NODES_MAX);
-   node_names[node_count] = strdup(s);
-   node_count += 1;
-   return node_count - 1;
+        const char *s
+)
+{
+	assert(node_count <= NODES_MAX);
+	node_names[node_count] = strdup(s);
+	node_count += 1;
+	return node_count - 1;
 }
 
 
@@ -153,17 +150,16 @@ add_node_name(
 
 int
 node_index(
-   const char *s
-) {
-   if (node_count == 0) {
-      return add_node_name(s);
-   }
-   for (int i = 0; i < node_count; i++) {
-      if (strcmp(node_names[i], s) == 0) {
-         return i;
-      }
-   }
-   return add_node_name(s);
+        const char *s
+)
+{
+	if (node_count == 0)
+		return add_node_name(s);
+	for (int i = 0; i < node_count; i++) {
+		if (strcmp(node_names[i], s) == 0)
+			return i;
+	}
+	return add_node_name(s);
 }
 
 
@@ -181,26 +177,26 @@ node_index(
 
 void
 parse_line(
-   const char *iline
-) {
-   const int from_tok = 1;
-   const int to_tok = 11;
-   const int delta_tok = 4;
-   const int dir_tok = 3;
+        const char *iline
+)
+{
+	const int from_tok = 1;
+	const int to_tok = 11;
+	const int delta_tok = 4;
+	const int dir_tok = 3;
 
-   char *s = strdup(iline);
-   const char **t = split_string(s, " .\n");
+	char *s = strdup(iline);
+	const char **t = split_string(s, " .\n");
 
-   int idx_from = node_index(t[from_tok]);
-   int idx_to = node_index(t[to_tok]);
-   node_delta[idx_from][idx_to] = strtol(t[delta_tok], NULL, 10);
-   if (strcmp(t[dir_tok], "lose") == 0) {
-      node_delta[idx_from][idx_to] = -node_delta[idx_from][idx_to];
-   }
+	int idx_from = node_index(t[from_tok]);
+	int idx_to = node_index(t[to_tok]);
+	node_delta[idx_from][idx_to] = strtol(t[delta_tok], NULL, 10);
+	if (strcmp(t[dir_tok], "lose") == 0)
+		node_delta[idx_from][idx_to] = -node_delta[idx_from][idx_to];
 
-   /* clean up and return */
-   free((void *)t[0]);
-   free(t);
+	/* clean up and return */
+	free((void *)t[0]);
+	free(t);
 }
 
 /*
@@ -209,20 +205,19 @@ parse_line(
  */
 
 int
-evaluate(int p[]) {
-   int r = 0;
+evaluate(int p[])
+{
+	int r = 0;
 
-   /* forward */
-   for (int i = 0; i < node_count - 1; i++) {
-      r += node_delta[p[i]][p[i+1]];
-   }
-   r += node_delta[p[node_count-1]][p[0]];
+	/* forward */
+	for (int i = 0; i < node_count - 1; i++)
+		r += node_delta[p[i]][p[i+1]];
+	r += node_delta[p[node_count-1]][p[0]];
 
-   /* backward */
-   for (int i = 0; i < node_count - 1; i++) {
-      r += node_delta[p[i+1]][p[i]];
-   }
-   r += node_delta[p[0]][p[node_count-1]];
+	/* backward */
+	for (int i = 0; i < node_count - 1; i++)
+		r += node_delta[p[i+1]][p[i]];
+	r += node_delta[p[0]][p[node_count-1]];
 
-   return r;
+	return r;
 }

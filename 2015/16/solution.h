@@ -47,16 +47,16 @@
    equality. */
 
 typedef struct map_t {
-   char tag[16];
-   int  ix;
-   char op;
+	char tag[16];
+	int  ix;
+	char op;
 } map_t;
 
 /* facts about this aunt. */
 
 typedef struct facts_t {
-   int id;
-   int data[DATA_MAX];
+	int id;
+	int data[DATA_MAX];
 } facts_t;
 
 /*
@@ -76,13 +76,13 @@ facts_t aunts[AUNT_MAX];
 
 void
 reset_state(
-   int rel
+        int rel
 );
 
 
 void
 parse_line(
-   const char *iline
+        const char *iline
 );
 
 
@@ -92,7 +92,7 @@ parse_line(
 
 facts_t
 parse_condition(
-   const char *iline
+        const char *iline
 );
 
 
@@ -100,7 +100,7 @@ parse_condition(
 
 int
 get_data_ix(
-   const char *s
+        const char *s
 );
 
 
@@ -108,7 +108,7 @@ get_data_ix(
 
 int
 satisfy_count(
-   facts_t cond
+        facts_t cond
 );
 
 
@@ -116,8 +116,8 @@ satisfy_count(
 
 bool
 satisfies(
-   facts_t cond,
-   int ix
+        facts_t cond,
+        int ix
 );
 
 
@@ -126,8 +126,8 @@ satisfies(
 
 int
 satisfy_ix(
-   facts_t cond,
-   int start
+        facts_t cond,
+        int start
 );
 
 
@@ -145,13 +145,13 @@ satisfy_ix(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

@@ -27,14 +27,14 @@
  */
 
 typedef struct race_trace_t {
-   char *name;     /* you know dancer and dasher and comet and vixen ... */
-   int speed;      /* km/s not that it matters */
-   int burst;      /* seconds of sustained flight before */
-   int rest;       /* seconds of sustained rest before flight resumes */
-   int flying;     /* 1 = flying, 0 = resting */
-   int ticks;      /* how many tickes left before next state change */
-   int distance;   /* travelled to the current second */
-   int score;      /* how many seconds in the lead */
+	char *name;     /* you know dancer and dasher and comet and vixen ... */
+	int speed;      /* km/s not that it matters */
+	int burst;      /* seconds of sustained flight before */
+	int rest;       /* seconds of sustained rest before flight resumes */
+	int flying;     /* 1 = flying, 0 = resting */
+	int ticks;      /* how many tickes left before next state change */
+	int distance;   /* travelled to the current second */
+	int score;      /* how many seconds in the lead */
 } race_trace_t;
 
 /*
@@ -54,7 +54,7 @@ reset_state(int free);
 
 void
 parse_line(
-   const char *line
+        const char *line
 );
 
 void
@@ -77,13 +77,13 @@ run_race(int duration);
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

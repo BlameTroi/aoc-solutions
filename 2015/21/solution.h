@@ -14,11 +14,11 @@
  */
 
 typedef struct gear_t {
-   const char *slot;
-   const char *name;
-   int cost;
-   int damage;
-   int armor;
+	const char *slot;
+	const char *name;
+	int cost;
+	int damage;
+	int armor;
 } gear_t;
 
 /*
@@ -26,15 +26,15 @@ typedef struct gear_t {
  */
 
 typedef struct set_t {
-   int total_hits;
-   int total_cost;
-   int total_armor;
-   int total_damage;
-   int final_hp;
-   gear_t *weapon;
-   gear_t *armor;
-   gear_t *ring_one;
-   gear_t *ring_two;
+	int total_hits;
+	int total_cost;
+	int total_armor;
+	int total_damage;
+	int final_hp;
+	gear_t *weapon;
+	gear_t *armor;
+	gear_t *ring_one;
+	gear_t *ring_two;
 } set_t;
 
 /*
@@ -43,12 +43,12 @@ typedef struct set_t {
  */
 
 typedef struct mob_t {
-   const char *tag;
-   int hp;
-   int damage;
-   int armor;
-   int curr_hp;
-   set_t *equipped;
+	const char *tag;
+	int hp;
+	int damage;
+	int armor;
+	int curr_hp;
+	set_t *equipped;
 } mob_t;
 
 /*
@@ -57,35 +57,35 @@ typedef struct mob_t {
 
 void
 reset_all(
-   void
+        void
 );
 
 void
 strip_mob(
-   mob_t *
+        mob_t *
 );
 
 mob_t *
 read_mob(
-   char *,
-   FILE *
+        char *,
+        FILE *
 );
 
 int
 equip_mob(
-   mob_t *
+        mob_t *
 );
 
 void
 update_mob_stats(
-   mob_t *
+        mob_t *
 );
 
 mob_t *
 battle(
-   mob_t *player,
-   mob_t *boss,
-   bool print
+        mob_t *player,
+        mob_t *boss,
+        bool print
 );
 
 /*
@@ -101,12 +101,12 @@ battle(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

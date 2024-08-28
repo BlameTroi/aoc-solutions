@@ -42,18 +42,18 @@
 typedef struct itab itab;
 
 struct itab {
-   char *mne;
-   int opc;
-   bool reg;
-   bool offset;
+	char *mne;
+	int opc;
+	bool reg;
+	bool offset;
 };
 
 typedef struct inst inst;
 
 struct inst {
-   int opc;
-   int reg;
-   int offset;
+	int opc;
+	int reg;
+	int offset;
 };
 
 #define RAM_MAX 255
@@ -61,10 +61,10 @@ struct inst {
 typedef struct cpu cpu;
 
 struct cpu {
-   int pic;
-   unsigned long a;
-   unsigned long b;
-   inst ram[RAM_MAX];
+	int pic;
+	unsigned long a;
+	unsigned long b;
+	inst ram[RAM_MAX];
 };
 
 /* how long may a line in the test dataset be? */
@@ -72,23 +72,23 @@ struct cpu {
 
 cpu *
 create(
-   int
+        int
 );
 
 bool
 ipl(
-   cpu *,
-   inst *
+        cpu *,
+        inst *
 );
 
 void
 run(
-   cpu *
+        cpu *
 );
 
 inst
 assemble(
-   char *
+        char *
 );
 
 /*
@@ -105,13 +105,13 @@ assemble(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

@@ -1,0 +1,10 @@
+# astyle trying to find one i like
+style=linux
+indent=tab=8
+attach-namespaces
+attach-extern-c
+attach-closing-while
+indent-col1-comments
+align-pointer=name
+break-return-type
+break-return-type-decl

@@ -36,13 +36,13 @@
  * gift box metrics type, units are consistent.
  */
 typedef struct gift_t {
-   size_t l;
-   size_t w;
-   size_t h;
-   size_t area;           /*  total surface area */
-   size_t slack;          /*  extra wrap surface */
-   size_t ribbon;         /*  shortest perimiter */
-   size_t bow;            /*  bow length = volume units */
+	size_t l;
+	size_t w;
+	size_t h;
+	size_t area;           /*  total surface area */
+	size_t slack;          /*  extra wrap surface */
+	size_t ribbon;         /*  shortest perimiter */
+	size_t bow;            /*  bow length = volume units */
 } gift_t;
 
 
@@ -52,52 +52,53 @@ typedef struct gift_t {
  */
 gift_t
 getWrap(
-   char *line,
-   size_t line_max
-) {
-   char *work = strdup(line);
-   assert(work);
-   char *pos = work;
+        char *line,
+        size_t line_max
+)
+{
+	char *work = strdup(line);
+	assert(work);
+	char *pos = work;
 
-   char *l = strsep(&pos, "x\n");
-   assert(l);
-   char *w = strsep(&pos, "x\n");
-   assert(w);
-   char *h = strsep(&pos, "x\n");
-   assert(h);
+	char *l = strsep(&pos, "x\n");
+	assert(l);
+	char *w = strsep(&pos, "x\n");
+	assert(w);
+	char *h = strsep(&pos, "x\n");
+	assert(h);
 
-   gift_t g;
+	gift_t g;
 
-   g.l = atoi(l);
-   g.w = atoi(w);
-   g.h = atoi(h);
+	g.l = atoi(l);
+	g.w = atoi(w);
+	g.h = atoi(h);
 
-   /* each surface's area */
-   size_t lw = g.l * g.w;
-   size_t wh = g.w * g.h;
-   size_t hl = g.h * g.l;
+	/* each surface's area */
+	size_t lw = g.l * g.w;
+	size_t wh = g.w * g.h;
+	size_t hl = g.h * g.l;
 
-   /* and each surface's perimiter */
-   size_t plw = g.l*2 + g.w*2;
-   size_t pwh = g.w*2 + g.h*2;
-   size_t phl = g.h*2 + g.l*2;
+	/* and each surface's perimiter */
+	size_t plw = g.l*2 + g.w*2;
+	size_t pwh = g.w*2 + g.h*2;
+	size_t phl = g.h*2 + g.l*2;
 
-   /* total surface area */
-   g.area = 2*lw + 2*wh + 2*hl;
+	/* total surface area */
+	g.area = 2*lw + 2*wh + 2*hl;
 
-   /* extra slack is the minimum side area */
-   g.slack = min(lw, wh);
-   g.slack = min(g.slack, hl);
+	/* extra slack is the minimum side area */
+	g.slack = min(lw, wh);
+	g.slack = min(g.slack, hl);
 
-   /* base ribbon length for the wrap is minimum perimiter */
-   g.ribbon = min(plw, pwh);
-   g.ribbon = min(g.ribbon, phl);
+	/* base ribbon length for the wrap is minimum perimiter */
+	g.ribbon = min(plw, pwh);
+	g.ribbon = min(g.ribbon, phl);
 
-   /* ribbon for bow is oddly enough the volume */
-   g.bow = g.l * g.w * g.h;
+	/* ribbon for bow is oddly enough the volume */
+	g.bow = g.l * g.w * g.h;
 
-   free(work);
-   return g;
+	free(work);
+	return g;
 }
 
 
@@ -106,43 +107,44 @@ getWrap(
  */
 int
 main(
-   int argc,
-   const char **argv
-) {
-   FILE *ifile;
-   size_t totalWrap = 0;
-   size_t totalRibbon = 0;
+        int argc,
+        const char **argv
+)
+{
+	FILE *ifile;
+	size_t totalWrap = 0;
+	size_t totalRibbon = 0;
 
-   if (argc < 2) {
-      printf("usage: %s path-to-input\n", argv[0]);
-      return EXIT_FAILURE;
-   }
+	if (argc < 2) {
+		printf("usage: %s path-to-input\n", argv[0]);
+		return EXIT_FAILURE;
+	}
 
-   ifile = fopen(argv[1], "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", argv[1]);
-      return EXIT_FAILURE;
-   }
+	ifile = fopen(argv[1], "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", argv[1]);
+		return EXIT_FAILURE;
+	}
 
-   const size_t LINE_MAX = 255;
-   char iline[LINE_MAX+1];
+	const size_t LINE_MAX = 255;
+	char iline[LINE_MAX+1];
 
-   while (fgets(iline, LINE_MAX, ifile)) {
-      gift_t g = getWrap(iline, LINE_MAX);
-      totalWrap = totalWrap + g.area + g.slack;
-      totalRibbon = totalRibbon + g.ribbon + g.bow;
-   }
+	while (fgets(iline, LINE_MAX, ifile)) {
+		gift_t g = getWrap(iline, LINE_MAX);
+		totalWrap = totalWrap + g.area + g.slack;
+		totalRibbon = totalRibbon + g.ribbon + g.bow;
+	}
 
-   if (ferror(ifile)) {
-      printf("error: aborting\n");
-      fclose(ifile);
-      return EXIT_FAILURE;
-   }
+	if (ferror(ifile)) {
+		printf("error: aborting\n");
+		fclose(ifile);
+		return EXIT_FAILURE;
+	}
 
-   printf("total wrapping paper needed: %zu\n", totalWrap);
-   printf("total ribbon needed: %zu\n", totalRibbon);
+	printf("total wrapping paper needed: %zu\n", totalWrap);
+	printf("total ribbon needed: %zu\n", totalRibbon);
 
-   fclose(ifile);
+	fclose(ifile);
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

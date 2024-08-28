@@ -16,7 +16,7 @@
 
 unsigned long
 diag_end(
-   int n
+        int n
 );
 
 /*
@@ -26,7 +26,7 @@ diag_end(
 
 unsigned long
 diag_begin(
-   int n
+        int n
 );
 
 /*
@@ -40,7 +40,7 @@ diag_begin(
 
 unsigned long
 next_code(
-   unsigned long code
+        unsigned long code
 );
 
 /*
@@ -50,8 +50,8 @@ next_code(
 
 unsigned long
 code_at(
-   int row,
-   int col
+        int row,
+        int col
 );
 
 
@@ -70,12 +70,12 @@ code_at(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 /* end solution.h */

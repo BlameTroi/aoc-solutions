@@ -80,22 +80,22 @@ of all the wires and their inputs. that's step one.
    specific value. */
 
 typedef enum sig_e {
-   se_undefined = 0,        /* all enums should have zero for undefined/unset */
-   se_gate,
-   se_wire,
-   se_value
+	se_undefined = 0,        /* all enums should have zero for undefined/unset */
+	se_gate,
+	se_wire,
+	se_value
 } sig_e;
 
 
 /* gates perform the functions you would expect. */
 
 typedef enum gate_e {
-   ge_undefined = 0,
-   ge_and,
-   ge_or,
-   ge_not,
-   ge_lshift,
-   ge_rshift
+	ge_undefined = 0,
+	ge_and,
+	ge_or,
+	ge_not,
+	ge_lshift,
+	ge_rshift
 } gate_e;
 
 
@@ -104,11 +104,11 @@ typedef enum gate_e {
    to wire 1. wire 2 being an empty string means use the mask value. */
 
 typedef struct gate_t {
-   gate_e type;                    /* and, or, not, lshift, rshift */
-   char wire1[WIRE_MAX];           /* any of the above need at least one wire */
-   char wire2[WIRE_MAX];           /* and, or could use two wires or a wire and */
-   uint16_t mask;                  /* a mask value. */
-   uint8_t bit_shift;              /* shift, 0-15, though 0 is in essence a nop */
+	gate_e type;                    /* and, or, not, lshift, rshift */
+	char wire1[WIRE_MAX];           /* any of the above need at least one wire */
+	char wire2[WIRE_MAX];           /* and, or could use two wires or a wire and */
+	uint16_t mask;                  /* a mask value. */
+	uint8_t bit_shift;              /* shift, 0-15, though 0 is in essence a nop */
 } gate_t;
 
 
@@ -118,13 +118,13 @@ typedef struct gate_t {
    particular connection. */
 
 typedef struct connection_t {
-   char wire[WIRE_MAX];             /* who i am */
-   bool received_signal;            /* have we? */
-   uint16_t signal;                 /* if we have, this is what we got */
-   sig_e source_type;               /* where i get my signal from */
-   gate_t inp_gate;                 /* if it's a gate, it's described in here */
-   char inp_wire[WIRE_MAX];         /* if it's a wire, the name of that wire */
-   uint16_t inp_value;              /* if it's a hard coded value, we have that here */
+	char wire[WIRE_MAX];             /* who i am */
+	bool received_signal;            /* have we? */
+	uint16_t signal;                 /* if we have, this is what we got */
+	sig_e source_type;               /* where i get my signal from */
+	gate_t inp_gate;                 /* if it's a gate, it's described in here */
+	char inp_wire[WIRE_MAX];         /* if it's a wire, the name of that wire */
+	uint16_t inp_value;              /* if it's a hard coded value, we have that here */
 } connection_t;
 
 
@@ -136,8 +136,8 @@ typedef struct connection_t {
    dataset there are two of these among the roughly 300 connections. */
 
 typedef struct circuit_t {
-   int num_connections;
-   connection_t connections[CONNECTIONS_MAX];
+	int num_connections;
+	connection_t connections[CONNECTIONS_MAX];
 } circuit_t;
 
 
@@ -150,7 +150,7 @@ typedef struct circuit_t {
 
 circuit_t *
 initCircuit(
-   void
+        void
 );
 
 
@@ -159,8 +159,8 @@ initCircuit(
 
 bool
 addConnection(
-   circuit_t *,         /* address of the circuit board */
-   const char *         /* input string from dataset to parse and add */
+        circuit_t *,         /* address of the circuit board */
+        const char *         /* input string from dataset to parse and add */
 );
 
 
@@ -171,15 +171,15 @@ addConnection(
 
 connection_t
 parseConnection(
-   const char *                 /* input string from dataset to parse and add */
+        const char *                 /* input string from dataset to parse and add */
 );
 
 
 /* look up connection in circuit by terminal wire name. */
 connection_t *
 connectionFor(
-   circuit_t *,
-   const char *
+        circuit_t *,
+        const char *
 );
 
 
@@ -187,7 +187,7 @@ connectionFor(
 
 bool
 runCircuit(
-   circuit_t *             /* address of the circuit board */
+        circuit_t *             /* address of the circuit board */
 );
 
 
@@ -195,7 +195,7 @@ runCircuit(
 
 void
 freeCircuit(
-   circuit_t *            /* address of the circuit board */
+        circuit_t *            /* address of the circuit board */
 );
 
 
@@ -206,12 +206,12 @@ freeCircuit(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

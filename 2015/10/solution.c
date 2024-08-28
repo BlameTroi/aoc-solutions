@@ -19,13 +19,13 @@
 
 int
 runlen(
-   const char *c
-) {
-   const char *p = c;
-   while (*p == *c) {
-      p += 1;
-   }
-   return p - c;
+        const char *c
+)
+{
+	const char *p = c;
+	while (*p == *c)
+		p += 1;
+	return p - c;
 }
 
 
@@ -36,16 +36,15 @@ runlen(
 
 int
 digitsNeeded(
-   int n
-) {
-   assert(n > 0 && n < 1000);
-   if (n < 10) {
-      return 1;
-   }
-   if (n < 100) {
-      return 2;
-   }
-   return 3;
+        int n
+)
+{
+	assert(n > 0 && n < 1000);
+	if (n < 10)
+		return 1;
+	if (n < 100)
+		return 2;
+	return 3;
 }
 
 
@@ -66,43 +65,43 @@ digitsNeeded(
 
 char *
 seesay(
-   const char *s
-) {
+        const char *s
+)
+{
 
-   /* safety first */
-   assert(s);
-   int n = strlen(s);
-   assert(n);
-   for (int i = 0; i < n; i++) {
-      assert(s[i] >= '0' && s[i] <= '9');
-   }
+	/* safety first */
+	assert(s);
+	int n = strlen(s);
+	assert(n);
+	for (int i = 0; i < n; i++)
+		assert(s[i] >= '0' && s[i] <= '9');
 
-   /* allocate our output buffer in chunks of */
-   const int chunklen = 256;
-   int m = min(n * 2, chunklen);
-   char *r = malloc(m);
+	/* allocate our output buffer in chunks of */
+	const int chunklen = 256;
+	int m = min(n * 2, chunklen);
+	char *r = malloc(m);
 
-   n = 0;    /* position in output buffer */
-   while (*s) {
-      int rl = runlen(s);
-      int dn = digitsNeeded(rl);
+	n = 0;    /* position in output buffer */
+	while (*s) {
+		int rl = runlen(s);
+		int dn = digitsNeeded(rl);
 
-      /* grow buffer if needed */
-      if (n + 1 + dn > m - 2) {
-         m = m + chunklen;
-         r = realloc(r, m);
-      }
+		/* grow buffer if needed */
+		if (n + 1 + dn > m - 2) {
+			m = m + chunklen;
+			r = realloc(r, m);
+		}
 
-      /* store run length and then the value */
-      snprintf(r + n, dn + 1, "%d", rl);
-      n += dn;
-      *(r + n) = *s;
-      n += 1;
-      *(r + n) = '\0';
-      s += rl;
-   }
+		/* store run length and then the value */
+		snprintf(r + n, dn + 1, "%d", rl);
+		n += dn;
+		*(r + n) = *s;
+		n += 1;
+		*(r + n) = '\0';
+		s += rl;
+	}
 
-   return r;
+	return r;
 }
 
 
@@ -113,43 +112,44 @@ seesay(
 
 int
 part_one(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   /* input is one line, our starting string and a repeat count */
+	/* input is one line, our starting string and a repeat count */
 
-   char iline[INPUT_LEN_MAX];
+	char iline[INPUT_LEN_MAX];
 
-   if (!fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      printf("error reading input\n.");
-      return EXIT_FAILURE;
-   }
+	if (!fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+		printf("error reading input\n.");
+		return EXIT_FAILURE;
+	}
 
-   const char **list = split_string(iline, " ");
-   char *see = strdup(list[1]);
-   int n = strtol(list[2], NULL, 10);
-   char *say;
-   while (n) {
-      say = seesay(see);
-      free(see);
-      see = say;
-      n -= 1;
-   }
+	const char **list = split_string(iline, " ");
+	char *see = strdup(list[1]);
+	int n = strtol(list[2], NULL, 10);
+	char *say;
+	while (n) {
+		say = seesay(see);
+		free(see);
+		see = say;
+		n -= 1;
+	}
 
-   printf("part one: %d\n", (int)strlen(say));
+	printf("part one: %d\n", (int)strlen(say));
 
-   free(say);
-   free((void *)list[0]);
-   free(list);
+	free(say);
+	free((void *)list[0]);
+	free(list);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -160,41 +160,42 @@ part_one(
 
 int
 part_two(
-   const char *fname
-) {
-   FILE *ifile;
+        const char *fname
+)
+{
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
-   char iline[INPUT_LEN_MAX];
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
+	char iline[INPUT_LEN_MAX];
 
-   if (!fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      printf("error reading input\n.");
-      return EXIT_FAILURE;
-   }
+	if (!fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+		printf("error reading input\n.");
+		return EXIT_FAILURE;
+	}
 
-   const char **list = split_string(iline, " ");
-   char *see = strdup(list[1]);
-   int n = strtol(list[2], NULL, 10);
-   /* for part two, increase repetitions by 10 */
-   n += 10;
-   char *say;
-   while (n) {
-      say = seesay(see);
-      free(see);
-      see = say;
-      n -= 1;
-   }
+	const char **list = split_string(iline, " ");
+	char *see = strdup(list[1]);
+	int n = strtol(list[2], NULL, 10);
+	/* for part two, increase repetitions by 10 */
+	n += 10;
+	char *say;
+	while (n) {
+		say = seesay(see);
+		free(see);
+		see = say;
+		n -= 1;
+	}
 
-   printf("part two: %d\n", (int)strlen(say));
+	printf("part two: %d\n", (int)strlen(say));
 
-   free(say);
-   free((void *)list[0]);
-   free(list);
+	free(say);
+	free((void *)list[0]);
+	free(list);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }

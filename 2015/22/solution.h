@@ -27,16 +27,16 @@
 typedef struct battle_state battle_state;
 
 struct battle_state {
-   int turn;
-   int casting;
-   int player_hp;
-   int player_mana;
-   int player_temp_armor;
-   int mana_used;
-   int boss_hp;
-   int boss_damage;
-   bool hard_mode;
-   int spell_timers[SPELL_MAX];
+	int turn;
+	int casting;
+	int player_hp;
+	int player_mana;
+	int player_temp_armor;
+	int mana_used;
+	int boss_hp;
+	int boss_damage;
+	bool hard_mode;
+	int spell_timers[SPELL_MAX];
 };
 
 /*
@@ -51,10 +51,10 @@ typedef void (*fntick)(battle_state *);
 typedef struct spell spell;
 
 struct spell {
-   char *name;
-   fncan can_cast;
-   fncast do_cast;
-   fntick do_tick;
+	char *name;
+	fncan can_cast;
+	fncast do_cast;
+	fntick do_tick;
 };
 
 /*
@@ -106,11 +106,11 @@ print_battle_state(battle_state *);
 
 battle_state
 create_battle_state(
-   int player_hp,
-   int player_mana,
-   int boss_hp,
-   int boss_damage,
-   bool hard_mode
+        int player_hp,
+        int player_mana,
+        int boss_hp,
+        int boss_damage,
+        bool hard_mode
 );
 
 /*
@@ -120,8 +120,8 @@ create_battle_state(
  */
 int
 battle_round(
-   battle_state *,
-   int best_result_yet
+        battle_state *,
+        int best_result_yet
 );
 
 /*
@@ -131,11 +131,11 @@ battle_round(
  */
 int
 battle(
-   int player_hp,
-   int player_mana,
-   int boss_hp,
-   int boss_damage,
-   bool hard_mode
+        int player_hp,
+        int player_mana,
+        int boss_hp,
+        int boss_damage,
+        bool hard_mode
 );
 
 /*
@@ -143,7 +143,7 @@ battle(
  */
 void
 reset_all(
-   void
+        void
 );
 
 /*
@@ -159,12 +159,12 @@ reset_all(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

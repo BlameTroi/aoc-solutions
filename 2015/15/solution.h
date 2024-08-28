@@ -40,8 +40,8 @@
 #define SCOREABLE_MAX 4
 
 typedef struct ingredient_t {
-   char *name;
-   int attributes[ATTRIBUTE_MAX];
+	char *name;
+	int attributes[ATTRIBUTE_MAX];
 } ingredient_t;
 
 
@@ -61,22 +61,22 @@ long max_score;
 
 void
 reset_state(
-   int rel
+        int rel
 );
 
 void
 parse_line(
-   const char *iline
+        const char *iline
 );
 
 long
 score(
-   int *unit         /* allocated portions for each ingredient */
+        int *unit         /* allocated portions for each ingredient */
 );
 
 long
 calories(
-   int *unit
+        int *unit
 );
 
 
@@ -94,13 +94,13 @@ calories(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

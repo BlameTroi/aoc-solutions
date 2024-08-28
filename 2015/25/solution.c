@@ -86,12 +86,14 @@
  */
 
 inline unsigned long
-diag_end(int n) {
-   return n * (n + 1) / 2;
+diag_end(int n)
+{
+	return n * (n + 1) / 2;
 }
 inline unsigned long
-diag_begin(int n) {
-   return diag_end(n) - (n - 1);
+diag_begin(int n)
+{
+	return diag_end(n) - (n - 1);
 }
 
 /*
@@ -99,8 +101,9 @@ diag_begin(int n) {
  */
 
 inline unsigned long
-next_code(unsigned long code) {
-   return (code * FACTOR) % DIVISOR;
+next_code(unsigned long code)
+{
+	return (code *FACTOR) % DIVISOR;
 }
 
 /*
@@ -110,26 +113,26 @@ next_code(unsigned long code) {
 
 unsigned long
 code_at(
-   int row,
-   int col
-) {
-   unsigned long code;
-   code = SEED;
-   int r = 1;
-   int c = 1;
-   do {
-      if (r == row && c == col) {
-         break;
-      }
-      r -= 1;
-      c += 1;
-      if (r == 0) {
-         r = c;
-         c = 1;
-      }
-      code = next_code(code);
-   } while (true);
-   return code;
+        int row,
+        int col
+)
+{
+	unsigned long code;
+	code = SEED;
+	int r = 1;
+	int c = 1;
+	do {
+		if (r == row && c == col)
+			break;
+		r -= 1;
+		c += 1;
+		if (r == 0) {
+			r = c;
+			c = 1;
+		}
+		code = next_code(code);
+	} while (true);
+	return code;
 }
 
 /*
@@ -139,43 +142,44 @@ code_at(
 
 int
 part_one(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   char iline[INPUT_LEN_MAX];
-   if (!fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      printf("error reading input file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
-   const char* lower = "abcdefghijklmnopqrstuvwxyz";
-   const char* upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-   const char* other = ", \n.;:";
-   char *delims = malloc(strlen(lower) + strlen(upper) + strlen(other) + 1);
-   strcpy(delims, lower);
-   strcat(delims, upper);
-   strcat(delims, other);
+	char iline[INPUT_LEN_MAX];
+	if (!fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+		printf("error reading input file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
+	const char* lower = "abcdefghijklmnopqrstuvwxyz";
+	const char* upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	const char* other = ", \n.;:";
+	char *delims = malloc(strlen(lower) + strlen(upper) + strlen(other) + 1);
+	strcpy(delims, lower);
+	strcat(delims, upper);
+	strcat(delims, other);
 
-   const char **tokens = split_string(iline, delims);
+	const char **tokens = split_string(iline, delims);
 
-   if (!tokens[1] || !tokens[2]) {
-      printf("error: input should contain two numbers: %s\n", iline);
-      return EXIT_FAILURE;
-   }
+	if (!tokens[1] || !tokens[2]) {
+		printf("error: input should contain two numbers: %s\n", iline);
+		return EXIT_FAILURE;
+	}
 
-   int row = strtol(tokens[1], NULL, 10);
-   int col = strtol(tokens[2], NULL, 10);
-   unsigned long code = code_at(row, col);
+	int row = strtol(tokens[1], NULL, 10);
+	int col = strtol(tokens[2], NULL, 10);
+	unsigned long code = code_at(row, col);
 
-   printf("part one: %lu\n", code);
+	printf("part one: %lu\n", code);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -186,8 +190,9 @@ part_one(
 
 int
 part_two(
-   const char *fname
-) {
-   printf("part two: a freebie\n");
-   return EXIT_SUCCESS;
+        const char *fname
+)
+{
+	printf("part two: a freebie\n");
+	return EXIT_SUCCESS;
 }

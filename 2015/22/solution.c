@@ -60,36 +60,36 @@
  */
 
 spell spells[] = {
-   {
-      "magic missle",
-      can_magic_missle,
-      cast_magic_missle,
-      NULL
-   },
-   {
-      "drain",
-      can_drain,
-      cast_drain,
-      NULL
-   },
-   {
-      "shield",
-      can_shield,
-      cast_shield,
-      tick_shield
-   },
-   {
-      "poison",
-      can_poison,
-      cast_poison,
-      tick_poison
-   },
-   {
-      "recharge",
-      can_recharge,
-      cast_recharge,
-      tick_recharge
-   },
+	{
+		"magic missle",
+		can_magic_missle,
+		cast_magic_missle,
+		NULL
+	},
+	{
+		"drain",
+		can_drain,
+		cast_drain,
+		NULL
+	},
+	{
+		"shield",
+		can_shield,
+		cast_shield,
+		tick_shield
+	},
+	{
+		"poison",
+		can_poison,
+		cast_poison,
+		tick_poison
+	},
+	{
+		"recharge",
+		can_recharge,
+		cast_recharge,
+		tick_recharge
+	},
 };
 
 /*
@@ -98,12 +98,12 @@ spell spells[] = {
  */
 
 void
-tick_spells(battle_state *s) {
-   for (int i = 0; i < SPELL_MAX; i++) {
-      if (spells[i].do_tick) {
-         spells[i].do_tick(s);
-      }
-   }
+tick_spells(battle_state *s)
+{
+	for (int i = 0; i < SPELL_MAX; i++) {
+		if (spells[i].do_tick)
+			spells[i].do_tick(s);
+	}
 }
 
 /*
@@ -112,33 +112,37 @@ tick_spells(battle_state *s) {
 
 /* magic missle costs 53 mana and instantly does 4 damage */
 bool
-can_magic_missle(battle_state *s) {
-   return s->player_hp > 0 &&
-          s->player_mana >= 53;
+can_magic_missle(battle_state *s)
+{
+	return s->player_hp > 0 &&
+	       s->player_mana >= 53;
 }
 
 void
-cast_magic_missle(battle_state *s) {
-   s->player_mana -= 53;
-   s->mana_used += 53;
-   s->boss_hp -= 4;
+cast_magic_missle(battle_state *s)
+{
+	s->player_mana -= 53;
+	s->mana_used += 53;
+	s->boss_hp -= 4;
 }
 
 /* drain costs 73 mana, instantly does 2 points of damage and
  * heals you 2 points. */
 
 bool
-can_drain(battle_state *s) {
-   return s->player_hp > 0 &&
-          s->player_mana >= 72;
+can_drain(battle_state *s)
+{
+	return s->player_hp > 0 &&
+	       s->player_mana >= 72;
 }
 
 void
-cast_drain(battle_state *s) {
-   s->player_mana -= 73;
-   s->mana_used += 73;
-   s->boss_hp -= 2;
-   s->player_hp += 2;
+cast_drain(battle_state *s)
+{
+	s->player_mana -= 73;
+	s->mana_used += 73;
+	s->boss_hp -= 2;
+	s->player_hp += 2;
 }
 
 /*
@@ -149,27 +153,29 @@ cast_drain(battle_state *s) {
  * bonus of 7. */
 
 bool
-can_shield(battle_state *s) {
-   return s->player_hp > 0 &&
-          s->player_mana >= 113 &&
-          s->spell_timers[SHIELD] == 0;
+can_shield(battle_state *s)
+{
+	return s->player_hp > 0 &&
+	       s->player_mana >= 113 &&
+	       s->spell_timers[SHIELD] == 0;
 }
 
 void
-cast_shield(battle_state *s) {
-   s->spell_timers[SHIELD] = 6;
-   s->player_mana -= 113;
-   s->mana_used += 113;
+cast_shield(battle_state *s)
+{
+	s->spell_timers[SHIELD] = 6;
+	s->player_mana -= 113;
+	s->mana_used += 113;
 }
 
 void
-tick_shield(battle_state *s) {
-   s->player_temp_armor = 0;
-   if (s->spell_timers[SHIELD] == 0) {
-      return;
-   }
-   s->spell_timers[SHIELD] -= 1;
-   s->player_temp_armor = 7;
+tick_shield(battle_state *s)
+{
+	s->player_temp_armor = 0;
+	if (s->spell_timers[SHIELD] == 0)
+		return;
+	s->spell_timers[SHIELD] -= 1;
+	s->player_temp_armor = 7;
 }
 
 /*
@@ -180,26 +186,28 @@ tick_shield(battle_state *s) {
  * of 3 per turn lasting 6 turns. */
 
 bool
-can_poison(battle_state *s) {
-   return s->player_hp > 0 &&
-          s->player_mana >= 173 &&
-          s->spell_timers[POISON] == 0;
+can_poison(battle_state *s)
+{
+	return s->player_hp > 0 &&
+	       s->player_mana >= 173 &&
+	       s->spell_timers[POISON] == 0;
 }
 
 void
-cast_poison(battle_state *s) {
-   s->spell_timers[POISON] = 6;
-   s->player_mana -= 173;
-   s->mana_used += 173;
+cast_poison(battle_state *s)
+{
+	s->spell_timers[POISON] = 6;
+	s->player_mana -= 173;
+	s->mana_used += 173;
 }
 
 void
-tick_poison(battle_state *s) {
-   if (s->spell_timers[POISON] == 0) {
-      return;
-   }
-   s->spell_timers[POISON] -= 1;
-   s->boss_hp -= 3;
+tick_poison(battle_state *s)
+{
+	if (s->spell_timers[POISON] == 0)
+		return;
+	s->spell_timers[POISON] -= 1;
+	s->boss_hp -= 3;
 }
 
 /*
@@ -211,26 +219,28 @@ tick_poison(battle_state *s) {
  * 5 turns. */
 
 bool
-can_recharge(battle_state *s) {
-   return s->player_hp > 0 &&
-          s->player_mana >= 229 &&
-          s->spell_timers[RECHARGE] == 0;
+can_recharge(battle_state *s)
+{
+	return s->player_hp > 0 &&
+	       s->player_mana >= 229 &&
+	       s->spell_timers[RECHARGE] == 0;
 }
 
 void
-cast_recharge(battle_state *s) {
-   s->spell_timers[RECHARGE] = 5;
-   s->player_mana -= 229;
-   s->mana_used += 229;
+cast_recharge(battle_state *s)
+{
+	s->spell_timers[RECHARGE] = 5;
+	s->player_mana -= 229;
+	s->mana_used += 229;
 }
 
 void
-tick_recharge(battle_state *s) {
-   if (s->spell_timers[RECHARGE] == 0) {
-      return;
-   }
-   s->spell_timers[RECHARGE] -= 1;
-   s->player_mana += 101;
+tick_recharge(battle_state *s)
+{
+	if (s->spell_timers[RECHARGE] == 0)
+		return;
+	s->spell_timers[RECHARGE] -= 1;
+	s->player_mana += 101;
 }
 
 /*
@@ -241,16 +251,16 @@ tick_recharge(battle_state *s) {
  */
 
 void
-print_state(battle_state *s) {
-   printf("turn: %2d spell: %1d  player: %2d %3d %1d %4d  boss hp: %3d  spells: ",
-          s->turn, s->casting, s->player_hp, s->player_mana, s->player_temp_armor, s->mana_used, s->boss_hp);
-   for (int i = 0; i < SPELL_MAX; i++) {
-      if (s->spell_timers[i] < 1) {
-         continue;
-      }
-      printf("[%s %d]", spells[i].name, s->spell_timers[i]);
-   }
-   printf("\n");
+print_state(battle_state *s)
+{
+	printf("turn: %2d spell: %1d  player: %2d %3d %1d %4d  boss hp: %3d  spells: ",
+	       s->turn, s->casting, s->player_hp, s->player_mana, s->player_temp_armor, s->mana_used, s->boss_hp);
+	for (int i = 0; i < SPELL_MAX; i++) {
+		if (s->spell_timers[i] < 1)
+			continue;
+		printf("[%s %d]", spells[i].name, s->spell_timers[i]);
+	}
+	printf("\n");
 }
 
 /*
@@ -259,84 +269,78 @@ print_state(battle_state *s) {
 
 battle_state
 create_battle_state(
-   int player_hp,
-   int player_mana,
-   int boss_hp,
-   int boss_damage,
-   bool hard_mode
-) {
-   battle_state s;
-   memset(&s, 0, sizeof(battle_state));
-   s.player_hp = player_hp;
-   s.player_mana = player_mana;
-   s.boss_hp = boss_hp;
-   s.boss_damage = boss_damage;
-   s.hard_mode = hard_mode;
-   for (int i = 0; i < SPELL_MAX; i++) {
-      s.spell_timers[i] = 0;
-   }
-   return s;
+        int player_hp,
+        int player_mana,
+        int boss_hp,
+        int boss_damage,
+        bool hard_mode
+)
+{
+	battle_state s;
+	memset(&s, 0, sizeof(battle_state));
+	s.player_hp = player_hp;
+	s.player_mana = player_mana;
+	s.boss_hp = boss_hp;
+	s.boss_damage = boss_damage;
+	s.hard_mode = hard_mode;
+	for (int i = 0; i < SPELL_MAX; i++)
+		s.spell_timers[i] = 0;
+	return s;
 }
 
 int
 battle_round(
-   battle_state *s,
-   int best_so_far
-) {
+        battle_state *s,
+        int best_so_far
+)
+{
 
-   /* the player actually has the initiative, but the code wants
-    * the boss to come first in structure. */
+	/* the player actually has the initiative, but the code wants
+	 * the boss to come first in structure. */
 
-   if (s->turn > 0) {
-      tick_spells(s);
-      if (s->boss_hp < 1) {
-         return min(s->mana_used, best_so_far);
-      }
-      s->player_hp -= max(1, s->boss_damage - s->player_temp_armor);
-      if (s->player_hp < 1) {
-         return best_so_far;
-      }
-   }
+	if (s->turn > 0) {
+		tick_spells(s);
+		if (s->boss_hp < 1)
+			return min(s->mana_used, best_so_far);
+		s->player_hp -= max(1, s->boss_damage - s->player_temp_armor);
+		if (s->player_hp < 1)
+			return best_so_far;
+	}
 
-   /* now the player goes ... */
+	/* now the player goes ... */
 
-   if (s->hard_mode) {
-      s->player_hp -= 1;
-   }
-   if (s->player_hp < 1) {
-      return best_so_far;
-   }
-   tick_spells(s);
-   if (s->boss_hp < 1) {
-      return min(s->mana_used, best_so_far);
-   }
+	if (s->hard_mode)
+		s->player_hp -= 1;
+	if (s->player_hp < 1)
+		return best_so_far;
+	tick_spells(s);
+	if (s->boss_hp < 1)
+		return min(s->mana_used, best_so_far);
 
-   /* prune this path if it's using too much mana */
-   if (s->mana_used > best_so_far) {
-      return best_so_far;
-   }
+	/* prune this path if it's using too much mana */
+	if (s->mana_used > best_so_far)
+		return best_so_far;
 
-   /* chase down each possible spell path recursively */
+	/* chase down each possible spell path recursively */
 
-   for (int i = 0; i < SPELL_MAX; i++) {
-      if (!spells[i].can_cast(s)) {
-         continue;
-      }
-      battle_state trial = *s;
-      trial.turn += 1;
-      trial.casting = i;
-      spells[i].do_cast(&trial);
+	for (int i = 0; i < SPELL_MAX; i++) {
+		if (!spells[i].can_cast(s))
+			continue;
+		battle_state trial = *s;
+		trial.turn += 1;
+		trial.casting = i;
+		spells[i].do_cast(&trial);
 
-      /* boss dead, yay */
-      if (trial.boss_hp < 1) {
-         best_so_far = min(trial.mana_used, best_so_far);
-         continue;
-      }
+		/* boss dead, yay */
+		if (trial.boss_hp < 1) {
+			best_so_far = min(trial.mana_used, best_so_far);
+			continue;
+		}
 
-      best_so_far = min(battle_round(&trial, best_so_far), best_so_far);
-   }
+		best_so_far = min(battle_round(&trial, best_so_far), best_so_far);
+	}
 
-   return best_so_far;
+	return best_so_far;
 }
 
 /*
@@ -347,16 +351,17 @@ battle_round(
 
 int
 battle(
-   int player_hp,
-   int player_mana,
-   int boss_hp,
-   int boss_damage,
-   bool hard_mode
-) {
-   battle_state s = create_battle_state(player_hp, player_mana, boss_hp, boss_damage, hard_mode);
-   s.turn = 0;
-   int result = battle_round(&s, INT_MAX);
-   return result;
+        int player_hp,
+        int player_mana,
+        int boss_hp,
+        int boss_damage,
+        bool hard_mode
+)
+{
+	battle_state s = create_battle_state(player_hp, player_mana, boss_hp, boss_damage, hard_mode);
+	s.turn = 0;
+	int result = battle_round(&s, INT_MAX);
+	return result;
 }
 
 /*
@@ -364,8 +369,9 @@ battle(
  * is run, do it here. there is nothing for day 22 of 2015.
  */
 void
-reset_all(void) {
-   return;
+reset_all(void)
+{
+	return;
 }
 
 /*
@@ -376,22 +382,24 @@ reset_all(void) {
 
 int
 part_one(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   int r;
-   r = battle(50, 500, 71, 10, false);
-   printf("part one: %d\n", r);
+	int r;
+	r = battle(50, 500, 71, 10, false);
+	printf("part one: %d\n", r);
 
-   r = battle(50, 500, 71, 10, true);
-   printf("part two: %d\n", r);
+	r = battle(50, 500, 71, 10, true);
+	printf("part two: %d\n", r);
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 int
 part_two(
-   const char *fname
-) {
-   return EXIT_SUCCESS;
+        const char *fname
+)
+{
+	return EXIT_SUCCESS;
 }

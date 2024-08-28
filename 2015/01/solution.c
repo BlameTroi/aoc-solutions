@@ -15,49 +15,54 @@
 #include <stdio.h>
 
 int
-main(int argc, char **argv) {
-   FILE *ifile;
 
-   if (argc < 2) {
-      printf("usage: %s path-to-input\n", argv[0]);
-      return EXIT_FAILURE;
-   }
+main(int argc, char **argv)
+{
+	FILE *ifile;
 
-   ifile = fopen(argv[1], "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", argv[1]);
-      return EXIT_FAILURE;
-   }
+	if (argc < 2) {
+		printf("usage: %s path-to-input\n", argv[0]);
+		return EXIT_FAILURE;
+	}
 
-   int atBasement = 0;       /* which positin of input sends santa to basement for the first time */
-   int floor = 0;            /* what is the current floor */
-   int parens = 0;           /* parens read/current paren position */
-   int ch = 0;               /* input character, could include newlines */
+	this is a test
+	/* this is a test */
+	for (int i = 0 ; i ++; i ++;)
+		adf(3);
+	ifile = fopen(argv[1], "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", argv[1]);
+		return EXIT_FAILURE;
+	}
 
-   while (EOF != (ch = fgetc(ifile))) {
-      /* part one, move from floor to floor as instructed */
-      if (ch == '(') {
-         parens += 1;
-         floor += 1;
-      } else if (ch == ')') {
-         parens += 1;
-         floor -= 1;
-         /* part two, did that move us into the first basement level for */
-         /* the first time? */
-         if (atBasement == 0 && floor == -1) {
-            atBasement = parens;
-         }
-      } else if (ch != '\n') {
-         printf("error: illegal character %d, aborting\n", ch);
-         fclose(ifile);
-         return EXIT_FAILURE;
-      }
-   }
+	int atBasement = 0;       /* which positin of input sends santa to basement for the first time */
+	int floor = 0;            /* what is the current floor */
+	int parens = 0;           /* parens read/current paren position */
+	int ch = 0;               /* input character, could include newlines */
 
-   printf("after %d parens, santa finds himeself on floor %d.\n", parens, floor);
-   printf("and he first entered the basement on paren %d.\n", atBasement);
+	while (EOF != (ch = fgetc(ifile))) {
+		/* part one, move from floor to floor as instructed */
+		if (ch == '(') {
+			parens += 1;
+			floor += 1;
+		} else if (ch == ')') {
+			parens += 1;
+			floor -= 1;
+			/* part two, did that move us into the first basement level for */
+			/* the first time? */
+			if (atBasement == 0 && floor == -1)
+				atBasement = parens;
+		} else if (ch != '\n') {
+			printf("error: illegal character %d, aborting\n", ch);
+			fclose(ifile);
+			return EXIT_FAILURE;
+		}
+	}
 
-   fclose(ifile);
+	printf("after %d parens, santa finds himeself on floor %d.\n", parens, floor);
+	printf("and he first entered the basement on paren %d.\n", atBasement);
 
-   return EXIT_SUCCESS;
+	fclose(ifile);
+
+	return EXIT_SUCCESS;
 }

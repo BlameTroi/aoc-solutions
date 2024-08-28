@@ -30,53 +30,51 @@
 
 int
 main(
-   int argc,
-   const char **argv
-) {
+        int argc,
+        const char **argv
+)
+{
 
-   if (argc < 2) {
-      printf("usage: %s secret-key\n", argv[0]);
-      return EXIT_FAILURE;
-   }
+	if (argc < 2) {
+		printf("usage: %s secret-key\n", argv[0]);
+		return EXIT_FAILURE;
+	}
 
-   const char *baseKey = argv[1];
-   size_t keyLen = strlen(baseKey);
-   char *workarea = calloc(HASH_MAX, 1);
-   assert(workarea);
-   strcpy(workarea, baseKey);
-   uint64_t odometer = 0;
-   unsigned char digest[16];
-   int done5 = 0;
-   int done6 = 0;
+	const char *baseKey = argv[1];
+	size_t keyLen = strlen(baseKey);
+	char *workarea = calloc(HASH_MAX, 1);
+	assert(workarea);
+	strcpy(workarea, baseKey);
+	uint64_t odometer = 0;
+	unsigned char digest[16];
+	int done5 = 0;
+	int done6 = 0;
 
-   /* no check for runaway here. the expectation is that we */
-   /* will get an answer within the limits of the problem. */
-   while (!done5 || !done6) {
-      odometer += 1;
-      memset(workarea+keyLen, 0, HASH_MAX-1-keyLen);
-      sprintf(workarea+keyLen, "%llu", odometer);
-      md5_string(workarea, digest);
-      /* checking for leading zeros is actually pretty easy. */
-      if (digest[0]) {
-         continue;
-      }
-      if (digest[1]) {
-         continue;
-      }
-      if (digest[2] < 16) {
-         if (!done5) {
-            printf("(5)odometer: %llu\n", odometer);
-            done5 = 1;
-         }
-      }
-      if (digest[2]) {
-         continue;
-      }
-      if (!done6) {
-         printf("(6)odometer: %llu\n", odometer);
-         done6 = 1;
-      }
-   }
+	/* no check for runaway here. the expectation is that we */
+	/* will get an answer within the limits of the problem. */
+	while (!done5 || !done6) {
+		odometer += 1;
+		memset(workarea+keyLen, 0, HASH_MAX-1-keyLen);
+		sprintf(workarea+keyLen, "%llu", odometer);
+		md5_string(workarea, digest);
+		/* checking for leading zeros is actually pretty easy. */
+		if (digest[0])
+			continue;
+		if (digest[1])
+			continue;
+		if (digest[2] < 16) {
+			if (!done5) {
+				printf("(5)odometer: %llu\n", odometer);
+				done5 = 1;
+			}
+		}
+		if (digest[2])
+			continue;
+		if (!done6) {
+			printf("(6)odometer: %llu\n", odometer);
+			done6 = 1;
+		}
+	}
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

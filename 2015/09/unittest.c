@@ -13,13 +13,15 @@
 
 
 void
-test_setup(void) {
-   /* does nothing at the moment. */
+test_setup(void)
+{
+	/* does nothing at the moment. */
 }
 
 void
-test_teardown(void) {
-   /* does nothing at the moment. */
+test_teardown(void)
+{
+	/* does nothing at the moment. */
 }
 
 
@@ -30,36 +32,36 @@ test_teardown(void) {
 /* global/static data and constants */
 
 char *sampleInput[] = {
-   "London to Dublin = 464\n",
-   "London to Belfast = 518\n",
-   "Dublin to Belfast = 141\n",
+	"London to Dublin = 464\n",
+	"London to Belfast = 518\n",
+	"Dublin to Belfast = 141\n",
 };
 
 char *expectedLocations[] = {
-   "London",
-   "Dublin",
-   "Belfast"
+	"London",
+	"Dublin",
+	"Belfast"
 };
 
 
 
-MU_TEST(test_problem_data) {
+MU_TEST(test_problem_data)
+{
 
-   /* clear any prior work */
-   resetData();
+	/* clear any prior work */
+	resetData();
 
-   /* 'read' the input distances and build the locations list
-      and distances matrix. */
+	/* 'read' the input distances and build the locations list
+	   and distances matrix. */
 
-   int numInputs = sizeof(sampleInput) / sizeof(char *);
-   for (int i = 0; i < numInputs; i++) {
-      addDistance(sampleInput[i]);
-   }
+	int numInputs = sizeof(sampleInput) / sizeof(char *);
+	for (int i = 0; i < numInputs; i++)
+		addDistance(sampleInput[i]);
 
-   /* these are the expected results */
+	/* these are the expected results */
 
-   mu_assert_int_eq(605, shortestPath());
-   mu_assert_int_eq(982, longestPath());
+	mu_assert_int_eq(605, shortestPath());
+	mu_assert_int_eq(982, longestPath());
 
 }
 
@@ -71,23 +73,25 @@ MU_TEST(test_problem_data) {
  * of doing it manually.
  */
 
-MU_TEST_SUITE(test_suite) {
+MU_TEST_SUITE(test_suite)
+{
 
-   /* always have a setup and teardown, even if they */
-   /* do nothing. */
+	/* always have a setup and teardown, even if they */
+	/* do nothing. */
 
-   MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
+	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
-   /* is it plugged in? */
-   /*	MU_RUN_TEST(test_created); */
-   MU_RUN_TEST(test_problem_data);
+	/* is it plugged in? */
+	/*	MU_RUN_TEST(test_created); */
+	MU_RUN_TEST(test_problem_data);
 
 }
 
 
 int
-main(int argc, char *argv[]) {
-   MU_RUN_SUITE(test_suite);
-   MU_REPORT();
-   return MU_EXIT_CODE;
+main(int argc, char *argv[])
+{
+	MU_RUN_SUITE(test_suite);
+	MU_REPORT();
+	return MU_EXIT_CODE;
 }

@@ -38,24 +38,25 @@ part_two(char *fname);
 
 /* mainline */
 int
-main(int argc, char ** argv) {
+main(int argc, char **argv)
+{
 
-   if (argc < 2) {
-      printf("usage: %s path-to-input\n", argv[0]);
-      return EXIT_FAILURE;
-   }
+	if (argc < 2) {
+		printf("usage: %s path-to-input\n", argv[0]);
+		return EXIT_FAILURE;
+	}
 
-   if (part_one(argv[1]) != EXIT_SUCCESS) {
-      printf("error in part one\n");
-      return EXIT_FAILURE;
-   }
+	if (part_one(argv[1]) != EXIT_SUCCESS) {
+		printf("error in part one\n");
+		return EXIT_FAILURE;
+	}
 
-   if (part_two(argv[1]) != EXIT_SUCCESS) {
-      printf("error in part two\n");
-      return EXIT_FAILURE;
-   }
+	if (part_two(argv[1]) != EXIT_SUCCESS) {
+		printf("error in part two\n");
+		return EXIT_FAILURE;
+	}
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 
@@ -80,84 +81,85 @@ main(int argc, char ** argv) {
  */
 
 int
-part_one(char *fname) {
+part_one(char *fname)
+{
 
-   FILE *ifile;
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   /* line from input */
-   char *iline;
-   /* length, expected to have a trailing \n */
-   size_t ilen;
+	/* line from input */
+	char *iline;
+	/* length, expected to have a trailing \n */
+	size_t ilen;
 
-   /* regular expression overhead */
-   pcre2_code *re;           /* compiled regular expression */
-   PCRE2_SPTR pattern;       /* pattern source */
-   int errornumber;          /* error in compile of re */
-   PCRE2_SIZE erroroffset;   /* position of error in re */
-   PCRE2_SPTR subject;       /* string to run pattern against */
-   size_t subject_length;    /* its length, \n optional */
-   pcre2_match_data *match_data;   /* result of match */
+	/* regular expression overhead */
+	pcre2_code *re;           /* compiled regular expression */
+	PCRE2_SPTR pattern;       /* pattern source */
+	int errornumber;          /* error in compile of re */
+	PCRE2_SIZE erroroffset;   /* position of error in re */
+	PCRE2_SPTR subject;       /* string to run pattern against */
+	size_t subject_length;    /* its length, \n optional */
+	pcre2_match_data *match_data;   /* result of match */
 
-   /*                       none of these          3 of these   and at least repeat */
-   pattern = (PCRE2_SPTR)"^(?!.*(ab|cd|pq|xy))(?=(.*[aeiou]){3})(?=.*(\\w)\\3).*$";
-   /*                      1                  2                 3 */
+	/*                       none of these          3 of these   and at least repeat */
+	pattern = (PCRE2_SPTR)"^(?!.*(ab|cd|pq|xy))(?=(.*[aeiou]){3})(?=.*(\\w)\\3).*$";
+	/*                      1                  2                 3 */
 
-   /* compile the pattern */
-   re = pcre2_compile(pattern,
-                      PCRE2_ZERO_TERMINATED,
-                      0,
-                      &errornumber,
-                      &erroroffset,
-                      NULL);
+	/* compile the pattern */
+	re = pcre2_compile(pattern,
+	                   PCRE2_ZERO_TERMINATED,
+	                   0,
+	                   &errornumber,
+	                   &erroroffset,
+	                   NULL);
 
-   if (re == NULL) {
-      /* compile failed, report error */
-      PCRE2_UCHAR buffer[256];
-      pcre2_get_error_message(errornumber, buffer, sizeof(buffer));
-      printf("PCRE2 compilation failed at offset %d: %s\n", (int)erroroffset, buffer);
-      return EXIT_FAILURE;
-   }
+	if (re == NULL) {
+		/* compile failed, report error */
+		PCRE2_UCHAR buffer[256];
+		pcre2_get_error_message(errornumber, buffer, sizeof(buffer));
+		printf("PCRE2 compilation failed at offset %d: %s\n", (int)erroroffset, buffer);
+		return EXIT_FAILURE;
+	}
 
-   match_data = pcre2_match_data_create_from_pattern(re, NULL);
+	match_data = pcre2_match_data_create_from_pattern(re, NULL);
 
-   size_t nice = 0;
-   char strbuf[256];
+	size_t nice = 0;
+	char strbuf[256];
 
-   while ((iline = fgetln(ifile, &ilen))) {
-      memset(strbuf, 0, 255);
-      memcpy(strbuf, iline, ilen-1);           /* omit newline */
-      /* printf("%s", strbuf); */
-      subject = (PCRE2_SPTR)strbuf;
-      subject_length = strlen((char *)subject);
-      int rc = pcre2_match(re,
-                           subject,
-                           subject_length,
-                           0,
-                           0,
-                           match_data,
-                           NULL);
-      if (rc == PCRE2_ERROR_NOMATCH) {
-         /* printf("\n"); */
-      } else if (rc < 0) {
-         printf("error matching on %s - error %d\n", subject, rc);
-      } else {
-         nice += 1;
-         /* printf(" - nice %zu\n", nice); */
-      }
-   }
-   pcre2_match_data_free(match_data);
+	while ((iline = fgetln(ifile, &ilen))) {
+		memset(strbuf, 0, 255);
+		memcpy(strbuf, iline, ilen-1);           /* omit newline */
+		/* printf("%s", strbuf); */
+		subject = (PCRE2_SPTR)strbuf;
+		subject_length = strlen((char *)subject);
+		int rc = pcre2_match(re,
+		                     subject,
+		                     subject_length,
+		                     0,
+		                     0,
+		                     match_data,
+		                     NULL);
+		if (rc == PCRE2_ERROR_NOMATCH) {
+			/* printf("\n"); */
+		} else if (rc < 0)
+			printf("error matching on %s - error %d\n", subject, rc);
+		else {
+			nice += 1;
+			/* printf(" - nice %zu\n", nice); */
+		}
+	}
+	pcre2_match_data_free(match_data);
 
-   printf("\npart one: %zu\n", nice);
-   pcre2_code_free(re);
-   fclose(ifile);
+	printf("\npart one: %zu\n", nice);
+	pcre2_code_free(re);
+	fclose(ifile);
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 
@@ -178,66 +180,64 @@ part_one(char *fname) {
  */
 
 int
-part_two(char *fname) {
+part_two(char *fname)
+{
 
-   FILE *ifile;
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
-   /* line from input */
-   char *iline;
-   /* length, expected to have a trailing \n */
-   size_t ilen;
-   /* final total */
-   size_t nice = 0;
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
+	/* line from input */
+	char *iline;
+	/* length, expected to have a trailing \n */
+	size_t ilen;
+	/* final total */
+	size_t nice = 0;
 
-   /* there are two conditions to check for and no disqualifiers. */
-   /* x-x and xy-*xy, with overlaps allowed */
-   while ((iline = fgetln(ifile, &ilen))) {
-      int gotOne = 0;      /* hit on x-x */
-      int atOne = 0;
-      int gotTwo = 0;      /* hit on xy-*xy */
-      int atTwo = 0;
-      int i = 0;
-      int j = 0;
-      if (iline[0] == '#') {
-         continue;
-      }
-      /* check one, at least one letter repeats with exactly one */
-      /* letter between the repeats, xyx or zzz are valid. */
-      for (i = 2; i < ilen; i++) {
-         if (iline[i] == iline[i-2]) {
-            gotOne = 1;
-            atOne = i - 2;
-            break;
-         }
-      }
-      /* check pair preceeded by itself with at least one intervening */
-      /* character. xxxx is ok, xxyxx is ok, abcab is ok, aaa is not. */
-      /* 01234 */
-      for (i = 0; i < ilen; i++) {
-         for (j = i+2; j < ilen; j++) {
-            if (memcmp(iline+i, iline+j, 2) == 0) {
-               gotTwo = 1;
-               atTwo = i;
-               break;
-            }
-         }
-         if (gotTwo) {
-            break;
-         }
-      }
-      /* did we get both one and two? */
-      if (gotOne && gotTwo) {
-         nice += 1;
-      }
-   }
+	/* there are two conditions to check for and no disqualifiers. */
+	/* x-x and xy-*xy, with overlaps allowed */
+	while ((iline = fgetln(ifile, &ilen))) {
+		int gotOne = 0;      /* hit on x-x */
+		int atOne = 0;
+		int gotTwo = 0;      /* hit on xy-*xy */
+		int atTwo = 0;
+		int i = 0;
+		int j = 0;
+		if (iline[0] == '#')
+			continue;
+		/* check one, at least one letter repeats with exactly one */
+		/* letter between the repeats, xyx or zzz are valid. */
+		for (i = 2; i < ilen; i++) {
+			if (iline[i] == iline[i-2]) {
+				gotOne = 1;
+				atOne = i - 2;
+				break;
+			}
+		}
+		/* check pair preceeded by itself with at least one intervening */
+		/* character. xxxx is ok, xxyxx is ok, abcab is ok, aaa is not. */
+		/* 01234 */
+		for (i = 0; i < ilen; i++) {
+			for (j = i+2; j < ilen; j++) {
+				if (memcmp(iline+i, iline+j, 2) == 0) {
+					gotTwo = 1;
+					atTwo = i;
+					break;
+				}
+			}
+			if (gotTwo)
+				break;
+		}
+		/* did we get both one and two? */
+		if (gotOne && gotTwo)
+			nice += 1;
+	}
 
-   printf("\npart two: %zu\n", nice);
+	printf("\npart two: %zu\n", nice);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }

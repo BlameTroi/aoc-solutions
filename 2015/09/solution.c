@@ -26,27 +26,27 @@ int maxDistance;
 
 int
 part_one(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   /* clear any prior work */
-   resetData();
+	/* clear any prior work */
+	resetData();
 
-   char iline[INPUT_LEN_MAX];
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      addDistance(iline);
-   }
+	char iline[INPUT_LEN_MAX];
+	while (fgets(iline, INPUT_LEN_MAX - 1, ifile))
+		addDistance(iline);
 
-   printf("part one: %d\n", shortestPath());
+	printf("part one: %d\n", shortestPath());
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -57,28 +57,28 @@ part_one(
 
 int
 part_two(
-   const char *fname
-) {
-   FILE *ifile;
+        const char *fname
+)
+{
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   /* clear any prior work */
-   resetData();
+	/* clear any prior work */
+	resetData();
 
-   char iline[INPUT_LEN_MAX];
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      addDistance(iline);
-   }
+	char iline[INPUT_LEN_MAX];
+	while (fgets(iline, INPUT_LEN_MAX - 1, ifile))
+		addDistance(iline);
 
-   printf("part two: %d\n", longestPath());
+	printf("part two: %d\n", longestPath());
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -92,19 +92,19 @@ part_two(
 
 int
 indexOfLocation(
-   const char *s
-) {
-   int i;
-   /* if it's already here, return it */
-   for (i = 0; i < numLocations; i++) {
-      if (strcmp(locations[i], s) == 0) {
-         return i;
-      }
-   }
-   assert(numLocations <= LOCATIONS_MAX);
-   locations[numLocations] = strdup(s);
-   numLocations += 1;
-   return numLocations - 1;
+        const char *s
+)
+{
+	int i;
+	/* if it's already here, return it */
+	for (i = 0; i < numLocations; i++) {
+		if (strcmp(locations[i], s) == 0)
+			return i;
+	}
+	assert(numLocations <= LOCATIONS_MAX);
+	locations[numLocations] = strdup(s);
+	numLocations += 1;
+	return numLocations - 1;
 }
 
 
@@ -113,12 +113,12 @@ indexOfLocation(
  */
 
 int
-distanceForPath(int n, int path[n]) {
-   int d = 0;
-   for (int i = 0; i < n - 1; i++) {
-      d += distances[path[i]][path[i + 1]];
-   }
-   return d;
+distanceForPath(int n, int path[n])
+{
+	int d = 0;
+	for (int i = 0; i < n - 1; i++)
+		d += distances[path[i]][path[i + 1]];
+	return d;
 }
 
 
@@ -132,15 +132,15 @@ distanceForPath(int n, int path[n]) {
 /* initilize for a new run */
 
 void
-resetData(void) {
-   memset(distances, 0, sizeof(distances));
-   for (int i = 0; i < numLocations; i++) {
-      free(locations[i]);
-   }
-   memset(locations, 0, sizeof(locations));
-   numLocations = 0;
-   minDistance = -1;
-   maxDistance = -1;
+resetData(void)
+{
+	memset(distances, 0, sizeof(distances));
+	for (int i = 0; i < numLocations; i++)
+		free(locations[i]);
+	memset(locations, 0, sizeof(locations));
+	numLocations = 0;
+	minDistance = -1;
+	maxDistance = -1;
 }
 
 
@@ -154,29 +154,30 @@ resetData(void) {
 
 void
 addDistance(
-   const char *s
-) {
+        const char *s
+)
+{
 
-   /* first city in 1, second in 3, distance in 5 */
-   const char **tokens = split_string(s, " \n");
+	/* first city in 1, second in 3, distance in 5 */
+	const char **tokens = split_string(s, " \n");
 
-   /* find in locations table -or- add new entry */
-   int lx1 = indexOfLocation(tokens[1]);
-   int lx2 = indexOfLocation(tokens[3]);
+	/* find in locations table -or- add new entry */
+	int lx1 = indexOfLocation(tokens[1]);
+	int lx2 = indexOfLocation(tokens[3]);
 
-   /* if no distance logged yet, add it. we could just overwrite but
-      this could be useful in debugging or to detect bad data.  */
-   if (distances[lx1][lx2] == 0) {
-      distances[lx1][lx2] = strtol(tokens[5], NULL, 10);
-      distances[lx2][lx1] = distances[lx1][lx2];
-   } else {
-      assert(distances[lx1][lx2] == strtol(tokens[5], NULL, 10));
-      assert(distances[lx1][lx2] == distances[lx2][lx1]);
-   }
+	/* if no distance logged yet, add it. we could just overwrite but
+	   this could be useful in debugging or to detect bad data.  */
+	if (distances[lx1][lx2] == 0) {
+		distances[lx1][lx2] = strtol(tokens[5], NULL, 10);
+		distances[lx2][lx1] = distances[lx1][lx2];
+	} else {
+		assert(distances[lx1][lx2] == strtol(tokens[5], NULL, 10));
+		assert(distances[lx1][lx2] == distances[lx2][lx1]);
+	}
 
-   /* free the copy of the input record and then the token pointers */
-   free((void *)tokens[0]);
-   free(tokens);
+	/* free the copy of the input record and then the token pointers */
+	free((void *)tokens[0]);
+	free(tokens);
 }
 
 
@@ -184,19 +185,19 @@ addDistance(
    find the path distances. */
 
 void
-permutePaths(void) {
-   int path[numLocations];
-   for (int i = 0; i < numLocations; i++) {
-      path[i] = i;
-   }
-   int currDistance = distanceForPath(numLocations, path);
-   minDistance = currDistance;
-   maxDistance = currDistance;
-   while (permute_next(numLocations, path)) {
-      currDistance = distanceForPath(numLocations, path);
-      minDistance = min(minDistance, currDistance);
-      maxDistance = max(maxDistance, currDistance);
-   }
+permutePaths(void)
+{
+	int path[numLocations];
+	for (int i = 0; i < numLocations; i++)
+		path[i] = i;
+	int currDistance = distanceForPath(numLocations, path);
+	minDistance = currDistance;
+	maxDistance = currDistance;
+	while (permute_next(numLocations, path)) {
+		currDistance = distanceForPath(numLocations, path);
+		minDistance = min(minDistance, currDistance);
+		maxDistance = max(maxDistance, currDistance);
+	}
 }
 
 
@@ -204,18 +205,18 @@ permutePaths(void) {
    among the permuted paths. */
 
 int
-shortestPath(void) {
-   if (minDistance == -1) {
-      permutePaths();
-   }
-   return minDistance;
+shortestPath(void)
+{
+	if (minDistance == -1)
+		permutePaths();
+	return minDistance;
 }
 
 
 int
-longestPath(void) {
-   if (maxDistance == -1) {
-      permutePaths();
-   }
-   return maxDistance;
+longestPath(void)
+{
+	if (maxDistance == -1)
+		permutePaths();
+	return maxDistance;
 }

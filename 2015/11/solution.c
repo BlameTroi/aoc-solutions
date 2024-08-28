@@ -54,54 +54,53 @@
 
 int
 part_one(
-   const char *fname
-) {
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+        const char *fname
+)
+{
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   char iline[INPUT_LEN_MAX];
+	char iline[INPUT_LEN_MAX];
 
-   if (!fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      printf("error reading input file\n");
-      return EXIT_FAILURE;
-   }
+	if (!fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+		printf("error reading input file\n");
+		return EXIT_FAILURE;
+	}
 
-   fclose(ifile);
+	fclose(ifile);
 
 
-   /* assume iline is a valid starting password and work it */
-   iline[PASSWORD_MAX] = '\0';
+	/* assume iline is a valid starting password and work it */
+	iline[PASSWORD_MAX] = '\0';
 
-   /* current password provided, increment until we get the next valid one */
-   int n = 0;
-   while (n < PASSWORD_TRIES_MAX && !password_p(password_increment(iline))) {
-      n += 1;
-   }
+	/* current password provided, increment until we get the next valid one */
+	int n = 0;
+	while (n < PASSWORD_TRIES_MAX && !password_p(password_increment(iline)))
+		n += 1;
 
-   if (password_p(iline)) {
-      printf("\npart one after %d tries gets %s\n", n, iline);
-   } else {
-      printf("\npart one error did not find password\n");
-      return EXIT_FAILURE;
-   }
+	if (password_p(iline))
+		printf("\npart one after %d tries gets %s\n", n, iline);
+	else {
+		printf("\npart one error did not find password\n");
+		return EXIT_FAILURE;
+	}
 
-   /* and what will the password be after that new one expires? */
-   n = 0;
-   while (n < PASSWORD_TRIES_MAX && !password_p(password_increment(iline))) {
-      n += 1;
-   }
+	/* and what will the password be after that new one expires? */
+	n = 0;
+	while (n < PASSWORD_TRIES_MAX && !password_p(password_increment(iline)))
+		n += 1;
 
-   if (password_p(iline)) {
-      printf("\npart two after another %d tries gets %s\n", n, iline);
-   } else {
-      printf("\npart two error did not find password\n");
-      return EXIT_FAILURE;
-   }
+	if (password_p(iline))
+		printf("\npart two after another %d tries gets %s\n", n, iline);
+	else {
+		printf("\npart two error did not find password\n");
+		return EXIT_FAILURE;
+	}
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 
@@ -112,26 +111,27 @@ part_one(
 
 int
 part_two(
-   const char *fname
-) {
-   return EXIT_SUCCESS;
-   /* this is handled in part one
-   FILE *ifile;
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
-   char iline[INPUT_LEN_MAX];
+        const char *fname
+)
+{
+	return EXIT_SUCCESS;
+	/* this is handled in part one
+	FILE *ifile;
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+	   printf("could not open file: %s\n", fname);
+	   return EXIT_FAILURE;
+	}
+	char iline[INPUT_LEN_MAX];
 
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-   }
+	while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+	}
 
-   printf("part two: %d\n", 0);
+	printf("part two: %d\n", 0);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
-   */
+	fclose(ifile);
+	return EXIT_SUCCESS;
+	*/
 }
 
 
@@ -141,14 +141,14 @@ part_two(
  */
 
 const char *
-pairFrom(const char *p) {
-   while (*p) {
-      if (*p == *(p+1)) {
-         return p;
-      }
-      p += 1;
-   }
-   return NULL;
+pairFrom(const char *p)
+{
+	while (*p) {
+		if (*p == *(p+1))
+			return p;
+		p += 1;
+	}
+	return NULL;
 }
 
 
@@ -175,64 +175,57 @@ pairFrom(const char *p) {
 
 bool
 password_p(
-   const char *candidate
-) {
+        const char *candidate
+)
+{
 
-   /* eliminate via guards */
-   if (candidate == NULL || strlen(candidate) != PASSWORD_MAX) {
-      return 0;
-   }
+	/* eliminate via guards */
+	if (candidate == NULL || strlen(candidate) != PASSWORD_MAX)
+		return 0;
 
-   /* work pointers */
-   const char *p;
-   const char *q;
+	/* work pointers */
+	const char *p;
+	const char *q;
 
-   /* lower case but not i, o, or l */
-   p = candidate;
-   while (*p) {
-      if (*p < 'a' || *p > 'z') {
-         return false;
-      }
-      if (*p == 'i' || *p == 'o' || *p == 'l') {
-         return false;
-      }
-      p += 1;
-   }
+	/* lower case but not i, o, or l */
+	p = candidate;
+	while (*p) {
+		if (*p < 'a' || *p > 'z')
+			return false;
+		if (*p == 'i' || *p == 'o' || *p == 'l')
+			return false;
+		p += 1;
+	}
 
-   /* is there at least one straight? */
-   int f = 0;
-   p = candidate;
-   while (*p) {
-      /* stop when we run to the end */
-      if (!*(p + 2)) {
-         break;
-      }
-      /* do these three ascend? */
-      if (*p < *(p + 1) && *(p + 1) < *(p + 2)) {
-         f = (*(p + 2) - *(p + 1) == 1) && (*(p + 1) - *p == 1);
-         if (f) {
-            break;
-         }
-      }
-      p += 1;
-   }
-   if (!f) {
-      return false;
-   }
+	/* is there at least one straight? */
+	int f = 0;
+	p = candidate;
+	while (*p) {
+		/* stop when we run to the end */
+		if (!*(p + 2))
+			break;
+		/* do these three ascend? */
+		if (*p < *(p + 1) && *(p + 1) < *(p + 2)) {
+			f = (*(p + 2) - *(p + 1) == 1) && (*(p + 1) - *p == 1);
+			if (f)
+				break;
+		}
+		p += 1;
+	}
+	if (!f)
+		return false;
 
-   /* are there two non-overlapping pairs? */
-   p = candidate;
-   p = pairFrom(p);
-   if (!p) {
-      return false;
-   }
-   q = pairFrom(p+2);
-   if (!q) {
-      return false;
-   }
+	/* are there two non-overlapping pairs? */
+	p = candidate;
+	p = pairFrom(p);
+	if (!p)
+		return false;
+	q = pairFrom(p+2);
+	if (!q)
+		return false;
 
-   /* that's the end of the rules */
-   return true;
+	/* that's the end of the rules */
+	return true;
 }
 
 
@@ -247,23 +240,24 @@ password_p(
 
 char *
 password_increment(
-   char *p
-) {
+        char *p
+)
+{
 
-   char c;                /* character work */
-   int r = 1;             /* adding 1, becomes carry as propogated */
-   int n = PASSWORD_MAX;  /* units digit, we work right to left */
-   while (n && r) {
-      n -= 1;
-      c = *(p+n) + r;     /* new digit = current + 1 + carry */
-      r = 0;              /* clear carry */
-      if (c > 'z') {      /* is there a carry for the next digit? */
-         c = 'a' + c - 1 - 'z'; /* adjust and propogate */
-         r = 1;
-      }
-      *(p+n) = c;           /* and update digit */
-   }
+	char c;                /* character work */
+	int r = 1;             /* adding 1, becomes carry as propogated */
+	int n = PASSWORD_MAX;  /* units digit, we work right to left */
+	while (n && r) {
+		n -= 1;
+		c = *(p+n) + r;     /* new digit = current + 1 + carry */
+		r = 0;              /* clear carry */
+		if (c > 'z') {      /* is there a carry for the next digit? */
+			c = 'a' + c - 1 - 'z'; /* adjust and propogate */
+			r = 1;
+		}
+		*(p+n) = c;           /* and update digit */
+	}
 
-   /* any overflow is ignored */
-   return p;
+	/* any overflow is ignored */
+	return p;
 }

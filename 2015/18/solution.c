@@ -27,20 +27,21 @@
  */
 
 void
-reset_state(int rel) {
-   if (rel) {
-      /* not used this day */
-   }
-   dim_rows = 0;
-   dim_cols = 0;
-   iter = 0;
-   stuck_rules = 0;
-   for (int i = 0; i < DIMENSION_MAX; i++) {
-      memset(page_one.p[i], G_OFF, sizeof(page_one.p[i]));
-      memset(page_two.p[i], G_OFF, sizeof(page_one.p[i]));
-   }
-   reading = &page_one;
-   writing = &page_two;
+reset_state(int rel)
+{
+	if (rel) {
+		/* not used this day */
+	}
+	dim_rows = 0;
+	dim_cols = 0;
+	iter = 0;
+	stuck_rules = 0;
+	for (int i = 0; i < DIMENSION_MAX; i++) {
+		memset(page_one.p[i], G_OFF, sizeof(page_one.p[i]));
+		memset(page_two.p[i], G_OFF, sizeof(page_one.p[i]));
+	}
+	reading = &page_one;
+	writing = &page_two;
 }
 
 
@@ -49,10 +50,11 @@ reset_state(int rel) {
  */
 
 void
-flip_pages(void) {
-   page_t *swap = reading;
-   reading = writing;
-   writing = swap;
+flip_pages(void)
+{
+	page_t *swap = reading;
+	reading = writing;
+	writing = swap;
 }
 
 
@@ -63,18 +65,17 @@ flip_pages(void) {
 
 bool
 stuck_p(
-   int row,
-   int col
-) {
-   if (stuck_rules) {
-      if (row == 0 && (col == 0 || col == dim_cols-1)) {
-         return true;
-      }
-      if (row == dim_rows-1 && (col == 0 || col == dim_cols-1)) {
-         return true;
-      }
-   }
-   return false;
+        int row,
+        int col
+)
+{
+	if (stuck_rules) {
+		if (row == 0 && (col == 0 || col == dim_cols-1))
+			return true;
+		if (row == dim_rows-1 && (col == 0 || col == dim_cols-1))
+			return true;
+	}
+	return false;
 }
 
 
@@ -86,17 +87,16 @@ stuck_p(
 
 bool
 on_p(
-   int row,
-   int col
-) {
-   if (row < 0 || col < 0 || row > dim_rows - 1 || col > dim_cols - 1) {
-      return false;
-   }
-   if (stuck_p(row, col)) {
-      return true;
-   } else {
-      return reading->p[row][col] == G_ON;
-   }
+        int row,
+        int col
+)
+{
+	if (row < 0 || col < 0 || row > dim_rows - 1 || col > dim_cols - 1)
+		return false;
+	if (stuck_p(row, col))
+		return true;
+	else
+		return reading->p[row][col] == G_ON;
 }
 
 
@@ -106,10 +106,11 @@ on_p(
 
 void
 turn_on(
-   int row,
-   int col
-) {
-   writing->p[row][col] = G_ON;
+        int row,
+        int col
+)
+{
+	writing->p[row][col] = G_ON;
 }
 
 
@@ -119,13 +120,13 @@ turn_on(
 
 void
 turn_off(
-   int row,
-   int col
-) {
-   if (stuck_p(row, col)) {
-      return;
-   }
-   writing->p[row][col] = G_OFF;
+        int row,
+        int col
+)
+{
+	if (stuck_p(row, col))
+		return;
+	writing->p[row][col] = G_OFF;
 }
 
 
@@ -135,14 +136,15 @@ turn_off(
 
 int
 neighbors_on(
-   int row,
-   int col
-) {
-   int r = 0;
-   r += on_p(row-1, col-1) + on_p(row, col-1) + on_p(row+1, col-1);
-   r += on_p(row-1, col) + /*     this cell          */ on_p(row+1, col);
-   r += on_p(row-1, col+1) + on_p(row, col+1) + on_p(row+1, col+1);
-   return r;
+        int row,
+        int col
+)
+{
+	int r = 0;
+	r += on_p(row-1, col-1) + on_p(row, col-1) + on_p(row+1, col-1);
+	r += on_p(row-1, col) + /*     this cell          */ on_p(row+1, col);
+	r += on_p(row-1, col+1) + on_p(row, col+1) + on_p(row+1, col+1);
+	return r;
 }
 
 
@@ -159,18 +161,17 @@ neighbors_on(
 
 bool
 decide(
-   int row,
-   int col
-) {
-   if (stuck_p(row, col)) {
-      return true;
-   }
-   int hood = neighbors_on(row, col);
-   if (on_p(row, col)) {
-      return hood == 2 || hood == 3;
-   } else {
-      return hood == 3;
-   }
+        int row,
+        int col
+)
+{
+	if (stuck_p(row, col))
+		return true;
+	int hood = neighbors_on(row, col);
+	if (on_p(row, col))
+		return hood == 2 || hood == 3;
+	else
+		return hood == 3;
 }
 
 
@@ -180,19 +181,19 @@ decide(
  */
 
 int
-cycle_lights(void) {
-   int lit = 0;
-   for (int r = 0; r < dim_rows; r++) {
-      for (int c = 0; c < dim_cols; c++) {
-         if (decide(r, c)) {
-            lit += 1;
-            turn_on(r, c);
-         } else {
-            turn_off(r, c);
-         }
-      }
-   }
-   return lit;
+cycle_lights(void)
+{
+	int lit = 0;
+	for (int r = 0; r < dim_rows; r++) {
+		for (int c = 0; c < dim_cols; c++) {
+			if (decide(r, c)) {
+				lit += 1;
+				turn_on(r, c);
+			} else
+				turn_off(r, c);
+		}
+	}
+	return lit;
 }
 
 
@@ -203,24 +204,25 @@ cycle_lights(void) {
 
 void
 load_row(
-   int row,
-   const char *s
-) {
-   assert(strlen(s) == dim_cols + 1);
-   for (int c = 0; c < dim_cols; c++) {
-      switch (s[c]) {
-      case G_ON:
-         turn_on(row, c);
-         break;
-      case G_OFF:
-         turn_off(row, c);
-         break;
-      case '\n':
-         break;
-      default:
-         assert(NULL);
-      }
-   }
+        int row,
+        const char *s
+)
+{
+	assert(strlen(s) == dim_cols + 1);
+	for (int c = 0; c < dim_cols; c++) {
+		switch (s[c]) {
+		case G_ON:
+			turn_on(row, c);
+			break;
+		case G_OFF:
+			turn_off(row, c);
+			break;
+		case '\n':
+			break;
+		default:
+			assert(NULL);
+		}
+	}
 }
 
 
@@ -233,46 +235,47 @@ load_row(
 
 int
 part_one(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   char iline[INPUT_LEN_MAX];
+	char iline[INPUT_LEN_MAX];
 
-   reset_state(0);
-   int first = 1;
-   int row = 0;
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      if (first) {
-         /* the first input line contains number of rows, columns, and
-            iterations to run */
-         char *next = iline;
-         dim_rows = strtol(iline, &next, 10);
-         dim_cols = strtol(next, &next, 10);
-         iter = strtol(next, &next, 10);
-         first = 0;
-         continue;
-      }
-      load_row(row, iline);
-      row += 1;
-   }
+	reset_state(0);
+	int first = 1;
+	int row = 0;
+	while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+		if (first) {
+			/* the first input line contains number of rows, columns, and
+			   iterations to run */
+			char *next = iline;
+			dim_rows = strtol(iline, &next, 10);
+			dim_cols = strtol(next, &next, 10);
+			iter = strtol(next, &next, 10);
+			first = 0;
+			continue;
+		}
+		load_row(row, iline);
+		row += 1;
+	}
 
-   int lit;
-   for (int i = 0; i < iter; i++) {
-      flip_pages();
-      lit = cycle_lights();
-   }
+	int lit;
+	for (int i = 0; i < iter; i++) {
+		flip_pages();
+		lit = cycle_lights();
+	}
 
-   printf("part one: %d\n", lit);
+	printf("part one: %d\n", lit);
 
-   reset_state(1);
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	reset_state(1);
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -286,46 +289,47 @@ part_one(
 
 int
 part_two(
-   const char *fname
-) {
+        const char *fname
+)
+{
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      printf("could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		printf("could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   char iline[INPUT_LEN_MAX];
+	char iline[INPUT_LEN_MAX];
 
-   reset_state(0);
-   int first = 1;
-   int row = 0;
-   while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-      if (first) {
-         /* the first input line contains number of rows, columns, and
-            iterations to run */
-         char *next = iline;
-         dim_rows = strtol(iline, &next, 10);
-         dim_cols = strtol(next, &next, 10);
-         iter = strtol(next, &next, 10);
-         first = 0;
-         continue;
-      }
-      load_row(row, iline);
-      row += 1;
-   }
+	reset_state(0);
+	int first = 1;
+	int row = 0;
+	while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
+		if (first) {
+			/* the first input line contains number of rows, columns, and
+			   iterations to run */
+			char *next = iline;
+			dim_rows = strtol(iline, &next, 10);
+			dim_cols = strtol(next, &next, 10);
+			iter = strtol(next, &next, 10);
+			first = 0;
+			continue;
+		}
+		load_row(row, iline);
+		row += 1;
+	}
 
-   stuck_rules = 1;
+	stuck_rules = 1;
 
-   int lit;
-   for (int i = 0; i < iter; i++) {
-      flip_pages();
-      lit = cycle_lights();
-   }
+	int lit;
+	for (int i = 0; i < iter; i++) {
+		flip_pages();
+		lit = cycle_lights();
+	}
 
-   printf("part two: %d\n", lit);
+	printf("part two: %d\n", lit);
 
-   reset_state(1);
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	reset_state(1);
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }

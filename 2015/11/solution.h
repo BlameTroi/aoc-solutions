@@ -24,12 +24,12 @@
 
 bool
 password_p(
-   const char *candidate /* a password string */
+        const char *candidate /* a password string */
 );
 
 char *
 password_increment(
-   char *password
+        char *password
 );
 
 
@@ -47,13 +47,13 @@ password_increment(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 

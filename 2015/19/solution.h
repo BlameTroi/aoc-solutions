@@ -44,10 +44,10 @@
 /* given from => to in input */
 
 typedef struct transform_t {
-   size_t from_len;
-   size_t to_len;
-   char from[FROM_MAX];
-   char to[TO_MAX];
+	size_t from_len;
+	size_t to_len;
+	char from[FROM_MAX];
+	char to[TO_MAX];
 } transform_t;
 
 /*
@@ -60,14 +60,14 @@ reset_state(bool rel);
 
 bool
 parse_line(
-   const char *iline
+        const char *iline
 );
 
 char *
 transformer(
-   transform_t *t,
-   const char *s,
-   int *pos);
+        transform_t *t,
+        const char *s,
+        int *pos);
 
 
 /*
@@ -84,13 +84,13 @@ transformer(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 
