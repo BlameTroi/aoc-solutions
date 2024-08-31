@@ -5,9 +5,6 @@
 
 #define INPUT_LINE_MAX 4096
 
-#include <stdbool.h>
-#include "txbfs.h"
-
 /*
  * the graph is initialized by sending values to the bots.
  */
@@ -18,12 +15,12 @@
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 /* end solution.h */

@@ -42,35 +42,34 @@
 
 static int
 fnmaze(int x, int y, int magic) {
-   return one_bits_in(magic + x*x + 3*x + 2*x*y + y + y*y);
+	return one_bits_in(magic + x *x + 3*x + 2*x *y + y + y *y);
 }
 
 static bool
 is_valid_maze_coordinate(const maze *m, const maze_coordinate *c) {
-   assert(m && c);
-   return c->row >= 0 && c->row < m->rows &&
-          c->col >= 0 && c->col < m->cols;
+	assert(m && c);
+	return c->row >= 0 && c->row < m->rows &&
+	       c->col >= 0 && c->col < m->cols;
 }
 
 static bool
 is_null_maze_coordinate(const maze_coordinate *c) {
-   return c->row == -INT_MAX && c->col == -INT_MAX;
+	return c->row == -INT_MAX && c->col == -INT_MAX;
 }
 
 static const maze_coordinate
 null_maze_coordinate(void) {
-   return (maze_coordinate) {
-      -INT_MAX, -INT_MAX
-   };
+	return (maze_coordinate) {
+		-INT_MAX, -INT_MAX
+	};
 }
 
 static bool
 equal_maze_coordinate(const maze_coordinate *a, const maze_coordinate *b) {
-   assert(a && b);
-   if (is_null_maze_coordinate(a) || is_null_maze_coordinate(b)) {
-      return false;
-   }
-   return a->row == b->row && a->col == b->col;
+	assert(a && b);
+	if (is_null_maze_coordinate(a) || is_null_maze_coordinate(b))
+		return false;
+	return a->row == b->row && a->col == b->col;
 }
 
 /*
@@ -81,18 +80,16 @@ equal_maze_coordinate(const maze_coordinate *a, const maze_coordinate *b) {
 
 int
 compare_maze_coordinate(void *a, void *b) {
-   const maze_coordinate *ma = a;
-   const maze_coordinate *mb = b;
-   if (equal_maze_coordinate(ma, mb)) {
-      return 0;
-   }
-   int da = ma->row + ma->col;
-   int db = mb->row + mb->col;
-   int c = da - db;
-   if (c == 0) {
-      c = mb->row - ma->row;
-   }
-   return c;
+	const maze_coordinate *ma = a;
+	const maze_coordinate *mb = b;
+	if (equal_maze_coordinate(ma, mb))
+		return 0;
+	int da = ma->row + ma->col;
+	int db = mb->row + mb->col;
+	int c = da - db;
+	if (c == 0)
+		c = mb->row - ma->row;
+	return c;
 }
 
 /*
@@ -103,20 +100,17 @@ compare_maze_coordinate(void *a, void *b) {
 
 static bool
 next_maze_coordinate(const maze *m, maze_coordinate *c) {
-   assert(m && c);
-   if (!is_valid_maze_coordinate(m, c)) {
-      return false;
-   }
-   c->col += 1;
-   if (c->col < m->cols) {
-      return true;
-   }
-   c->row += 1;
-   c->col = 0;
-   if (c->row < m->rows) {
-      return true;
-   }
-   return false;
+	assert(m && c);
+	if (!is_valid_maze_coordinate(m, c))
+		return false;
+	c->col += 1;
+	if (c->col < m->cols)
+		return true;
+	c->row += 1;
+	c->col = 0;
+	if (c->row < m->rows)
+		return true;
+	return false;
 }
 
 /*
@@ -126,10 +120,10 @@ next_maze_coordinate(const maze *m, maze_coordinate *c) {
 
 static maze_coordinate *
 adjust_maze_coordinate(const maze_coordinate *c, int row_adj, int col_adj) {
-   maze_coordinate *d = malloc(sizeof(*d));
-   d->row = c->row + row_adj;
-   d->col = c->col + col_adj;
-   return d;
+	maze_coordinate *d = malloc(sizeof(*d));
+	d->row = c->row + row_adj;
+	d->col = c->col + col_adj;
+	return d;
 }
 
 /*
@@ -138,26 +132,24 @@ adjust_maze_coordinate(const maze_coordinate *c, int row_adj, int col_adj) {
 
 static qucb *
 adjacent_maze_cells(const maze *m, const maze_coordinate *c) {
-   qucb *ac = qu_create();
-   if (!is_valid_maze_coordinate(m, c)) {
-      return ac;
-   }
-   int adjacent_adjustments[4][2] = {
-      {-1, 0},
-      {0, -1}, {0, +1},
-      {+1, 0},
-   };
-   for (int i = 0; i < 4; i++) {
-      maze_coordinate *adj = adjust_maze_coordinate(
-                                c,
-                                adjacent_adjustments[i][0],
-                                adjacent_adjustments[i][1]
-                             );
-      if (is_valid_maze_coordinate(m, adj)) {
-         qu_enqueue(ac, adj);
-      }
-   }
-   return ac;
+	qucb *ac = qu_create();
+	if (!is_valid_maze_coordinate(m, c))
+		return ac;
+	int adjacent_adjustments[4][2] = {
+		{-1, 0},
+		{0, -1}, {0, +1},
+		{+1, 0},
+	};
+	for (int i = 0; i < 4; i++) {
+		maze_coordinate *adj = adjust_maze_coordinate(
+		                               c,
+		                               adjacent_adjustments[i][0],
+		                               adjacent_adjustments[i][1]
+		                       );
+		if (is_valid_maze_coordinate(m, adj))
+			qu_enqueue(ac, adj);
+	}
+	return ac;
 }
 
 /*
@@ -166,28 +158,27 @@ adjacent_maze_cells(const maze *m, const maze_coordinate *c) {
 
 static qucb *
 open_adjacent_maze_cells(const maze *m, const maze_coordinate *c) {
-   qucb *ac = qu_create();
-   if (!is_valid_maze_coordinate(m, c)) {
-      return ac;
-   }
-   int adjacent_adjustments[4][2] = {
-      {-1, 0},
-      {0, -1}, {0, +1},
-      {+1, 0},
-   };
-   for (int i = 0; i < 4; i++) {
-      maze_coordinate *adj = adjust_maze_coordinate(
-                                c,
-                                adjacent_adjustments[i][0],
-                                adjacent_adjustments[i][1]
-                             );
-      if (is_valid_maze_coordinate(m, adj) && is_open(m, adj)) {
-         qu_enqueue(ac, adj);
-      } else {
-         free(adj);
-      }
-   }
-   return ac;
+	qucb *ac = qu_create();
+	if (!is_valid_maze_coordinate(m, c))
+		return ac;
+	int adjacent_adjustments[4][2] = {
+		{-1, 0},
+		{0, -1}, {0, +1},
+		{+1, 0},
+	};
+	for (int i = 0; i < 4; i++) {
+		maze_coordinate *adj = adjust_maze_coordinate(
+		                               c,
+		                               adjacent_adjustments[i][0],
+		                               adjacent_adjustments[i][1]
+		                       );
+		if (is_valid_maze_coordinate(m, adj) && is_open(m, adj))
+			qu_enqueue(ac, adj);
+
+		else
+			free(adj);
+	}
+	return ac;
 }
 
 /*
@@ -196,7 +187,7 @@ open_adjacent_maze_cells(const maze *m, const maze_coordinate *c) {
 
 static int
 offset(const maze *m, const maze_coordinate *c) {
-   return c->row * m->cols + c->col;
+	return c->row * m->cols + c->col;
 }
 
 /*
@@ -206,14 +197,13 @@ offset(const maze *m, const maze_coordinate *c) {
 
 static char
 glyph_at(const maze *m, const maze_coordinate *c) {
-   assert(is_valid_maze_coordinate(m, c));
-   char g = m->grid[offset(m, c)];
-   if (g) {
-      return g;
-   }
-   int h = fnmaze(c->col, c->row, m->magic);
-   m->grid[offset(m, c)] = is_even(h) ? m->open : m->wall;
-   return m->grid[offset(m, c)];
+	assert(is_valid_maze_coordinate(m, c));
+	char g = m->grid[offset(m, c)];
+	if (g)
+		return g;
+	int h = fnmaze(c->col, c->row, m->magic);
+	m->grid[offset(m, c)] = is_even(h) ? m->open : m->wall;
+	return m->grid[offset(m, c)];
 }
 
 /*
@@ -222,12 +212,12 @@ glyph_at(const maze *m, const maze_coordinate *c) {
 
 bool
 is_open(const maze *m, const maze_coordinate *c) {
-   return glyph_at(m, c) == m->open;
+	return glyph_at(m, c) == m->open;
 }
 
 bool
 is_wall(const maze *m, const maze_coordinate *c) {
-   return glyph_at(m, c) == m->wall;
+	return glyph_at(m, c) == m->wall;
 }
 
 /*
@@ -237,33 +227,33 @@ is_wall(const maze *m, const maze_coordinate *c) {
 
 maze *
 create_maze_with_glyphs(int rows, int cols, int magic, char open, char wall) {
-   assert(rows > 0 && cols > 0 && open != '\0' && wall != '\0');
-   maze *m = malloc(sizeof(maze));
-   assert(m);
-   memset(m, 0, sizeof(*m));
-   m->rows = rows;
-   m->cols = cols;
-   m->magic = magic;
-   m->open = open;
-   m->wall = wall;
-   m->grid = malloc((m->rows + 1) * (m->cols + 1) * sizeof(char));
-   assert(m->grid);
-   memset(m->grid, 0, (m->rows + 1) * (m->cols + 1) * sizeof(char));
-   return m;
+	assert(rows > 0 && cols > 0 && open != '\0' && wall != '\0');
+	maze *m = malloc(sizeof(maze));
+	assert(m);
+	memset(m, 0, sizeof(*m));
+	m->rows = rows;
+	m->cols = cols;
+	m->magic = magic;
+	m->open = open;
+	m->wall = wall;
+	m->grid = malloc((m->rows + 1) * (m->cols + 1) * sizeof(char));
+	assert(m->grid);
+	memset(m->grid, 0, (m->rows + 1) * (m->cols + 1) * sizeof(char));
+	return m;
 }
 
 maze *
 create_maze(int rows, int cols, int magic) {
-   return create_maze_with_glyphs(rows, cols, magic, '.', '#');
+	return create_maze_with_glyphs(rows, cols, magic, '.', '#');
 }
 
 void
 destroy_maze(maze *m) {
-   assert(m);
-   memset(m->grid, 253, (m->rows + 1) * (m->cols + 1) * sizeof(char));
-   free(m->grid);
-   memset(m, 253, sizeof(*m));
-   free(m);
+	assert(m);
+	memset(m->grid, 253, (m->rows + 1) * (m->cols + 1) * sizeof(char));
+	free(m->grid);
+	memset(m, 253, sizeof(*m));
+	free(m);
 }
 
 /*
@@ -273,13 +263,13 @@ destroy_maze(maze *m) {
 
 void
 populate_maze(maze *m) {
-   assert(m);
-   maze_coordinate c;
-   c.row = 0;
-   c.col = 0;
-   do {
-      glyph_at(m, &c);
-   } while (next_maze_coordinate(m, &c));
+	assert(m);
+	maze_coordinate c;
+	c.row = 0;
+	c.col = 0;
+	do {
+		glyph_at(m, &c);
+	} while (next_maze_coordinate(m, &c));
 }
 
 /*
@@ -288,23 +278,23 @@ populate_maze(maze *m) {
 
 void
 fprint_maze(FILE *f, const maze *m) {
-   fprintf(f, "\nmaze %d rows %d columns, magic=%d\n\n", m->rows, m->cols, m->magic);
-   fprintf(f, "    ");
-   for (int x = 0; x < m->cols; x++) {
-      fprintf(f, "%d", x % 10);
-   }
-   fprintf(f, "\n");
-   maze_coordinate c;
-   for (int y = 0; y < m->rows; y++) {
-      c.row = y;
-      fprintf(f, "%3d ", y);
-      for (int x = 0; x < m->cols; x++) {
-         c.col = x;
-         fprintf(f, "%c", glyph_at(m, &c));
-      }
-      fprintf(f, "\n");
-   }
-   fprintf(f, "\n");
+	fprintf(f, "\nmaze %d rows %d columns, magic=%d\n\n", m->rows, m->cols,
+	        m->magic);
+	fprintf(f, "    ");
+	for (int x = 0; x < m->cols; x++)
+		fprintf(f, "%d", x % 10);
+	fprintf(f, "\n");
+	maze_coordinate c;
+	for (int y = 0; y < m->rows; y++) {
+		c.row = y;
+		fprintf(f, "%3d ", y);
+		for (int x = 0; x < m->cols; x++) {
+			c.col = x;
+			fprintf(f, "%c", glyph_at(m, &c));
+		}
+		fprintf(f, "\n");
+	}
+	fprintf(f, "\n");
 }
 
 /*
@@ -312,7 +302,7 @@ fprint_maze(FILE *f, const maze *m) {
  */
 void
 print_maze(const maze *m) {
-   fprint_maze(stdout, m);
+	fprint_maze(stdout, m);
 }
 
 /*
@@ -321,10 +311,10 @@ print_maze(const maze *m) {
 
 maze_coordinate *
 dup_maze_coordinate(const maze_coordinate *c) {
-   maze_coordinate *d = malloc(sizeof(maze_coordinate));
-   d->row = c->row;
-   d->col = c->col;
-   return d;
+	maze_coordinate *d = malloc(sizeof(maze_coordinate));
+	d->row = c->row;
+	d->col = c->col;
+	return d;
 }
 
 /*
@@ -333,32 +323,32 @@ dup_maze_coordinate(const maze_coordinate *c) {
 
 void
 fprint_distances(FILE *f, const maze *m, int *distances) {
-   fprintf(f, "\nmaze %d rows %d columns, magic=%d\n\n", m->rows, m->cols, m->magic);
-   fprintf(f, "    ");
-   for (int x = 0; x < m->cols; x++) {
-      fprintf(f, "%d", x % 10);
-   }
-   fprintf(f, "\n");
-   maze_coordinate c;
-   for (int y = 0; y < m->rows; y++) {
-      c.row = y;
-      fprintf(f, "%3d ", y);
-      for (int x = 0; x < m->cols; x++) {
-         c.col = x;
-         if (is_open(m, &c)) {
-            fprintf(f, " %2d", distances[offset(m, &c)]);
-         } else {
-            fprintf(f, "   ");
-         }
-      }
-      fprintf(f, "\n");
-   }
-   fprintf(f, "\n");
+	fprintf(f, "\nmaze %d rows %d columns, magic=%d\n\n", m->rows, m->cols,
+	        m->magic);
+	fprintf(f, "    ");
+	for (int x = 0; x < m->cols; x++)
+		fprintf(f, "%d", x % 10);
+	fprintf(f, "\n");
+	maze_coordinate c;
+	for (int y = 0; y < m->rows; y++) {
+		c.row = y;
+		fprintf(f, "%3d ", y);
+		for (int x = 0; x < m->cols; x++) {
+			c.col = x;
+			if (is_open(m, &c))
+				fprintf(f, " %2d", distances[offset(m, &c)]);
+
+			else
+				fprintf(f, "   ");
+		}
+		fprintf(f, "\n");
+	}
+	fprintf(f, "\n");
 }
 
 void
 print_distances(const maze *m, int *distances) {
-   fprint_distances(stdout, m, distances);
+	fprint_distances(stdout, m, distances);
 }
 
 /*
@@ -376,90 +366,87 @@ print_distances(const maze *m, int *distances) {
  */
 
 int
-shortest_path_length(const maze *m, const maze_coordinate from, const maze_coordinate to) {
-   int dist = -INT_MAX;
-   int *distances = malloc((m->rows + 1) * (m->cols + 1) * sizeof(int));
-   memset(distances, -1, (m->rows + 1) * (m->cols + 1) * sizeof(int));
-   qucb *wq = qu_create();
-   qu_enqueue(wq, dup_maze_coordinate(&from));
-   distances[offset(m, &from)] = 0;
+shortest_path_length(const maze *m, const maze_coordinate from,
+                     const maze_coordinate to) {
+	int dist = -INT_MAX;
+	int *distances = malloc((m->rows + 1) * (m->cols + 1) * sizeof(int));
+	memset(distances, -1, (m->rows + 1) * (m->cols + 1) * sizeof(int));
+	qucb *wq = qu_create();
+	qu_enqueue(wq, dup_maze_coordinate(&from));
+	distances[offset(m, &from)] = 0;
 
-   while (!qu_empty(wq)) {
-      maze_coordinate *c = qu_dequeue(wq);
-      /* printf("%d,%d dist=%d  next=", c->row, c->col, distances[offset(m, c)]); */
-      if (equal_maze_coordinate(&to, c)) {
-         dist = distances[offset(m, c)];
-         /* printf("done\n"); */
-         free(c);
-         break;
-      }
-      qucb *adj = open_adjacent_maze_cells(m, c);
-      while (!qu_empty(adj)) {
-         maze_coordinate *a = qu_dequeue(adj);
-         /* printf("[%d,%d %c dist=%d]", a->row, a->col, glyph_at(m, a), distances[offset(m, a)]); */
-         if (distances[offset(m, a)] < 0) {
-            distances[offset(m, a)] = distances[offset(m, c)] + 1;
-            qu_enqueue(wq, a);
-         } else {
-            free(a);
-         }
-      }
-      /* printf("\n"); */
-      qu_destroy(adj);
-      free(c);
-   }
-   while (!qu_empty(wq)) {
-      qu_dequeue(wq);
-   }
-   qu_destroy(wq);
-   /* print_distances(m, distances); */
-   free(distances);
-   return dist;
+	while (!qu_empty(wq)) {
+		maze_coordinate *c = qu_dequeue(wq);
+		/* printf("%d,%d dist=%d  next=", c->row, c->col, distances[offset(m, c)]); */
+		if (equal_maze_coordinate(&to, c)) {
+			dist = distances[offset(m, c)];
+			/* printf("done\n"); */
+			free(c);
+			break;
+		}
+		qucb *adj = open_adjacent_maze_cells(m, c);
+		while (!qu_empty(adj)) {
+			maze_coordinate *a = qu_dequeue(adj);
+			/* printf("[%d,%d %c dist=%d]", a->row, a->col, glyph_at(m, a), distances[offset(m, a)]); */
+			if (distances[offset(m, a)] < 0) {
+				distances[offset(m, a)] = distances[offset(m, c)] + 1;
+				qu_enqueue(wq, a);
+			} else
+				free(a);
+		}
+		/* printf("\n"); */
+		qu_destroy(adj);
+		free(c);
+	}
+	while (!qu_empty(wq))
+		qu_dequeue(wq);
+	qu_destroy(wq);
+	/* print_distances(m, distances); */
+	free(distances);
+	return dist;
 }
 
 dlcb *
 cells_within_path_length(
-   const maze *m,
-   const maze_coordinate from,
-   const maze_coordinate to,
-   int max_path_length
+        const maze *m,
+        const maze_coordinate from,
+        const maze_coordinate to,
+        int max_path_length
 ) {
-   dlcb *dl = dl_create_by_key(false, compare_maze_coordinate, free);
-   int *distances = malloc((m->rows + 1) * (m->cols + 1) * sizeof(int));
-   memset(distances, -1, (m->rows + 1) * (m->cols + 1) * sizeof(int));
-   qucb *wq = qu_create();
-   qu_enqueue(wq, dup_maze_coordinate(&from));
-   distances[offset(m, &from)] = 0;
+	dlcb *dl = dl_create_by_key(false, compare_maze_coordinate, free);
+	int *distances = malloc((m->rows + 1) * (m->cols + 1) * sizeof(int));
+	memset(distances, -1, (m->rows + 1) * (m->cols + 1) * sizeof(int));
+	qucb *wq = qu_create();
+	qu_enqueue(wq, dup_maze_coordinate(&from));
+	distances[offset(m, &from)] = 0;
 
-   while (!qu_empty(wq)) {
-      maze_coordinate *c = qu_dequeue(wq);
-      qucb *adj = open_adjacent_maze_cells(m, c);
-      while (!qu_empty(adj)) {
-         maze_coordinate *a = qu_dequeue(adj);
-         /* printf("[%d,%d %c dist=%d]", a->row, a->col, glyph_at(m, a), distances[offset(m, a)]); */
-         if (distances[offset(m, a)] < 0) {
-            distances[offset(m, a)] = distances[offset(m, c)] + 1;
-            qu_enqueue(wq, a);
-         } else {
-            free(a);
-         }
-      }
-      /* printf("\n"); */
-      qu_destroy(adj);
-      if (distances[offset(m, c)] <= max_path_length) {
-         dl_insert(dl, 0, (void *)c);
-      } else {
-         free(c);
-      }
-   }
-   while (!qu_empty(wq)) {
-      qu_dequeue(wq);
-   }
-   qu_destroy(wq);
-   /* print_distances(m, distances); */
-   free(distances);
+	while (!qu_empty(wq)) {
+		maze_coordinate *c = qu_dequeue(wq);
+		qucb *adj = open_adjacent_maze_cells(m, c);
+		while (!qu_empty(adj)) {
+			maze_coordinate *a = qu_dequeue(adj);
+			/* printf("[%d,%d %c dist=%d]", a->row, a->col, glyph_at(m, a), distances[offset(m, a)]); */
+			if (distances[offset(m, a)] < 0) {
+				distances[offset(m, a)] = distances[offset(m, c)] + 1;
+				qu_enqueue(wq, a);
+			} else
+				free(a);
+		}
+		/* printf("\n"); */
+		qu_destroy(adj);
+		if (distances[offset(m, c)] <= max_path_length)
+			dl_insert(dl, 0, (void *)c);
 
-   return dl;
+		else
+			free(c);
+	}
+	while (!qu_empty(wq))
+		qu_dequeue(wq);
+	qu_destroy(wq);
+	/* print_distances(m, distances); */
+	free(distances);
+
+	return dl;
 }
 
 /*
@@ -469,22 +456,22 @@ cells_within_path_length(
 
 int
 part_one(
-   const char *fname
+        const char *fname
 ) {
 
-   maze  *m = create_maze(49, 42, 1350);
-   maze_coordinate from = (maze_coordinate) {
-      1, 1
-   };
-   maze_coordinate to = (maze_coordinate) {
-      39, 31
-   };
+	maze  *m = create_maze(49, 42, 1350);
+	maze_coordinate from = (maze_coordinate) {
+		1, 1
+	};
+	maze_coordinate to = (maze_coordinate) {
+		39, 31
+	};
 
-   int dist = shortest_path_length(m, from, to);
+	int dist = shortest_path_length(m, from, to);
 
-   printf("part one: %d\n", dist);
+	printf("part one: %d\n", dist);
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 
@@ -495,23 +482,23 @@ part_one(
 
 int
 part_two(
-   const char *fname
+        const char *fname
 ) {
 
-   maze  *m = create_maze(49, 42, 1350);
-   maze_coordinate from = (maze_coordinate) {
-      1, 1
-   };
-   maze_coordinate to = (maze_coordinate) {
-      39, 31
-   };
+	maze  *m = create_maze(49, 42, 1350);
+	maze_coordinate from = (maze_coordinate) {
+		1, 1
+	};
+	maze_coordinate to = (maze_coordinate) {
+		39, 31
+	};
 
-   dlcb *dl = cells_within_path_length(m, from, to, 50);
+	dlcb *dl = cells_within_path_length(m, from, to, 50);
 
-   printf("part two: %d\n", dl_count(dl));
+	printf("part two: %d\n", dl_count(dl));
 
-   dl_delete_all(dl);
-   dl_destroy(dl);
+	dl_delete_all(dl);
+	dl_destroy(dl);
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

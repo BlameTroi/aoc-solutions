@@ -30,39 +30,39 @@
 
 int
 part_one(
-   const char *fname
+        const char *fname
 ) {
 
-   char *door_id = DOOR_ID;
-   uint8_t digest[16];
-   char password[PASSWORD_LENGTH+1];
-   int len = 0;
-   long odometer = 0;
-   char buffer[1024];
+	char *door_id = DOOR_ID;
+	uint8_t digest[16];
+	char password[PASSWORD_LENGTH+1];
+	int len = 0;
+	long odometer = 0;
+	char buffer[1024];
 
-   memset(digest, 0, sizeof(digest));
-   memset(password, 0, sizeof(password));
-   memset(buffer, 0, sizeof(buffer));
+	memset(digest, 0, sizeof(digest));
+	memset(password, 0, sizeof(password));
+	memset(buffer, 0, sizeof(buffer));
 
-   const char digits[16] = "0123456789abcdef";
+	const char digits[16] = "0123456789abcdef";
 
-   while (len < PASSWORD_LENGTH) {
-      snprintf(buffer, sizeof(buffer) - 1, "%s%ld", door_id, odometer);
-      md5_string(buffer, digest);
-      if (digest[0] == 0 && digest[1] == 0 && digest[2] < 16) {
-         password[len] = digits[digest[2]];
-         len += 1;
-         /* for (int i = 0; i < PASSWORD_LENGTH; i++) { */
-         /*    printf("%c", password[i] ? password[i] : '.'); */
-         /* } */
-         /* printf(" %ld\n", odometer); */
-      }
-      odometer += 1;
-   }
+	while (len < PASSWORD_LENGTH) {
+		snprintf(buffer, sizeof(buffer) - 1, "%s%ld", door_id, odometer);
+		md5_string(buffer, digest);
+		if (digest[0] == 0 && digest[1] == 0 && digest[2] < 16) {
+			password[len] = digits[digest[2]];
+			len += 1;
+			/* for (int i = 0; i < PASSWORD_LENGTH; i++) { */
+			/*    printf("%c", password[i] ? password[i] : '.'); */
+			/* } */
+			/* printf(" %ld\n", odometer); */
+		}
+		odometer += 1;
+	}
 
-   printf("part one: %s\n", password);
+	printf("part one: %s\n", password);
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 
@@ -72,40 +72,40 @@ part_one(
 
 int
 part_two(
-   const char *fname
+        const char *fname
 ) {
-   char *door_id = DOOR_ID;
-   uint8_t digest[16];
-   char password[PASSWORD_LENGTH+1];
-   int len = 0;
-   long odometer = 0;
-   char buffer[1024];
+	char *door_id = DOOR_ID;
+	uint8_t digest[16];
+	char password[PASSWORD_LENGTH+1];
+	int len = 0;
+	long odometer = 0;
+	char buffer[1024];
 
-   memset(digest, 0, sizeof(digest));
-   memset(password, 0, sizeof(password));
-   memset(buffer, 0, sizeof(buffer));
+	memset(digest, 0, sizeof(digest));
+	memset(password, 0, sizeof(password));
+	memset(buffer, 0, sizeof(buffer));
 
-   const char digits[16] = "0123456789abcdef";
+	const char digits[16] = "0123456789abcdef";
 
-   while (len < PASSWORD_LENGTH) {
-      snprintf(buffer, sizeof(buffer) - 1, "%s%ld", door_id, odometer);
-      md5_string(buffer, digest);
-      if (digest[0] == 0 && digest[1] == 0 && digest[2] < 8) {
-         int pos = digest[2];
-         int idx = digest[3] >> 4;
-         if (password[pos] == '\0') {
-            password[pos] = digits[idx];
-            /* for (int i = 0; i < PASSWORD_LENGTH; i++) { */
-            /*    printf("%c", password[i] ? password[i] : '.'); */
-            /* } */
-            /* printf(" %ld\n", odometer); */
-            len += 1;
-         }
-      }
-      odometer += 1;
-   }
+	while (len < PASSWORD_LENGTH) {
+		snprintf(buffer, sizeof(buffer) - 1, "%s%ld", door_id, odometer);
+		md5_string(buffer, digest);
+		if (digest[0] == 0 && digest[1] == 0 && digest[2] < 8) {
+			int pos = digest[2];
+			int idx = digest[3] >> 4;
+			if (password[pos] == '\0') {
+				password[pos] = digits[idx];
+				/* for (int i = 0; i < PASSWORD_LENGTH; i++) { */
+				/*    printf("%c", password[i] ? password[i] : '.'); */
+				/* } */
+				/* printf(" %ld\n", odometer); */
+				len += 1;
+			}
+		}
+		odometer += 1;
+	}
 
-   printf("part two: %s\n", password);
+	printf("part two: %s\n", password);
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

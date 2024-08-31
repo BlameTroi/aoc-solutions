@@ -37,41 +37,41 @@
 
 typedef struct display display;
 struct display {
-   char tag[8];
-   uint8_t pixels[ROW_MAX][COLUMN_MAX];
+	char tag[8];
+	uint8_t pixels[ROW_MAX][COLUMN_MAX];
 };
 
 display *
 create_display(
-   void
+        void
 );
 
 void
 clear_display(
-   display *d
+        display *d
 );
 
 uint8_t
 get_pixel(
-   display *d,
-   int row,
-   int col
+        display *d,
+        int row,
+        int col
 );
 
 void
 show_display(
-   display *d,
-   FILE *f
+        display *d,
+        FILE *f
 );
 
 int
 count_lit_pixels(
-   display *d
+        display *d
 );
 
 void
 destroy_display(
-   display *d
+        display *d
 );
 
 /*
@@ -86,57 +86,57 @@ typedef struct instruction instruction;
 typedef void (fninstruction)(display *, uint8_t, uint8_t);
 
 struct instruction {
-   fninstruction *fn;
-   uint8_t a;
-   uint8_t b;
+	fninstruction *fn;
+	uint8_t a;
+	uint8_t b;
 };
 
 typedef struct program program;
 
 struct program {
-   char tag[8];
-   FILE *trace;
-   int ip;
-   instruction instructions[INSTRUCTION_MAX + 1];
+	char tag[8];
+	FILE *trace;
+	int ip;
+	instruction instructions[INSTRUCTION_MAX + 1];
 };
 
 program *
 create_program(
-   void
+        void
 );
 
 bool
 compile_instruction(
-   instruction *i,
-   const char *source
+        instruction *i,
+        const char *source
 );
 
 void
 show_instruction(
-   instruction *i,
-   FILE *f
+        instruction *i,
+        FILE *f
 );
 
 bool
 load_program(
-   program *p,
-   FILE *f
+        program *p,
+        FILE *f
 );
 
 bool
 run_program(
-   program *p,
-   display *d
+        program *p,
+        display *d
 );
 
 void
 set_program_trace(
-   FILE *f
+        FILE *f
 );
 
 void
 destroy_program(
-   program *p
+        program *p
 );
 
 /*
@@ -145,22 +145,22 @@ destroy_program(
 
 void
 do_rect(
-   display *d,
-   uint8_t a,
-   uint8_t b);
+        display *d,
+        uint8_t a,
+        uint8_t b);
 
 void
 do_rotate_row(
-   display *d,
-   uint8_t a,
-   uint8_t b
+        display *d,
+        uint8_t a,
+        uint8_t b
 );
 
 void
 do_rotate_column(
-   display *d,
-   uint8_t a,
-   uint8_t b
+        display *d,
+        uint8_t a,
+        uint8_t b
 );
 
 /*
@@ -169,12 +169,12 @@ do_rotate_column(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 /* end solution.h */

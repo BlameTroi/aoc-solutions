@@ -6,41 +6,40 @@
 #define INPUT_LINE_MAX 4096
 
 #include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 
 enum reg {
-   a = 0,
-   b,
-   c,
-   d
+	a = 0,
+	b,
+	c,
+	d
 };
 typedef enum reg reg;
 
 enum opcode {
-   inv = 0,
-   cpyr,
-   cpyv,
-   inc,
-   dec,
-   jnzr,
-   jnzv,
-   nop
+	inv = 0,
+	cpyr,
+	cpyv,
+	inc,
+	dec,
+	jnzr,
+	jnzv,
+	nop
 };
 typedef enum opcode opcode;
 
 typedef struct instruction instruction;
 struct instruction {
-   opcode opc;
-   int op1;
-   int op2;
+	opcode opc;
+	int op1;
+	int op2;
 };
 
 typedef struct cpu cpu;
 struct cpu {
-   int ip;
-   int registers[4];
-   instruction core[32];
+	int ip;
+	int registers[4];
+	instruction core[32];
 };
 
 instruction
@@ -54,12 +53,12 @@ execute(cpu *);
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 /* end solution.h */

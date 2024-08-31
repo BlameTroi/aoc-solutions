@@ -17,14 +17,14 @@
 
 display *
 create_display(
-   void
+        void
 ) {
-   display *d = malloc(sizeof(display));
-   assert(d);
-   memset(d, 0, sizeof(display));
-   memcpy(d->tag, DISPLAY_TAG, sizeof(d->tag));
-   clear_display(d);
-   return d;
+	display *d = malloc(sizeof(display));
+	assert(d);
+	memset(d, 0, sizeof(display));
+	memcpy(d->tag, DISPLAY_TAG, sizeof(d->tag));
+	clear_display(d);
+	return d;
 }
 
 /*
@@ -33,14 +33,13 @@ create_display(
 
 void
 clear_display(
-   display *d
+        display *d
 ) {
-   assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
-   for (int i = 0; i < ROW_MAX; i++) {
-      for (int j = 0; j < COLUMN_MAX; j++) {
-         d->pixels[i][j] = OFF;
-      }
-   }
+	assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
+	for (int i = 0; i < ROW_MAX; i++) {
+		for (int j = 0; j < COLUMN_MAX; j++)
+			d->pixels[i][j] = OFF;
+	}
 }
 
 /*
@@ -50,16 +49,15 @@ clear_display(
 
 int
 count_lit_pixels(
-   display *d
+        display *d
 ) {
-   assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
-   int count = 0;
-   for (int row = 0; row < ROW_MAX; row++) {
-      for (int column = 0; column < COLUMN_MAX; column++) {
-         count += d->pixels[row][column] == ON ? 1 : 0;
-      }
-   }
-   return count;
+	assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
+	int count = 0;
+	for (int row = 0; row < ROW_MAX; row++) {
+		for (int column = 0; column < COLUMN_MAX; column++)
+			count += d->pixels[row][column] == ON ? 1 : 0;
+	}
+	return count;
 }
 
 /*
@@ -68,13 +66,13 @@ count_lit_pixels(
 
 uint8_t
 get_pixel(
-   display *d,
-   int row,
-   int column
+        display *d,
+        int row,
+        int column
 ) {
-   assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
-   assert(row >= 0 && row < ROW_MAX && column >= 0 && column <= COLUMN_MAX);
-   return d->pixels[row][column];
+	assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
+	assert(row >= 0 && row < ROW_MAX && column >= 0 && column <= COLUMN_MAX);
+	return d->pixels[row][column];
 }
 
 /*
@@ -83,20 +81,18 @@ get_pixel(
 
 void
 show_display(
-   display *d,
-   FILE *f
+        display *d,
+        FILE *f
 ) {
-   assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
-   if (f == NULL) {
-      f = stdout;
-   }
-   for (int row = 0; row < ROW_MAX; row++) {
-      fprintf(f, "\n");
-      for (int column = 0; column < COLUMN_MAX; column++) {
-         fprintf(f, "%c", d->pixels[row][column] == ON ? 'X' : '_');
-      }
-   }
-   fprintf(f, "\n");
+	assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
+	if (f == NULL)
+		f = stdout;
+	for (int row = 0; row < ROW_MAX; row++) {
+		fprintf(f, "\n");
+		for (int column = 0; column < COLUMN_MAX; column++)
+			fprintf(f, "%c", d->pixels[row][column] == ON ? 'X' : '_');
+	}
+	fprintf(f, "\n");
 }
 
 /*
@@ -105,11 +101,11 @@ show_display(
 
 void
 destroy_display(
-   display *d
+        display *d
 ) {
-   assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
-   memset(d, 252, sizeof(display));
-   free(d);
+	assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
+	memset(d, 252, sizeof(display));
+	free(d);
 }
 
 /*
@@ -119,13 +115,13 @@ destroy_display(
 
 program *
 create_program(
-   void
+        void
 ) {
-   program *p = malloc(sizeof(program));
-   memset(p, 0, sizeof(program));
-   memcpy(p->tag, PROGRAM_TAG, sizeof(p->tag));
-   p->trace = false;
-   return p;
+	program *p = malloc(sizeof(program));
+	memset(p, 0, sizeof(program));
+	memcpy(p->tag, PROGRAM_TAG, sizeof(p->tag));
+	p->trace = false;
+	return p;
 }
 
 /*
@@ -142,60 +138,60 @@ create_program(
 
 bool
 compile_instruction(instruction *ip, const char *source) {
-   memset(ip, 0, sizeof(instruction));
-   const char **tokens = split_string(source, " byx=\n");
-   int a;
-   int b;
+	memset(ip, 0, sizeof(instruction));
+	const char **tokens = split_string(source, " byx=\n");
+	int a;
+	int b;
 
-   /* rect's arguments are not zero based, even though the position
-    * of painting is 0,0. */
-   if (strcmp(tokens[1], "rect") == 0) {
-      a = strtol(tokens[2], NULL, 10);
-      if (a < 1 || a > COLUMN_MAX) {
-         free_split(tokens);
-         return false;
-      }
-      b = strtol(tokens[3], NULL, 10);
-      if (b < 1 || b > ROW_MAX) {
-         free_split(tokens);
-         return false;
-      }
-      ip->fn = do_rect;
-      ip->a = a;
-      ip->b = b;
-      free_split(tokens);
-      return true;
-   }
+	/* rect's arguments are not zero based, even though the position
+	 * of painting is 0,0. */
+	if (strcmp(tokens[1], "rect") == 0) {
+		a = strtol(tokens[2], NULL, 10);
+		if (a < 1 || a > COLUMN_MAX) {
+			free_split(tokens);
+			return false;
+		}
+		b = strtol(tokens[3], NULL, 10);
+		if (b < 1 || b > ROW_MAX) {
+			free_split(tokens);
+			return false;
+		}
+		ip->fn = do_rect;
+		ip->a = a;
+		ip->b = b;
+		free_split(tokens);
+		return true;
+	}
 
-   if (strcmp(tokens[1], "rotate") == 0 && strcmp(tokens[2], "row") == 0) {
-      a = strtol(tokens[3], NULL, 10);
-      if (a < 0 || a >= ROW_MAX) {
-         free_split(tokens);
-         return false;
-      }
-      b = strtol(tokens[4], NULL, 10);
-      ip->fn = do_rotate_row;
-      ip->a = a;
-      ip->b = b;
-      free_split(tokens);
-      return true;
-   }
+	if (strcmp(tokens[1], "rotate") == 0 && strcmp(tokens[2], "row") == 0) {
+		a = strtol(tokens[3], NULL, 10);
+		if (a < 0 || a >= ROW_MAX) {
+			free_split(tokens);
+			return false;
+		}
+		b = strtol(tokens[4], NULL, 10);
+		ip->fn = do_rotate_row;
+		ip->a = a;
+		ip->b = b;
+		free_split(tokens);
+		return true;
+	}
 
-   if (strcmp(tokens[1], "rotate") == 0 && strcmp(tokens[2], "column") == 0) {
-      a = strtol(tokens[3], NULL, 10);
-      if (a < 0 || a >= COLUMN_MAX) {
-         free_split(tokens);
-         return false;
-      }
-      b = strtol(tokens[4], NULL, 10);
-      ip->fn = do_rotate_column;
-      ip->a = a;
-      ip->b = b;
-      free_split(tokens);
-      return true;
-   }
-   free_split(tokens);
-   return false;
+	if (strcmp(tokens[1], "rotate") == 0 && strcmp(tokens[2], "column") == 0) {
+		a = strtol(tokens[3], NULL, 10);
+		if (a < 0 || a >= COLUMN_MAX) {
+			free_split(tokens);
+			return false;
+		}
+		b = strtol(tokens[4], NULL, 10);
+		ip->fn = do_rotate_column;
+		ip->a = a;
+		ip->b = b;
+		free_split(tokens);
+		return true;
+	}
+	free_split(tokens);
+	return false;
 }
 
 /*
@@ -206,23 +202,21 @@ compile_instruction(instruction *ip, const char *source) {
 
 bool
 load_program(
-   program *p,
-   FILE *f
+        program *p,
+        FILE *f
 ) {
-   assert(p && memcmp(p->tag, PROGRAM_TAG, sizeof(p->tag)) == 0);
-   assert(f);
-   char buffer[INPUT_LINE_MAX];
-   p->ip = 0;
-   while (fgets(buffer, INPUT_LINE_MAX - 1, f)) {
-      if (p->ip >= INSTRUCTION_MAX) {
-         return false;
-      }
-      if (!compile_instruction(&p->instructions[p->ip], buffer)) {
-         return false;
-      }
-      p->ip += 1;
-   }
-   return true;
+	assert(p && memcmp(p->tag, PROGRAM_TAG, sizeof(p->tag)) == 0);
+	assert(f);
+	char buffer[INPUT_LINE_MAX];
+	p->ip = 0;
+	while (fgets(buffer, INPUT_LINE_MAX - 1, f)) {
+		if (p->ip >= INSTRUCTION_MAX)
+			return false;
+		if (!compile_instruction(&p->instructions[p->ip], buffer))
+			return false;
+		p->ip += 1;
+	}
+	return true;
 }
 
 /*
@@ -232,25 +226,24 @@ load_program(
 
 void
 show_instruction(
-   instruction *i,
-   FILE *f
+        instruction *i,
+        FILE *f
 ) {
-   if (f == NULL) {
-      f = stdout;
-   }
-   if (i->fn == do_rect) {
-      fprintf(f, "rect %dx%d\n", i->a, i->b);
-      return;
-   }
-   if (i->fn == do_rotate_row) {
-      fprintf(f, "rotate row y=%d by %d\n", i->a, i->b);
-      return;
-   }
-   if (i->fn == do_rotate_column) {
-      fprintf(f, "rotate column x=%d by %d\n", i->a, i->b);
-      return;
-   }
-   assert(NULL);
+	if (f == NULL)
+		f = stdout;
+	if (i->fn == do_rect) {
+		fprintf(f, "rect %dx%d\n", i->a, i->b);
+		return;
+	}
+	if (i->fn == do_rotate_row) {
+		fprintf(f, "rotate row y=%d by %d\n", i->a, i->b);
+		return;
+	}
+	if (i->fn == do_rotate_column) {
+		fprintf(f, "rotate column x=%d by %d\n", i->a, i->b);
+		return;
+	}
+	assert(NULL);
 }
 
 /*
@@ -264,26 +257,25 @@ show_instruction(
 
 bool
 run_program(
-   program *p,
-   display *d
+        program *p,
+        display *d
 ) {
-   assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
-   assert(p && memcmp(p->tag, PROGRAM_TAG, sizeof(p->tag)) == 0);
-   if (p->instructions[0].fn == NULL) {
-      return false;
-   }
-   p->ip = 0;
-   while (p->instructions[p->ip].fn) {
-      instruction *i = &p->instructions[p->ip];
-      (i->fn)(d, i->a, i->b);
-      if (p->trace) {
-         fprintf(p->trace, "\ntrace ip=%d  instruction=", p->ip);
-         show_instruction(i, p->trace);
-         show_display(d, p->trace);
-      }
-      p->ip += 1;
-   }
-   return true;
+	assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
+	assert(p && memcmp(p->tag, PROGRAM_TAG, sizeof(p->tag)) == 0);
+	if (p->instructions[0].fn == NULL)
+		return false;
+	p->ip = 0;
+	while (p->instructions[p->ip].fn) {
+		instruction *i = &p->instructions[p->ip];
+		(i->fn)(d, i->a, i->b);
+		if (p->trace) {
+			fprintf(p->trace, "\ntrace ip=%d  instruction=", p->ip);
+			show_instruction(i, p->trace);
+			show_display(d, p->trace);
+		}
+		p->ip += 1;
+	}
+	return true;
 }
 
 /*
@@ -292,11 +284,11 @@ run_program(
 
 void
 destroy_program(
-   program *p
+        program *p
 ) {
-   assert(p && memcmp(p->tag, PROGRAM_TAG, sizeof(p->tag)) == 0);
-   memset(p, 252, sizeof(program));
-   free(p);
+	assert(p && memcmp(p->tag, PROGRAM_TAG, sizeof(p->tag)) == 0);
+	memset(p, 252, sizeof(program));
+	free(p);
 }
 
 /*
@@ -308,16 +300,15 @@ destroy_program(
 
 void
 do_rect(
-   display *d,
-   uint8_t a,
-   uint8_t b
+        display *d,
+        uint8_t a,
+        uint8_t b
 ) {
-   assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
-   for (int row = 0; row < b; row++) {
-      for (int column = 0; column < a; column++) {
-         d->pixels[row][column] = ON;
-      }
-   }
+	assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
+	for (int row = 0; row < b; row++) {
+		for (int column = 0; column < a; column++)
+			d->pixels[row][column] = ON;
+	}
 }
 
 /*
@@ -330,19 +321,18 @@ do_rect(
 
 void
 do_rotate_row(
-   display *d,
-   uint8_t a,
-   uint8_t b
+        display *d,
+        uint8_t a,
+        uint8_t b
 ) {
-   assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
-   assert(a >= 0 && a <= ROW_MAX);
-   for (int i = 0; i < b; i++) {
-      uint8_t c = d->pixels[a][COLUMN_MAX-1];
-      for (int j = COLUMN_MAX-1; j > 0; j--) {
-         d->pixels[a][j] = d->pixels[a][j-1];
-      }
-      d->pixels[a][0] = c;
-   }
+	assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
+	assert(a >= 0 && a <= ROW_MAX);
+	for (int i = 0; i < b; i++) {
+		uint8_t c = d->pixels[a][COLUMN_MAX-1];
+		for (int j = COLUMN_MAX-1; j > 0; j--)
+			d->pixels[a][j] = d->pixels[a][j-1];
+		d->pixels[a][0] = c;
+	}
 }
 
 /*
@@ -355,19 +345,18 @@ do_rotate_row(
 
 void
 do_rotate_column(
-   display *d,
-   uint8_t a,
-   uint8_t b
+        display *d,
+        uint8_t a,
+        uint8_t b
 ) {
-   assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
-   assert(a >= 0 && a <= COLUMN_MAX);
-   for (int i = 0; i < b; i++) {
-      uint8_t c = d->pixels[ROW_MAX-1][a];
-      for (int j = ROW_MAX-1; j > 0; j--) {
-         d->pixels[j][a] = d->pixels[j-1][a];
-      }
-      d->pixels[0][a] = c;
-   }
+	assert(d && memcmp(d->tag, DISPLAY_TAG, sizeof(d->tag)) == 0);
+	assert(a >= 0 && a <= COLUMN_MAX);
+	for (int i = 0; i < b; i++) {
+		uint8_t c = d->pixels[ROW_MAX-1][a];
+		for (int j = ROW_MAX-1; j > 0; j--)
+			d->pixels[j][a] = d->pixels[j-1][a];
+		d->pixels[0][a] = c;
+	}
 }
 
 /*
@@ -377,29 +366,29 @@ do_rotate_column(
 
 int
 part_one(
-   const char *fname
+        const char *fname
 ) {
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      fprintf(stderr, "error: could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		fprintf(stderr, "error: could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   program *p = create_program();
-   display *d = create_display();
-   load_program(p, ifile);
-   run_program(p, d);
-   show_display(d, stdout);
-   int count = count_lit_pixels(d);
-   destroy_program(p);
-   destroy_display(d);
+	program *p = create_program();
+	display *d = create_display();
+	load_program(p, ifile);
+	run_program(p, d);
+	show_display(d, stdout);
+	int count = count_lit_pixels(d);
+	destroy_program(p);
+	destroy_display(d);
 
-   fclose(ifile);
+	fclose(ifile);
 
-   printf("part one: %d\n", count);
+	printf("part one: %d\n", count);
 
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 
 /*
@@ -409,22 +398,22 @@ part_one(
 
 int
 part_two(
-   const char *fname
+        const char *fname
 ) {
-   FILE *ifile;
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      fprintf(stderr, "error: could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
-   char iline[INPUT_LINE_MAX];
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		fprintf(stderr, "error: could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
+	char iline[INPUT_LINE_MAX];
 
-   while (fgets(iline, INPUT_LINE_MAX - 1, ifile)) {
-   }
+	while (fgets(iline, INPUT_LINE_MAX - 1, ifile)) {
+	}
 
-   printf("part two: %d\n", 0);
+	printf("part two: %d\n", 0);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }

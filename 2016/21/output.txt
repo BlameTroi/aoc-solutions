@@ -1,0 +1,172 @@
+./driver /Users/troi/projects/aoc/datasets/2016/21/dataset.txt
+abcdefgh
+dbcaefgh  <--  swap letter a with letter d
+dbcagefh  <--  move position 6 to position 4
+debcagfh  <--  move position 5 to position 1
+dhbcagfe  <--  swap letter h with letter e
+bcagfedh  <--  rotate based on position of letter a
+bcdagfeh  <--  move position 6 to position 2
+cbdagfeh  <--  reverse positions 0 through 1
+hcbdagfe  <--  rotate based on position of letter h
+cbdagfeh  <--  rotate based on position of letter g
+hcbdagfe  <--  rotate based on position of letter h
+hcbdefga  <--  reverse positions 4 through 7
+hcbdeagf  <--  swap letter a with letter f
+hcfdeagb  <--  swap position 2 with position 7
+hcfdebag  <--  move position 7 to position 5
+bedfchag  <--  reverse positions 0 through 5
+chagbedf  <--  rotate based on position of letter f
+bedfchag  <--  rotate right 4 steps
+fedbchag  <--  swap position 3 with position 0
+fdebchag  <--  move position 1 to position 2
+fdebahcg  <--  reverse positions 4 through 6
+fdehabcg  <--  swap position 3 with position 5
+fdehcbag  <--  swap letter a with letter c
+fdbhceag  <--  swap position 5 with position 2
+fdghceab  <--  swap position 7 with position 2
+fdhcegab  <--  move position 2 to position 5
+gabfdhce  <--  rotate based on position of letter h
+cegabfdh  <--  rotate right 2 steps
+cegbafdh  <--  swap position 3 with position 4
+ecgbafdh  <--  move position 0 to position 1
+ehdfabgc  <--  reverse positions 1 through 7
+eafdhbgc  <--  reverse positions 1 through 4
+afdhbgce  <--  rotate based on position of letter b
+fdhbgcea  <--  rotate right 7 steps
+fdhbgcea  <--  rotate left 0 steps
+
+fehbgcda  <--  swap position 6 with position 1
+
+fbhegcda  <--  reverse positions 1 through 3
+
+ehbfgcda  <--  reverse positions 0 through 3
+
+hbfgecda  <--  move position 0 to position 4
+
+cdahbfge  <--  rotate based on position of letter f
+
+egfbhadc  <--  reverse positions 0 through 7
+
+gefbhadc  <--  reverse positions 0 through 1
+
+gfbhadce  <--  move position 1 to position 7
+
+gfbhadec  <--  move position 7 to position 6
+
+decgfbha  <--  rotate based on position of letter b
+
+decbfgha  <--  reverse positions 3 through 5
+
+bcedfgha  <--  reverse positions 0 through 3
+
+bhedfgca  <--  swap letter c with letter h
+
+bhegfdca  <--  reverse positions 3 through 5
+
+bhecfdga  <--  swap position 3 with position 6
+
+bhecfgda  <--  swap letter d with letter g
+
+bhecfdga  <--  move position 5 to position 6
+
+bhgcfdea  <--  swap position 6 with position 2
+
+cfdeabhg  <--  rotate right 5 steps
+
+cfdgabhe  <--  swap letter e with letter g
+
+ecfdgabh  <--  rotate based on position of letter e
+
+bhecfdga  <--  rotate based on position of letter c
+
+bhgcfdea  <--  swap letter g with letter e
+
+abhgcfde  <--  rotate based on position of letter b
+
+deabhgcf  <--  rotate based on position of letter b
+
+aedbhgcf  <--  swap position 0 with position 2
+
+caedbhgf  <--  move position 6 to position 0
+
+hcaedbgf  <--  move position 5 to position 0
+
+aedbgfhc  <--  rotate left 2 steps
+
+edbgfahc  <--  move position 0 to position 5
+
+cedbgfah  <--  rotate left 7 steps
+
+cedgbfah  <--  swap letter b with letter g
+
+fahcedgb  <--  rotate based on position of letter d
+
+faechdgb  <--  swap letter h with letter e
+
+faedhcgb  <--  swap letter d with letter c
+
+bfaedhcg  <--  rotate based on position of letter f
+
+hbfaedcg  <--  move position 5 to position 0
+
+dcghbfae  <--  rotate left 5 steps
+
+ecghbfad  <--  swap position 0 with position 7
+
+hcgebfad  <--  swap position 0 with position 3
+
+bfadhcge  <--  rotate left 4 steps
+
+fadhcgeb  <--  rotate left 1 step
+
+dhcgebfa  <--  rotate right 6 steps
+
+hdcgebfa  <--  swap position 0 with position 1
+
+hdcgfbea  <--  reverse positions 4 through 6
+
+hdcgebfa  <--  reverse positions 4 through 6
+
+hdcfgeba  <--  move position 6 to position 3
+
+hdcfageb  <--  move position 7 to position 4
+
+agebhdcf  <--  rotate right 4 steps
+
+adebhgcf  <--  swap letter g with letter d
+
+adcbhgef  <--  swap letter c with letter e
+
+adcbeghf  <--  swap letter e with letter h
+
+beghfadc  <--  rotate right 5 steps
+
+adcbeghf  <--  rotate based on position of letter g
+
+dcbeghfa  <--  rotate based on position of letter g
+
+eghfadcb  <--  rotate left 3 steps
+
+ehgfadcb  <--  swap letter h with letter g
+
+afghedcb  <--  reverse positions 0 through 4
+
+edcbafgh  <--  rotate right 4 steps
+
+edcbgafh  <--  move position 6 to position 4
+
+afhedcbg  <--  rotate based on position of letter c
+
+afbedchg  <--  swap position 2 with position 6
+
+afgedchb  <--  swap position 7 with position 2
+
+bafgedch  <--  rotate right 1 step
+
+bgfaedch  <--  swap position 3 with position 1
+
+bgfacdeh  <--  swap position 4 with position 6
+
+part one: bgfacdeh
+fbgdceah
+part two: fbgdceah

@@ -19,8 +19,8 @@
 typedef struct keypad_pos keypad_pos;
 
 struct keypad_pos {
-   int row;
-   int col;
+	int row;
+	int col;
 };
 
 /*
@@ -31,10 +31,10 @@ struct keypad_pos {
 typedef struct keypad_def keypad_def;
 
 struct keypad_def {
-   int rows;
-   int cols;
-   keypad_pos start_key;
-   char (*fnreader)(int, int);
+	int rows;
+	int cols;
+	keypad_pos start_key;
+	char (*fnreader)(int, int);
 };
 
 void
@@ -44,12 +44,12 @@ move_key(keypad_pos *pos, keypad_def def, char move);
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 /* end solution.h */

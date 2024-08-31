@@ -7,29 +7,28 @@
 
 /*
  * part one:
- *
  */
 
 int
 part_one(
-   const char *fname
+        const char *fname
 ) {
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      fprintf(stderr, "error: could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		fprintf(stderr, "error: could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   char iline[INPUT_LINE_MAX];
+	char iline[INPUT_LINE_MAX];
 
-   while (fgets(iline, INPUT_LINE_MAX - 1, ifile)) {
-   }
+	while (fgets(iline, INPUT_LINE_MAX - 1, ifile)) {
+	}
 
-   printf("part one: %d\n", 0);
+	printf("part one: %d\n", 0);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -40,22 +39,22 @@ part_one(
 
 int
 part_two(
-   const char *fname
+        const char *fname
 ) {
-   FILE *ifile;
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      fprintf(stderr, "error: could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
-   char iline[INPUT_LINE_MAX];
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		fprintf(stderr, "error: could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
+	char iline[INPUT_LINE_MAX];
 
-   while (fgets(iline, INPUT_LINE_MAX - 1, ifile)) {
-   }
+	while (fgets(iline, INPUT_LINE_MAX - 1, ifile)) {
+	}
 
-   printf("part two: %d\n", 0);
+	printf("part two: %d\n", 0);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }

@@ -27,86 +27,86 @@
 
 typedef struct maze_coordinate maze_coordinate;
 struct maze_coordinate {
-   int row; /* y oh y */
-   int col; /* x */
+	int row; /* y oh y */
+	int col; /* x */
 };
 
 typedef struct maze maze;
 struct maze {
-   int rows;   /* y */
-   int cols;   /* x */
-   int magic;  /* hash number */
-   char open;  /* visuals */
-   char wall;
-   char *grid; /* 0..rows of 0..cols */
+	int rows;   /* y */
+	int cols;   /* x */
+	int magic;  /* hash number */
+	char open;  /* visuals */
+	char wall;
+	char *grid; /* 0..rows of 0..cols */
 };
 
 maze *
 create_maze_with_glyphs(
-   int rows,
-   int cols,
-   int magic,
-   char open,
-   char wall
+        int rows,
+        int cols,
+        int magic,
+        char open,
+        char wall
 );
 
 maze *
 create_maze(
-   int rows,
-   int cols,
-   int magic
+        int rows,
+        int cols,
+        int magic
 );
 
 void
 destroy_maze(
-   maze *m
+        maze *m
 );
 
 void
 populate_maze(
-   maze *m
+        maze *m
 );
 
 bool
 is_open(
-   const maze *m,
-   const maze_coordinate *c
+        const maze *m,
+        const maze_coordinate *c
 );
 
 void
 fprint_maze(
-   FILE *f,
-   const maze *m
+        FILE *f,
+        const maze *m
 );
 
 void
 print_maze(
-   const maze *m
+        const maze *m
 );
 
 int
 shortest_path_length(
-   const maze *m,
-   const maze_coordinate from,
-   const maze_coordinate to
+        const maze *m,
+        const maze_coordinate from,
+        const maze_coordinate to
 );
 
 dlcb *
 cells_within_path_length(
-   const maze *m,
-   const maze_coordinate from,
-   const maze_coordinate to,
-   int max_path
+        const maze *m,
+        const maze_coordinate from,
+        const maze_coordinate to,
+        int max_path
 );
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 /* end solution.h */

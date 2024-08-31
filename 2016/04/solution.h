@@ -15,7 +15,7 @@ typedef struct room_checksum room_checksum;
 
 #define CHECK_DIGITS 5
 struct room_checksum {
-   char digits[CHECK_DIGITS];
+	char digits[CHECK_DIGITS];
 };
 
 typedef struct room_code room_code;
@@ -29,7 +29,7 @@ create_room_code(char *str);
 
 bool
 validate_room_code(
-   room_code *rc
+        room_code *rc
 );
 
 void
@@ -64,12 +64,12 @@ is_valid_room_code(room_code *rc);
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 /* end solution.h */

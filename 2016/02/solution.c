@@ -16,20 +16,20 @@
  */
 
 char keypad_one[3][3] = {
-   {'1', '2', '3'},
-   {'4', '5', '6'},
-   {'7', '8', '9'}
+	{'1', '2', '3'},
+	{'4', '5', '6'},
+	{'7', '8', '9'}
 };
 char
 fn_read_one(int row, int col) {
-   return keypad_one[row][col];
+	return keypad_one[row][col];
 }
 keypad_def keypad_one_def = {
-   3, 3,
-   (keypad_pos) {
-      1, 1
-   },
-   fn_read_one
+	3, 3,
+	(keypad_pos) {
+		1, 1
+	},
+	fn_read_one
 };
 
 /*
@@ -38,22 +38,22 @@ keypad_def keypad_one_def = {
  */
 
 char keypad_two[5][5] = {
-   { ' ', ' ', '1', ' ', ' ' },
-   { ' ', '2', '3', '4', ' ' },
-   { '5', '6', '7', '8', '9' },
-   { ' ', 'A', 'B', 'C', ' ' },
-   { ' ', ' ', 'D', ' ', ' ' }
+	{ ' ', ' ', '1', ' ', ' ' },
+	{ ' ', '2', '3', '4', ' ' },
+	{ '5', '6', '7', '8', '9' },
+	{ ' ', 'A', 'B', 'C', ' ' },
+	{ ' ', ' ', 'D', ' ', ' ' }
 };
 char
 fn_read_two(int row, int col) {
-   return keypad_two[row][col];
+	return keypad_two[row][col];
 }
 keypad_def keypad_two_def = {
-   5, 5,
-   (keypad_pos) {
-      2, 0
-   },
-   fn_read_two
+	5, 5,
+	(keypad_pos) {
+		2, 0
+	},
+	fn_read_two
 };
 
 /*
@@ -65,33 +65,29 @@ keypad_def keypad_two_def = {
 
 void
 move_key(keypad_pos *pos, keypad_def def, char move) {
-   assert(pos->row >= 0 && pos->row < def.rows &&
-          pos->col >= 0 && pos->col < def.cols);
-   if (move == UP) {
-      if (pos->row != 0 && def.fnreader(pos->row - 1, pos->col) != EMPTY) {
-         pos->row -= 1;
-      }
-      return;
-   }
-   if (move == RIGHT) {
-      if (pos->col < def.cols - 1 && def.fnreader(pos->row, pos->col + 1) != EMPTY) {
-         pos->col += 1;
-      }
-      return;
-   }
-   if (move == DOWN) {
-      if (pos->row < def.rows - 1 && def.fnreader(pos->row + 1, pos->col) != EMPTY) {
-         pos->row += 1;
-      }
-      return;
-   }
-   if (move == LEFT) {
-      if (pos->col != 0 && def.fnreader(pos->row, pos->col - 1) != EMPTY) {
-         pos->col -= 1;
-      }
-      return;
-   }
-   assert(NULL);
+	assert(pos->row >= 0 && pos->row < def.rows &&
+	       pos->col >= 0 && pos->col < def.cols);
+	if (move == UP) {
+		if (pos->row != 0 && def.fnreader(pos->row - 1, pos->col) != EMPTY)
+			pos->row -= 1;
+		return;
+	}
+	if (move == RIGHT) {
+		if (pos->col < def.cols - 1 && def.fnreader(pos->row, pos->col + 1) != EMPTY)
+			pos->col += 1;
+		return;
+	}
+	if (move == DOWN) {
+		if (pos->row < def.rows - 1 && def.fnreader(pos->row + 1, pos->col) != EMPTY)
+			pos->row += 1;
+		return;
+	}
+	if (move == LEFT) {
+		if (pos->col != 0 && def.fnreader(pos->row, pos->col - 1) != EMPTY)
+			pos->col -= 1;
+		return;
+	}
+	assert(NULL);
 }
 
 
@@ -123,43 +119,43 @@ move_key(keypad_pos *pos, keypad_def def, char move) {
 
 int
 part_one(
-   const char *fname
+        const char *fname
 ) {
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      fprintf(stderr, "error: could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		fprintf(stderr, "error: could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   keypad_pos pos = { 1, 1 };
+	keypad_pos pos = { 1, 1 };
 
-   char *result = malloc(RESULT_MAX + 1);
-   memset(result, 0, RESULT_MAX + 1);
-   int p = 0;
+	char *result = malloc(RESULT_MAX + 1);
+	memset(result, 0, RESULT_MAX + 1);
+	int p = 0;
 
-   char buffer[INPUT_LINE_MAX];
-   memset(buffer, 0, INPUT_LINE_MAX);
+	char buffer[INPUT_LINE_MAX];
+	memset(buffer, 0, INPUT_LINE_MAX);
 
-   while (fgets(buffer, INPUT_LINE_MAX - 1, ifile)) {
-      char *move = buffer;
-      while (*move) {
-         if (*move == '\n') {
-            move += 1;
-            continue;
-         }
-         move_key(&pos, keypad_one_def, *move);
-         move += 1;
-      }
-      result[p] = keypad_one_def.fnreader(pos.row, pos.col);
-      p += 1;
-      assert(p < RESULT_MAX);
-   }
+	while (fgets(buffer, INPUT_LINE_MAX - 1, ifile)) {
+		char *move = buffer;
+		while (*move) {
+			if (*move == '\n') {
+				move += 1;
+				continue;
+			}
+			move_key(&pos, keypad_one_def, *move);
+			move += 1;
+		}
+		result[p] = keypad_one_def.fnreader(pos.row, pos.col);
+		p += 1;
+		assert(p < RESULT_MAX);
+	}
 
-   printf("part one: %s\n", result);
+	printf("part one: %s\n", result);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -170,42 +166,42 @@ part_one(
 
 int
 part_two(
-   const char *fname
+        const char *fname
 ) {
-   FILE *ifile;
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      fprintf(stderr, "error: could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		fprintf(stderr, "error: could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   keypad_pos pos = { 2, 0 };
+	keypad_pos pos = { 2, 0 };
 
-   char *result = malloc(RESULT_MAX + 1);
-   memset(result, 0, RESULT_MAX + 1);
-   int p = 0;
+	char *result = malloc(RESULT_MAX + 1);
+	memset(result, 0, RESULT_MAX + 1);
+	int p = 0;
 
-   char buffer[INPUT_LINE_MAX];
-   memset(buffer, 0, INPUT_LINE_MAX);
+	char buffer[INPUT_LINE_MAX];
+	memset(buffer, 0, INPUT_LINE_MAX);
 
-   while (fgets(buffer, INPUT_LINE_MAX - 1, ifile)) {
-      char *move = buffer;
-      while (*move) {
-         if (*move == '\n') {
-            move += 1;
-            continue;
-         }
-         move_key(&pos, keypad_two_def, *move);
-         move += 1;
-      }
-      result[p] = keypad_two_def.fnreader(pos.row, pos.col);
-      p += 1;
-      assert(p < RESULT_MAX);
-   }
+	while (fgets(buffer, INPUT_LINE_MAX - 1, ifile)) {
+		char *move = buffer;
+		while (*move) {
+			if (*move == '\n') {
+				move += 1;
+				continue;
+			}
+			move_key(&pos, keypad_two_def, *move);
+			move += 1;
+		}
+		result[p] = keypad_two_def.fnreader(pos.row, pos.col);
+		p += 1;
+		assert(p < RESULT_MAX);
+	}
 
-   printf("part two: %s\n", result);
+	printf("part two: %s\n", result);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }

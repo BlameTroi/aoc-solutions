@@ -63,17 +63,17 @@ enum e_element { e1 = 0, e2 = 1, e3 = 2, e4 = 3, e5 = 4 };
 /* state of a move */
 typedef struct state state;
 struct state {
-   int no;
-   uint8_t elevator;
-   uint8_t microchips[LEVEL_DIM];
-   uint8_t generators[LEVEL_DIM];
+	int no;
+	uint8_t elevator;
+	uint8_t microchips[LEVEL_DIM];
+	uint8_t generators[LEVEL_DIM];
 };
 
 char *
 trace_line(
-   state *m,
-   char *buffer,
-   int buflen
+        state *m,
+        char *buffer,
+        int buflen
 );
 
 /*
@@ -85,18 +85,18 @@ trace_line(
 
 typedef struct dupcheck dupcheck;
 struct dupcheck {
-   uint8_t elevator;
-   uint8_t counts[LEVEL_DIM][2];
+	uint8_t elevator;
+	uint8_t counts[LEVEL_DIM][2];
 };
 
 dupcheck
 state_as_dupcheck(
-   state *m
+        state *m
 );
 
 bool
 id_duplicate(
-   state *m
+        state *m
 );
 
 /*
@@ -105,17 +105,17 @@ id_duplicate(
 
 bool
 is_valid(
-   state *m
+        state *m
 );
 
 bool
 is_goal(
-   state *m
+        state *m
 );
 
 bool
 is_duplicate(
-   state *m
+        state *m
 );
 
 /*
@@ -124,7 +124,7 @@ is_duplicate(
 
 qucb *
 next_moves(
-   state *m
+        state *m
 );
 
 /*
@@ -133,18 +133,18 @@ next_moves(
 
 void
 init_and_load(
-   state *,
-   bool use_live
+        state *,
+        bool use_live
 );
 
 int
 seek_r(
-   state *m
+        state *m
 );
 
 int
 seek_goal(
-   state *start
+        state *start
 );
 
 /*
@@ -153,12 +153,12 @@ seek_goal(
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 /* end solution.h */

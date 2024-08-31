@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "solution.h"
 
@@ -25,15 +26,15 @@
 
 typedef struct bot_node bot_node;
 struct bot_node {
-   bool low_bot;
-   int low_dest;
-   bool high_bot;
-   int high_dest;
-   int low_value;
-   int high_value;
-   bool full;
-   bool seen_17;
-   bool seen_61;
+	bool low_bot;
+	int low_dest;
+	bool high_bot;
+	int high_dest;
+	int low_value;
+	int high_value;
+	bool full;
+	bool seen_17;
+	bool seen_61;
 };
 
 /*
@@ -45,7 +46,7 @@ struct bot_node {
 
 typedef struct output_bin output_bin;
 struct output_bin {
-   fscb *fs;
+	fscb *fs;
 };
 
 /*
@@ -55,8 +56,8 @@ struct output_bin {
 
 typedef struct load_command load_command;
 struct load_command {
-   int value;
-   int bot;
+	int value;
+	int bot;
 };
 
 /*
@@ -76,21 +77,20 @@ load_command loads[50];
 void
 initialize(void) {
 
-   memset(bins, 0, sizeof(bins));
-   for (int i = 0; i < 50; i++) {
-      bins[i].fs = fs_create(10);
-   }
+	memset(bins, 0, sizeof(bins));
+	for (int i = 0; i < 50; i++)
+		bins[i].fs = fs_create(10);
 
-   memset(bots, 0, sizeof(bots));
-   for (int i = 0; i < 250; i++) {
-      bots[i].low_value = -1;
-      bots[i].high_value = -1;
-      bots[i].full = false;
-      bots[i].seen_17 = false;
-      bots[i].seen_61 = false;
-   }
+	memset(bots, 0, sizeof(bots));
+	for (int i = 0; i < 250; i++) {
+		bots[i].low_value = -1;
+		bots[i].high_value = -1;
+		bots[i].full = false;
+		bots[i].seen_17 = false;
+		bots[i].seen_61 = false;
+	}
 
-   memset(loads, 0, sizeof(loads));
+	memset(loads, 0, sizeof(loads));
 }
 
 /*
@@ -105,26 +105,23 @@ initialize(void) {
 
 void
 give_to_bot(bot_node *bot, int value) {
-   assert(bot->low_value == -1 || bot->high_value == -1);
-   if (value == 17) {
-      bot->seen_17 = true;
-   }
-   if (value == 61) {
-      bot->seen_61 = true;
-   }
-   if (bot->low_value == -1) {
-      bot->low_value = value;
-   } else {
-      bot->high_value = value;
-   }
-   if (bot->low_value > bot->high_value) {
-      int swap = bot->low_value;
-      bot->low_value = bot->high_value;
-      bot->high_value = swap;
-   }
-   if (bot->low_value != -1 && bot->high_value != -1) {
-      bot->full = true;
-   }
+	assert(bot->low_value == -1 || bot->high_value == -1);
+	if (value == 17)
+		bot->seen_17 = true;
+	if (value == 61)
+		bot->seen_61 = true;
+	if (bot->low_value == -1)
+		bot->low_value = value;
+
+	else
+		bot->high_value = value;
+	if (bot->low_value > bot->high_value) {
+		int swap = bot->low_value;
+		bot->low_value = bot->high_value;
+		bot->high_value = swap;
+	}
+	if (bot->low_value != -1 && bot->high_value != -1)
+		bot->full = true;
 }
 
 /*
@@ -136,7 +133,7 @@ give_to_bot(bot_node *bot, int value) {
 
 void
 give_to_bin(output_bin *bin, int value) {
-   fs_push(bin->fs, (void *)(long)value);
+	fs_push(bin->fs, (void *)(long)value);
 }
 
 /*
@@ -145,123 +142,120 @@ give_to_bin(output_bin *bin, int value) {
 
 int
 part_one(
-   const char *fname
+        const char *fname
 ) {
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      fprintf(stderr, "error: could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		fprintf(stderr, "error: could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   /*
-    * input is mixed format. parse and collect. keep track of the last
-    * used load command, bot, and output bin. since the input is also
-    * not in any meaningful order, max is our friend.
-    */
+	/*
+	 * input is mixed format. parse and collect. keep track of the last
+	 * used load command, bot, and output bin. since the input is also
+	 * not in any meaningful order, max is our friend.
+	 */
 
-   char buffer[256];
-   memset(buffer, 0, 256);
+	char buffer[256];
+	memset(buffer, 0, 256);
 
-   initialize();
+	initialize();
 
-   while (fgets(buffer, 255, ifile)) {
-      const char **tokens = split_string(buffer, " \n");
+	while (fgets(buffer, 255, ifile)) {
+		const char **tokens = split_string(buffer, " \n");
 
-      if (equal_string(tokens[1], "value")) {
-         last_load += 1;
-         loads[last_load].value = strtol(tokens[2], NULL, 10);
-         loads[last_load].bot = strtol(tokens[6], NULL, 10);
-         free_split(tokens);
-         continue;
-      }
+		if (equal_string(tokens[1], "value")) {
+			last_load += 1;
+			loads[last_load].value = strtol(tokens[2], NULL, 10);
+			loads[last_load].bot = strtol(tokens[6], NULL, 10);
+			free_split(tokens);
+			continue;
+		}
 
-      if (equal_string(tokens[1], "bot")) {
-         int bot = strtol(tokens[2], NULL, 10);
-         bots[bot].low_bot = equal_string(tokens[6], "bot");
-         bots[bot].low_dest = strtol(tokens[7], NULL, 10);
-         bots[bot].high_bot = equal_string(tokens[11], "bot");
-         bots[bot].high_dest = strtol(tokens[12], NULL, 10);
-         if (!bots[bot].low_bot) {
-            last_bin = max(last_bin, bots[bot].low_dest);
-         }
-         if (!bots[bot].high_bot) {
-            last_bin = max(last_bin, bots[bot].high_dest);
-         }
-         last_bot = max(last_bot, bot);
-         free_split(tokens);
-         continue;
-      }
+		if (equal_string(tokens[1], "bot")) {
+			int bot = strtol(tokens[2], NULL, 10);
+			bots[bot].low_bot = equal_string(tokens[6], "bot");
+			bots[bot].low_dest = strtol(tokens[7], NULL, 10);
+			bots[bot].high_bot = equal_string(tokens[11], "bot");
+			bots[bot].high_dest = strtol(tokens[12], NULL, 10);
+			if (!bots[bot].low_bot)
+				last_bin = max(last_bin, bots[bot].low_dest);
+			if (!bots[bot].high_bot)
+				last_bin = max(last_bin, bots[bot].high_dest);
+			last_bot = max(last_bot, bot);
+			free_split(tokens);
+			continue;
+		}
 
-      assert(NULL);
-   }
+		assert(NULL);
+	}
 
-   /*
-    * process the load commands, giving a value to a bot.
-    */
+	/*
+	 * process the load commands, giving a value to a bot.
+	 */
 
-   for (int i = 0; i <= last_load; i++) {
-      give_to_bot(&bots[loads[i].bot], loads[i].value);
-   }
+	for (int i = 0; i <= last_load; i++)
+		give_to_bot(&bots[loads[i].bot], loads[i].value);
 
-   /*
-    * at least one bot will have two values after the load commands
-    * complete. repeatedly scan through the bots for one with two
-    * values loaded, follow its programming for what to do with
-    * the values, and the restart the loop. do this until there
-    * are no more bots with two values.
-    */
+	/*
+	 * at least one bot will have two values after the load commands
+	 * complete. repeatedly scan through the bots for one with two
+	 * values loaded, follow its programming for what to do with
+	 * the values, and the restart the loop. do this until there
+	 * are no more bots with two values.
+	 */
 
-   bool done = false;
-   while (!done) {
-      done = true;
-      int i = 0;
-      while (i <= last_bot) {
-         if (bots[i].full) {
-            done = false;
-            if (bots[i].low_bot) {
-               give_to_bot(&bots[bots[i].low_dest], bots[i].low_value);
-            } else {
-               give_to_bin(&bins[bots[i].low_dest], bots[i].low_value);
-            }
-            bots[i].low_value = -1;
-            if (bots[i].high_bot) {
-               give_to_bot(&bots[bots[i].high_dest], bots[i].high_value);
-            } else {
-               give_to_bin(&bins[bots[i].high_dest], bots[i].high_value);
-            }
-            bots[i].high_value = -1;
-            bots[i].full = false;
-            break;
-         }
-         i += 1;
-      }
-   }
+	bool done = false;
+	while (!done) {
+		done = true;
+		int i = 0;
+		while (i <= last_bot) {
+			if (bots[i].full) {
+				done = false;
+				if (bots[i].low_bot)
+					give_to_bot(&bots[bots[i].low_dest], bots[i].low_value);
 
-   /*
-    * for part one, we want to know which bot handled values 17 and 61. this is
-    * tracked in give_to_bot().
-    *
-    * for part two, we want the product of the first three output bins, 0-2.
-    */
+				else
+					give_to_bin(&bins[bots[i].low_dest], bots[i].low_value);
+				bots[i].low_value = -1;
+				if (bots[i].high_bot)
+					give_to_bot(&bots[bots[i].high_dest], bots[i].high_value);
 
-   int the_bot = -1;
-   for (int i = 0; i <= last_bot; i++) {
-      if (bots[i].seen_17 && bots[i].seen_61) {
-         the_bot = i;
-         break;
-      }
-   }
+				else
+					give_to_bin(&bins[bots[i].high_dest], bots[i].high_value);
+				bots[i].high_value = -1;
+				bots[i].full = false;
+				break;
+			}
+			i += 1;
+		}
+	}
 
-   printf("part one: %d\n", the_bot);
+	/*
+	 * for part one, we want to know which bot handled values 17 and 61. this is
+	 * tracked in give_to_bot().
+	 *
+	 * for part two, we want the product of the first three output bins, 0-2.
+	 */
 
-   int the_product = (long)fs_pop(bins[0].fs) *
-                     (long)fs_pop(bins[1].fs) *
-                     (long)fs_pop(bins[2].fs);
-   printf("part two: %d\n", the_product);
+	int the_bot = -1;
+	for (int i = 0; i <= last_bot; i++) {
+		if (bots[i].seen_17 && bots[i].seen_61) {
+			the_bot = i;
+			break;
+		}
+	}
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	printf("part one: %d\n", the_bot);
+
+	int the_product = (long)fs_pop(bins[0].fs) *
+	                  (long)fs_pop(bins[1].fs) *
+	                  (long)fs_pop(bins[2].fs);
+	printf("part two: %d\n", the_product);
+
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -272,7 +266,7 @@ part_one(
 
 int
 part_two(
-   const char *fname
+        const char *fname
 ) {
-   return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
