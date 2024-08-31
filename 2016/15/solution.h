@@ -8,8 +8,8 @@
 typedef struct disc disc;
 
 struct disc {
-   int positions;
-   int start_position;
+	int positions;
+	int start_position;
 };
 
 long
@@ -17,12 +17,12 @@ spinner(int part);
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 /* end solution.h */

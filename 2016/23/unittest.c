@@ -9,7 +9,6 @@
 
 #include "minunit.h"
 #include "solution.h"
-#include "txbstr.h"
 
 /*
  * minunit setup and teardown of infrastructure.
@@ -28,64 +27,59 @@ char *test_string = NULL;
 
 bool
 get_args(void) {
-   if (num_args < 2) {
-      got_args = true;
-   }
-   if (got_args) {
-      return true;
-   }
+	if (num_args < 2)
+		got_args = true;
+	if (got_args)
+		return true;
 
-   if (num_args == 2) {
-      filename = the_args[1];
-      got_args = true;
-      return got_args;
-   }
+	if (num_args == 2) {
+		filename = the_args[1];
+		got_args = true;
+		return got_args;
+	}
 
-   if (num_args > 2 && strcmp(the_args[1], "-f") == 0) {
-      filename = the_args[2];
-      got_args = true;
-      return got_args;
-   }
+	if (num_args > 2 && strcmp(the_args[1], "-f") == 0) {
+		filename = the_args[2];
+		got_args = true;
+		return got_args;
+	}
 
-   if (strcmp(the_args[1], "-i") != 0) {
-      fprintf(stderr, "error: illegal arguments to unittest\n");
-      exit(EXIT_FAILURE);
-   }
+	if (strcmp(the_args[1], "-i") != 0) {
+		fprintf(stderr, "error: illegal arguments to unittest\n");
+		exit(EXIT_FAILURE);
+	}
 
-   int len = num_args;
-   for (int i = 2; i < num_args; i++) {
-      len += strlen(the_args[i]);
-   }
-   test_string = malloc(len+1);
-   memset(test_string, 0, len+1);
-   for (int i = 2; i < num_args; i++) {
-      if (i != 2) {
-         strcat(test_string, " ");
-      }
-      strcat(test_string, the_args[i]);
-   }
+	int len = num_args;
+	for (int i = 2; i < num_args; i++)
+		len += strlen(the_args[i]);
+	test_string = malloc(len+1);
+	memset(test_string, 0, len+1);
+	for (int i = 2; i < num_args; i++) {
+		if (i != 2)
+			strcat(test_string, " ");
+		strcat(test_string, the_args[i]);
+	}
 
-   got_args = true;
-   return got_args;
+	got_args = true;
+	return got_args;
 }
 
 void
 test_setup(void) {
-   get_args();
-   if (filename) {
-      datafile = fopen(filename, "r");
-      if (!datafile) {
-         fprintf(stderr, "error: could not open test data file!\n");
-         exit(EXIT_FAILURE);
-      }
-   }
+	get_args();
+	if (filename) {
+		datafile = fopen(filename, "r");
+		if (!datafile) {
+			fprintf(stderr, "error: could not open test data file!\n");
+			exit(EXIT_FAILURE);
+		}
+	}
 }
 
 void
 test_teardown(void) {
-   if (datafile) {
-      fclose(datafile);
-   }
+	if (datafile)
+		fclose(datafile);
 }
 
 /*
@@ -179,166 +173,167 @@ dec a
 
 cpu *
 load_test(void) {
-   cpu *m = malloc(sizeof(cpu));
-   memset(m, 0, sizeof(cpu));
-   char *prog[] = {
-      "cpy 2 a",
-      "tgl a",
-      "tgl a",
-      "tgl a",
-      "cpy 1 a",
-      "dec a",
-      "dec a",
-      NULL
-   };
-   printf("\n");
-   m->ip = 0;
-   int i = 0;
-   while (prog[i]) {
-      m->core[m->ip] = assemble(prog[i]);
-      m->ip += 1;
-      i += 1;
-   }
-   m->core[m->ip].opc = inv;
+	cpu *m = malloc(sizeof(cpu));
+	memset(m, 0, sizeof(cpu));
+	char *prog[] = {
+		"cpy 2 a",
+		"tgl a",
+		"tgl a",
+		"tgl a",
+		"cpy 1 a",
+		"dec a",
+		"dec a",
+		NULL
+	};
+	printf("\n");
+	m->ip = 0;
+	int i = 0;
+	while (prog[i]) {
+		m->core[m->ip] = assemble(prog[i]);
+		m->ip += 1;
+		i += 1;
+	}
+	m->core[m->ip].opc = inv;
 
-   return m;
+	return m;
 }
 
 MU_TEST(test_load) {
-   cpu *bunny = load_test();
-   int ok = execute(bunny);
-   printf(
-      "a %8d  b %8d  c %8d  d %8d\n",
-      bunny->registers[a], bunny->registers[b], bunny->registers[c], bunny->registers[d]
-   );
-   mu_should(ok);
-   mu_should(bunny->registers[a] == 3);
+	cpu *bunny = load_test();
+	int ok = execute(bunny);
+	printf(
+	        "a %8d  b %8d  c %8d  d %8d\n",
+	        bunny->registers[a], bunny->registers[b], bunny->registers[c],
+	        bunny->registers[d]
+	);
+	mu_should(ok);
+	mu_should(bunny->registers[a] == 3);
 }
 
 MU_TEST(test_inc) {
-   cpu *m = malloc(sizeof(cpu));
-   memset(m, 0, sizeof(cpu));
-   m->registers[a] = 1;
-   m->registers[b] = 2;
-   m->registers[c] = 3;
-   m->registers[d] = -1;
-   m->core[0] = assemble("inc a");
-   mu_should(m->core[0].opc == inc);
-   mu_should(m->core[0].op1.reg);
-   mu_should(m->core[0].op1.opr == a);
-   m->core[1] = assemble("inc b");
-   m->core[2] = assemble("inc c");
-   m->core[3] = assemble("inc d");
-   m->core[4] = assemble("inc 5"); /* illegal operand */
-   mu_should(m->core[4].opc == inc);
-   mu_shouldnt(m->core[4].op1.reg);
-   mu_should(m->core[4].op1.opr == 5);
-   bool ok = execute(m);
-   mu_should(m->registers[a] == 2);
-   mu_should(m->registers[b] == 3);
-   mu_should(m->registers[c] == 4);
-   mu_should(m->registers[d] == 0);
-   mu_should(ok);
-   free(m);
+	cpu *m = malloc(sizeof(cpu));
+	memset(m, 0, sizeof(cpu));
+	m->registers[a] = 1;
+	m->registers[b] = 2;
+	m->registers[c] = 3;
+	m->registers[d] = -1;
+	m->core[0] = assemble("inc a");
+	mu_should(m->core[0].opc == inc);
+	mu_should(m->core[0].op1.reg);
+	mu_should(m->core[0].op1.opr == a);
+	m->core[1] = assemble("inc b");
+	m->core[2] = assemble("inc c");
+	m->core[3] = assemble("inc d");
+	m->core[4] = assemble("inc 5"); /* illegal operand */
+	mu_should(m->core[4].opc == inc);
+	mu_shouldnt(m->core[4].op1.reg);
+	mu_should(m->core[4].op1.opr == 5);
+	bool ok = execute(m);
+	mu_should(m->registers[a] == 2);
+	mu_should(m->registers[b] == 3);
+	mu_should(m->registers[c] == 4);
+	mu_should(m->registers[d] == 0);
+	mu_should(ok);
+	free(m);
 }
 
 MU_TEST(test_dec) {
-   cpu *m = malloc(sizeof(cpu));
-   memset(m, 0, sizeof(cpu));
-   m->registers[a] = 3;
-   m->registers[b] = 2;
-   m->registers[c] = 1;
-   m->registers[d] = -1;
-   m->core[0] = assemble("dec a");
-   mu_should(m->core[0].opc == dec);
-   mu_should(m->core[0].op1.reg);
-   mu_should(m->core[0].op1.opr == a);
-   m->core[1] = assemble("dec b");
-   m->core[2] = assemble("dec c");
-   m->core[3] = assemble("dec d");
-   m->core[4] = assemble("dec 15"); /* illegal operand */
-   mu_should(m->core[4].opc == dec);
-   mu_shouldnt(m->core[4].op1.reg);
-   mu_should(m->core[4].op1.opr == 15);
-   bool ok = execute(m);
-   mu_should(m->registers[a] == 2);
-   mu_should(m->registers[b] == 1);
-   mu_should(m->registers[c] == 0);
-   mu_should(m->registers[d] == -2);
-   mu_should(ok);
-   free(m);
+	cpu *m = malloc(sizeof(cpu));
+	memset(m, 0, sizeof(cpu));
+	m->registers[a] = 3;
+	m->registers[b] = 2;
+	m->registers[c] = 1;
+	m->registers[d] = -1;
+	m->core[0] = assemble("dec a");
+	mu_should(m->core[0].opc == dec);
+	mu_should(m->core[0].op1.reg);
+	mu_should(m->core[0].op1.opr == a);
+	m->core[1] = assemble("dec b");
+	m->core[2] = assemble("dec c");
+	m->core[3] = assemble("dec d");
+	m->core[4] = assemble("dec 15"); /* illegal operand */
+	mu_should(m->core[4].opc == dec);
+	mu_shouldnt(m->core[4].op1.reg);
+	mu_should(m->core[4].op1.opr == 15);
+	bool ok = execute(m);
+	mu_should(m->registers[a] == 2);
+	mu_should(m->registers[b] == 1);
+	mu_should(m->registers[c] == 0);
+	mu_should(m->registers[d] == -2);
+	mu_should(ok);
+	free(m);
 }
 MU_TEST(test_cpy) {
-   cpu *m = malloc(sizeof(cpu));
-   memset(m, 0, sizeof(cpu));
-   m->registers[a] = 10;
-   m->registers[b] = 11;
-   m->registers[c] = 12;
-   m->registers[d] = 13;
-   m->core[0] = assemble("cpy a b");
-   mu_should(m->core[0].opc == cpy);
-   mu_should(m->core[0].op1.reg);
-   mu_should(m->core[0].op1.opr == a);
-   mu_should(m->core[0].op2.reg);
-   mu_should(m->core[0].op2.opr == b);
-   m->core[1] = assemble("cpy 3 c");
-   mu_shouldnt(m->core[1].op1.reg);
-   mu_should(m->core[1].op1.opr == 3);
-   m->core[2] = assemble("cpy d 9");   /* illegal operand */
-   mu_should(m->core[2].op1.reg);
-   mu_should(m->core[2].op1.opr == d);
-   mu_shouldnt(m->core[2].op2.reg);
-   mu_should(m->core[2].op2.opr == 9);
-   m->core[3] = assemble("cpy 9 d");   /* legal */
-   bool ok = execute(m);
-   mu_should(m->registers[a] == 10);
-   mu_should(m->registers[b] == 10);
-   mu_should(m->registers[c] == 3);
-   mu_should(m->registers[d] == 9);
-   mu_should(ok);
-   free(m);
+	cpu *m = malloc(sizeof(cpu));
+	memset(m, 0, sizeof(cpu));
+	m->registers[a] = 10;
+	m->registers[b] = 11;
+	m->registers[c] = 12;
+	m->registers[d] = 13;
+	m->core[0] = assemble("cpy a b");
+	mu_should(m->core[0].opc == cpy);
+	mu_should(m->core[0].op1.reg);
+	mu_should(m->core[0].op1.opr == a);
+	mu_should(m->core[0].op2.reg);
+	mu_should(m->core[0].op2.opr == b);
+	m->core[1] = assemble("cpy 3 c");
+	mu_shouldnt(m->core[1].op1.reg);
+	mu_should(m->core[1].op1.opr == 3);
+	m->core[2] = assemble("cpy d 9");   /* illegal operand */
+	mu_should(m->core[2].op1.reg);
+	mu_should(m->core[2].op1.opr == d);
+	mu_shouldnt(m->core[2].op2.reg);
+	mu_should(m->core[2].op2.opr == 9);
+	m->core[3] = assemble("cpy 9 d");   /* legal */
+	bool ok = execute(m);
+	mu_should(m->registers[a] == 10);
+	mu_should(m->registers[b] == 10);
+	mu_should(m->registers[c] == 3);
+	mu_should(m->registers[d] == 9);
+	mu_should(ok);
+	free(m);
 }
 MU_TEST(test_jnz) {
-   cpu *m = malloc(sizeof(cpu));
-   memset(m, 0, sizeof(cpu));
-   m->registers[a] = 15;
-   m->registers[b] = 2;
-   m->registers[c] = 1;
-   m->registers[d] = 0;
-   m->core[0] = assemble("dec a");
-   m->core[1] = assemble("inc d");
-   m->core[2] = assemble("jnz a -2");
-   m->core[3] = assemble("inc a");
-   bool ok = execute(m);
-   mu_should(m->registers[a] == 1);
-   mu_should(m->registers[d] == 15);
-   mu_should(ok);
-   free(m);
+	cpu *m = malloc(sizeof(cpu));
+	memset(m, 0, sizeof(cpu));
+	m->registers[a] = 15;
+	m->registers[b] = 2;
+	m->registers[c] = 1;
+	m->registers[d] = 0;
+	m->core[0] = assemble("dec a");
+	m->core[1] = assemble("inc d");
+	m->core[2] = assemble("jnz a -2");
+	m->core[3] = assemble("inc a");
+	bool ok = execute(m);
+	mu_should(m->registers[a] == 1);
+	mu_should(m->registers[d] == 15);
+	mu_should(ok);
+	free(m);
 }
 MU_TEST(test_tgl) {
-   cpu *m = malloc(sizeof(cpu));
-   memset(m, 0, sizeof(cpu));
-   m->core[0] = assemble("cpy 3 a");
-   m->core[1] = assemble("cpy 2 b");
-   m->core[2] = assemble("cpy -3 c");
-   m->core[3] = assemble("cpy 4 d");
-   m->core[4] = assemble("tgl c");
-   m->core[5] = assemble("dec a");
-   m->core[6] = assemble("jnz a -5");
-   bool ok = execute(m);
-   mu_should(m->registers[a] == 0);
-   mu_should(m->registers[b] == 6);
-   mu_should(ok);
-   free(m);
+	cpu *m = malloc(sizeof(cpu));
+	memset(m, 0, sizeof(cpu));
+	m->core[0] = assemble("cpy 3 a");
+	m->core[1] = assemble("cpy 2 b");
+	m->core[2] = assemble("cpy -3 c");
+	m->core[3] = assemble("cpy 4 d");
+	m->core[4] = assemble("tgl c");
+	m->core[5] = assemble("dec a");
+	m->core[6] = assemble("jnz a -5");
+	bool ok = execute(m);
+	mu_should(m->registers[a] == 0);
+	mu_should(m->registers[b] == 6);
+	mu_should(ok);
+	free(m);
 }
 
 MU_TEST(test_test) {
-   instruction c = assemble("cpy 41 a\n");
-   mu_should(c.opc == cpy);
-   mu_should(c.op1.opr == 41);
-   mu_should(c.op2.opr == a);
-   mu_should(true);
-   mu_shouldnt(false);
+	instruction c = assemble("cpy 41 a\n");
+	mu_should(c.opc == cpy);
+	mu_should(c.op1.opr == 41);
+	mu_should(c.op2.opr == a);
+	mu_should(true);
+	mu_shouldnt(false);
 }
 
 /*
@@ -346,16 +341,16 @@ MU_TEST(test_test) {
  */
 MU_TEST_SUITE(test_suite) {
 
-   MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
+	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
-   /* run your tests here */
-   MU_RUN_TEST(test_inc);
-   MU_RUN_TEST(test_dec);
-   MU_RUN_TEST(test_cpy);
-   MU_RUN_TEST(test_jnz);
-   MU_RUN_TEST(test_tgl);
-   MU_RUN_TEST(test_test);
-   MU_RUN_TEST(test_load);
+	/* run your tests here */
+	MU_RUN_TEST(test_inc);
+	MU_RUN_TEST(test_dec);
+	MU_RUN_TEST(test_cpy);
+	MU_RUN_TEST(test_jnz);
+	MU_RUN_TEST(test_tgl);
+	MU_RUN_TEST(test_test);
+	MU_RUN_TEST(test_load);
 }
 
 /*
@@ -364,9 +359,9 @@ MU_TEST_SUITE(test_suite) {
 
 int
 main(int argc, char *argv[]) {
-   num_args = argc;
-   the_args = argv;
-   MU_RUN_SUITE(test_suite);
-   MU_REPORT();
-   return MU_EXIT_CODE;
+	num_args = argc;
+	the_args = argv;
+	MU_RUN_SUITE(test_suite);
+	MU_REPORT();
+	return MU_EXIT_CODE;
 }

@@ -40,119 +40,113 @@ bool map_filled = false;
 
 int
 wrapped_row(int row) {
-   return row % ROW_WRAP;
+	return row % ROW_WRAP;
 }
 
 void
 initialize_floor_map(int rows, int cols, const char *data) {
-   assert(rows > 0 && cols > 0 && cols <= 100);
-   memset(floor_map, 0, sizeof(floor_map));
-   map_rows = rows;
-   map_cols = cols;
-   map_traps = 0;
-   map_safes = 0;
-   map_filled = false;
-   int col = 0;
-   while (*data == SAFE || *data == TRAP) {
-      floor_map[0][col] = *data;
-      if (*data == SAFE) {
-         map_safes += 1;
-      } else {
-         map_traps += 1;
-      }
-      col += 1;
-      data += 1;
-      cols -= 1;
-   }
-   assert(!cols);
+	assert(rows > 0 && cols > 0 && cols <= 100);
+	memset(floor_map, 0, sizeof(floor_map));
+	map_rows = rows;
+	map_cols = cols;
+	map_traps = 0;
+	map_safes = 0;
+	map_filled = false;
+	int col = 0;
+	while (*data == SAFE || *data == TRAP) {
+		floor_map[0][col] = *data;
+		if (*data == SAFE)
+			map_safes += 1;
+
+		else
+			map_traps += 1;
+		col += 1;
+		data += 1;
+		cols -= 1;
+	}
+	assert(!cols);
 }
 
 char trap_signatures[][3] = {
-   { TRAP, TRAP, SAFE },
-   { SAFE, TRAP, TRAP },
-   { TRAP, SAFE, SAFE },
-   { SAFE, SAFE, TRAP },
-   { '\0', '\0', '\0' }
+	{ TRAP, TRAP, SAFE },
+	{ SAFE, TRAP, TRAP },
+	{ TRAP, SAFE, SAFE },
+	{ SAFE, SAFE, TRAP },
+	{ '\0', '\0', '\0' }
 };
 
 char
 upper_left(int row, int col) {
-   if (col > 0) {
-      return floor_map[wrapped_row(row-1)][col-1];
-   }
-   return SAFE;
+	if (col > 0)
+		return floor_map[wrapped_row(row-1)][col-1];
+	return SAFE;
 }
 
 char
 upper_right(int row, int col) {
-   if (col < map_cols - 1) {
-      return floor_map[wrapped_row(row-1)][col+1];
-   }
-   return SAFE;
+	if (col < map_cols - 1)
+		return floor_map[wrapped_row(row-1)][col+1];
+	return SAFE;
 }
 
 char
 upper_middle(int row, int col) {
-   return floor_map[wrapped_row(row-1)][col];
+	return floor_map[wrapped_row(row-1)][col];
 }
 
 bool
 is_trap(int row, int col) {
-   char ul = upper_left(row, col);
-   char um = upper_middle(row, col);
-   char ur = upper_right(row, col);
-   for (int i = 0; trap_signatures[i][0] != '\0'; i++) {
-      if (ul == trap_signatures[i][0] &&
-            um == trap_signatures[i][1] &&
-            ur == trap_signatures[i][2]) {
-         return true;
-      }
-   }
-   return false;
+	char ul = upper_left(row, col);
+	char um = upper_middle(row, col);
+	char ur = upper_right(row, col);
+	for (int i = 0; trap_signatures[i][0] != '\0'; i++) {
+		if (ul == trap_signatures[i][0] &&
+		                um == trap_signatures[i][1] &&
+		                ur == trap_signatures[i][2])
+			return true;
+	}
+	return false;
 }
 
 void
 fill_floor_map(void) {
-   assert(!map_filled);
-   for (int row = 1; row < map_rows; row++) {
-      for (int col = 0; col < map_cols; col++) {
-         if (is_trap(row, col)) {
-            floor_map[wrapped_row(row)][col] = TRAP;
-            map_traps += 1;
-         } else {
-            floor_map[wrapped_row(row)][col] = SAFE;
-            map_safes += 1;
-         }
-      }
-   }
-   map_filled = true;
+	assert(!map_filled);
+	for (int row = 1; row < map_rows; row++) {
+		for (int col = 0; col < map_cols; col++) {
+			if (is_trap(row, col)) {
+				floor_map[wrapped_row(row)][col] = TRAP;
+				map_traps += 1;
+			} else {
+				floor_map[wrapped_row(row)][col] = SAFE;
+				map_safes += 1;
+			}
+		}
+	}
+	map_filled = true;
 }
 
 void
 count_map(int *trap, int *safe) {
-   if (!map_filled) {
-      fill_floor_map();
-   }
-   *trap = map_traps;
-   *safe = map_safes;
+	if (!map_filled)
+		fill_floor_map();
+	*trap = map_traps;
+	*safe = map_safes;
 }
 
 void
 print_map(void) {
-   if (map_rows > ROW_WRAP) {
-      printf("\ncan not print map of this size\n");
-      return;
-   }
-   if (!map_filled) {
-      fill_floor_map();
-   }
-   printf("\n");
-   for (int row = 0; row < map_rows; row++) {
-      for (int col = 0; col < map_cols; col++) {
-         printf("%c", floor_map[row][col]);
-      }
-      printf("\n");
-   }
+	if (map_rows > ROW_WRAP) {
+		printf("\ncan not print map of this size\n");
+		return;
+	}
+	if (!map_filled)
+		fill_floor_map();
+	printf("\n");
+	for (int row = 0; row < map_rows; row++) {
+		for (int col = 0; col < map_cols; col++)
+			printf("%c", floor_map[row][col]);
+		printf("\n");
+	}
 }
 
 /*
@@ -162,28 +156,28 @@ print_map(void) {
 
 int
 part_one(
-   const char *fname
+        const char *fname
 ) {
 
-   FILE *ifile = fopen(fname, "r");
-   if (!ifile) {
-      fprintf(stderr, "error: could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
+	FILE *ifile = fopen(fname, "r");
+	if (!ifile) {
+		fprintf(stderr, "error: could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
 
-   char iline[INPUT_LINE_MAX];
+	char iline[INPUT_LINE_MAX];
 
-   fgets(iline, INPUT_LINE_MAX - 1, ifile);
-   initialize_floor_map(40, 100, iline);
-   fill_floor_map();
-   int traps = 0;
-   int safes = 0;
-   count_map(&traps, &safes);
+	fgets(iline, INPUT_LINE_MAX - 1, ifile);
+	initialize_floor_map(40, 100, iline);
+	fill_floor_map();
+	int traps = 0;
+	int safes = 0;
+	count_map(&traps, &safes);
 
-   printf("part one: %d\n", safes);
+	printf("part one: %d\n", safes);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }
 
 
@@ -194,26 +188,26 @@ part_one(
 
 int
 part_two(
-   const char *fname
+        const char *fname
 ) {
-   FILE *ifile;
+	FILE *ifile;
 
-   ifile = fopen(fname, "r");
-   if (!ifile) {
-      fprintf(stderr, "error: could not open file: %s\n", fname);
-      return EXIT_FAILURE;
-   }
-   char iline[INPUT_LINE_MAX];
+	ifile = fopen(fname, "r");
+	if (!ifile) {
+		fprintf(stderr, "error: could not open file: %s\n", fname);
+		return EXIT_FAILURE;
+	}
+	char iline[INPUT_LINE_MAX];
 
-   fgets(iline, INPUT_LINE_MAX - 1, ifile);
-   initialize_floor_map(400000, 100, iline);
-   fill_floor_map();
-   int traps = 0;
-   int safes = 0;
-   count_map(&traps, &safes);
+	fgets(iline, INPUT_LINE_MAX - 1, ifile);
+	initialize_floor_map(400000, 100, iline);
+	fill_floor_map();
+	int traps = 0;
+	int safes = 0;
+	count_map(&traps, &safes);
 
-   printf("part two: %d\n", safes);
+	printf("part two: %d\n", safes);
 
-   fclose(ifile);
-   return EXIT_SUCCESS;
+	fclose(ifile);
+	return EXIT_SUCCESS;
 }

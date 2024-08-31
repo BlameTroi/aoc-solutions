@@ -1,8 +1,7 @@
 /* solution.c -- aoc 2016 19 -- troy brumley */
 
-#include <assert.h>
-#include <stdbool.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -58,25 +57,23 @@
 
 int
 josephus_adjacent(int num) {
-   uint8_t *sieve  = malloc(num);
-   memset(sieve, 1, num);
-   int k = num;          /* remaining */
-   int i = 0;            /* current elf */
-   int j = 1;            /* victim */
-   while (k > 1) {
-      j = wrap(i + 1, num);
-      while (!sieve[j]) {
-         j = wrap(j + 1, num);
-      }
-      sieve[j] = 0;
-      k -= 1;
-      i = wrap(j + 1, num);
-      while (!sieve[i]) {
-         i = wrap(i + 1, num);
-      }
-   }
-   free(sieve);
-   return i + 1;
+	uint8_t *sieve  = malloc(num);
+	memset(sieve, 1, num);
+	int k = num;          /* remaining */
+	int i = 0;            /* current elf */
+	int j = 1;            /* victim */
+	while (k > 1) {
+		j = wrap(i + 1, num);
+		while (!sieve[j])
+			j = wrap(j + 1, num);
+		sieve[j] = 0;
+		k -= 1;
+		i = wrap(j + 1, num);
+		while (!sieve[i])
+			i = wrap(i + 1, num);
+	}
+	free(sieve);
+	return i + 1;
 }
 
 /*
@@ -95,15 +92,13 @@ josephus_adjacent(int num) {
 
 int
 josephus_opposite(int num) {
-   int s = 2;
-   while (s < num) {
-      s = s * 3 - 2;
-   }
-   s = (s + 2) / 3;
-   if (s >= num) {
-      s = s * 2 - 9;
-   }
-   return num - (s) + 1;
+	int s = 2;
+	while (s < num)
+		s = s * 3 - 2;
+	s = (s + 2) / 3;
+	if (s >= num)
+		s = s * 2 - 9;
+	return num - (s) + 1;
 }
 
 /*
@@ -112,10 +107,10 @@ josephus_opposite(int num) {
 
 int
 part_one(
-   const char *fname
+        const char *fname
 ) {
-   printf("part one: %d\n", josephus_adjacent(LIVE));
-   return EXIT_SUCCESS;
+	printf("part one: %d\n", josephus_adjacent(LIVE));
+	return EXIT_SUCCESS;
 }
 
 
@@ -125,8 +120,8 @@ part_one(
 
 int
 part_two(
-   const char *fname
+        const char *fname
 ) {
-   printf("part two: %d\n", josephus_opposite(LIVE));
-   return EXIT_SUCCESS;
+	printf("part two: %d\n", josephus_opposite(LIVE));
+	return EXIT_SUCCESS;
 }

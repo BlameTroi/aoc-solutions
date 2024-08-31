@@ -97,69 +97,69 @@ test_teardown(void) {
  */
 
 char *expand_tests[][2] = {
-   { "1", "100" },
-   { "0", "001" },
-   { "11111", "11111000000" },
-   { "111100001010", "1111000010100101011110000" },
-   { NULL, NULL }
+	{ "1", "100" },
+	{ "0", "001" },
+	{ "11111", "11111000000" },
+	{ "111100001010", "1111000010100101011110000" },
+	{ NULL, NULL }
 };
 
 MU_TEST(test_expand) {
-   for (int i = 0; expand_tests[i][0]; i++) {
-      char *a = expand_tests[i][0];
-      char *expected = expand_tests[i][1];
-      char *b = dragon_expand(a);
-      printf("\n   input: %s\n", a);
-      printf("  output: %s\n", b);
-      printf("expected: %s\n", expected);
-      mu_should(strlen(b) == strlen(a) * 2 + 1);
-      mu_should(strcmp(b, expected) == 0);
-      free(b);
-   }
+	for (int i = 0; expand_tests[i][0]; i++) {
+		char *a = expand_tests[i][0];
+		char *expected = expand_tests[i][1];
+		char *b = dragon_expand(a);
+		printf("\n   input: %s\n", a);
+		printf("  output: %s\n", b);
+		printf("expected: %s\n", expected);
+		mu_should(strlen(b) == strlen(a) * 2 + 1);
+		mu_should(strcmp(b, expected) == 0);
+		free(b);
+	}
 }
 
 char *checksum_tests[][2] = {
-   { "10", "0" },
-   { "01", "0" },
-   { "00", "1" },
-   { "11", "1" },
-   { "110010110100", "100" },
-   { "0000", "1" },
-   { "1111", "1" },
-   { "1011", "0" },
-   { "1010", "1" },
-   { "10000011110010000111", "01100" },
-   { NULL, NULL }
+	{ "10", "0" },
+	{ "01", "0" },
+	{ "00", "1" },
+	{ "11", "1" },
+	{ "110010110100", "100" },
+	{ "0000", "1" },
+	{ "1111", "1" },
+	{ "1011", "0" },
+	{ "1010", "1" },
+	{ "10000011110010000111", "01100" },
+	{ NULL, NULL }
 };
 
 MU_TEST(test_checksum) {
-   for (int i = 0; checksum_tests[i][0]; i++) {
-      char *a = checksum_tests[i][0];
-      char *expected = checksum_tests[i][1];
-      char *b = dragon_checksum(a);
-      printf("\n   input: %s\n", a);
-      printf("  output: %s\n", b);
-      printf("expected: %s\n", expected);
-      mu_should(strcmp(b, expected) == 0);
-      free(b);
-   }
+	for (int i = 0; checksum_tests[i][0]; i++) {
+		char *a = checksum_tests[i][0];
+		char *expected = checksum_tests[i][1];
+		char *b = dragon_checksum(a);
+		printf("\n   input: %s\n", a);
+		printf("  output: %s\n", b);
+		printf("expected: %s\n", expected);
+		mu_should(strcmp(b, expected) == 0);
+		free(b);
+	}
 }
 
 MU_TEST(test_sample) {
-   char *input = "10000";
-   int fill_length = 20;
-   char *expanded = malloc(strlen(input) + 1);
-   strcpy(expanded, input);
-   while (strlen(expanded) < fill_length) {
-      char *next = dragon_expand(expanded);
-      free(expanded);
-      expanded = next;
-   }
-   expanded[fill_length] = '\0';
-   char *checksum = dragon_checksum(expanded);
-   mu_should(strcmp(checksum, "01100") == 0);
-   free(expanded);
-   free(checksum);
+	char *input = "10000";
+	int fill_length = 20;
+	char *expanded = malloc(strlen(input) + 1);
+	strcpy(expanded, input);
+	while (strlen(expanded) < fill_length) {
+		char *next = dragon_expand(expanded);
+		free(expanded);
+		expanded = next;
+	}
+	expanded[fill_length] = '\0';
+	char *checksum = dragon_checksum(expanded);
+	mu_should(strcmp(checksum, "01100") == 0);
+	free(expanded);
+	free(checksum);
 }
 
 /*
@@ -167,8 +167,8 @@ MU_TEST(test_sample) {
  */
 
 MU_TEST(test_test) {
-   mu_should(true);
-   mu_shouldnt(false);
+	mu_should(true);
+	mu_shouldnt(false);
 }
 
 /*
@@ -176,13 +176,13 @@ MU_TEST(test_test) {
  */
 MU_TEST_SUITE(test_suite) {
 
-   MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
+	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
-   /* run your tests here */
-   MU_RUN_TEST(test_test);
-   MU_RUN_TEST(test_expand);
-   MU_RUN_TEST(test_checksum);
-   MU_RUN_TEST(test_sample);
+	/* run your tests here */
+	MU_RUN_TEST(test_test);
+	MU_RUN_TEST(test_expand);
+	MU_RUN_TEST(test_checksum);
+	MU_RUN_TEST(test_sample);
 }
 
 /*
@@ -191,9 +191,9 @@ MU_TEST_SUITE(test_suite) {
 
 int
 main(int argc, char *argv[]) {
-   num_args = argc;
-   the_args = argv;
-   MU_RUN_SUITE(test_suite);
-   MU_REPORT();
-   return MU_EXIT_CODE;
+	num_args = argc;
+	the_args = argv;
+	MU_RUN_SUITE(test_suite);
+	MU_REPORT();
+	return MU_EXIT_CODE;
 }

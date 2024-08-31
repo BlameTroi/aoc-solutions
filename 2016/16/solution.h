@@ -7,22 +7,22 @@
 
 char *
 dragon_expand(
-   const char *a
+        const char *a
 );
 
 char *
 dragon_checksum(
-   const char *a
+        const char *a
 );
 
 int
 part_one(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 int
 part_two(
-   const char *                       /* a file name */
+        const char *                       /* a file name */
 );
 
 /* end solution.h */

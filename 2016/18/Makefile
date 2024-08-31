@@ -48,7 +48,7 @@ unittest: unittest.o solution.o
 	$(CC) $(CFLAGS) -o unittest unittest.o solution.o -lm
 
 test:
-	./unittest
+	./unittest unitdata.txt
 
 driver.o: driver.c
 	$(CC) $(CFLAGS) -c driver.c

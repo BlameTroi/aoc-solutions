@@ -60,4 +60,4 @@ short:
 	./driver $(DATADIR)/testone.txt
 
 long:
-	./driver $(DATADIR)/dataset.txt
+	./driver 00111101111101000,272
