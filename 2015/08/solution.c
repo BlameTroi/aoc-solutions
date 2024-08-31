@@ -1,4 +1,4 @@
-/* solution.c -- aoc 2015 06 -- troy brumley */
+/* solution.c -- aoc 2015 08 -- troy brumley */
 
 #include <assert.h>
 #include <stdio.h>
@@ -14,10 +14,9 @@
 /* how long is the input line as a compiled string */
 
 int
-compiledStringLength(
+compiled_string_length(
         const char *c
-)
-{
+) {
 	int i = 0;
 
 	/* skip the opening quote */
@@ -34,11 +33,9 @@ compiledStringLength(
 			switch (*c) {
 			case '\\':
 			case '\"':
-				c += 1;
-				break;
+				c += 1; break;
 			case 'x':
-				c += 3;
-				break;
+				c += 3; break;
 			default:
 				assert(NULL);
 			}
@@ -63,10 +60,9 @@ compiledStringLength(
 /* how long is the text in code */
 
 int
-sourceStringLength(
+source_string_length(
         const char *c
-)
-{
+) {
 	int i = 0;
 	while (*c) {
 		switch (*c) {
@@ -102,10 +98,9 @@ sourceStringLength(
    ended with a trailing \0. */
 
 char *
-encodedString(
+encoded_string(
         const char *c
-)
-{
+) {
 
 	/* pathological case first */
 
@@ -195,24 +190,21 @@ encodedString(
    for consistency. */
 
 int
-encodedStringLength(
+encoded_string_length(
         const char *c
-)
-{
+) {
 	return strlen(c);
 }
 
 
 /*
  * part one:
- *
  */
 
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -225,8 +217,8 @@ part_one(
 	int compiledSize = 0;
 	int sourceSize = 0;
 	while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-		compiledSize += compiledStringLength(iline);
-		sourceSize += sourceStringLength(iline);
+		compiledSize += compiled_string_length(iline);
+		sourceSize += source_string_length(iline);
 	}
 
 	printf("source size: %d\n", sourceSize);
@@ -246,8 +238,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");
@@ -261,8 +252,8 @@ part_two(
 	int encodedSize = 0;
 	while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
 		originalSize += strlen(iline) - 1; /* drop newline */
-		char *encoded = encodedString(iline);
-		encodedSize += encodedStringLength(encoded);
+		char *encoded = encoded_string(iline);
+		encodedSize += encoded_string_length(encoded);
 		free(encoded);
 	}
 

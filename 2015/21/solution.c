@@ -84,8 +84,7 @@ set_t gear_sets[sets_max];
 void
 update_set_stats(
         set_t *p
-)
-{
+) {
 	assert(p);
 	p->total_cost = p->weapon->cost;
 	p->total_damage = p->weapon->damage;
@@ -117,8 +116,7 @@ update_set_stats(
 void
 generate_gear_sets(
         void
-)
-{
+) {
 
 	int curr_set = 0;
 
@@ -133,7 +131,7 @@ generate_gear_sets(
 
 		/* skip duplicate rings when building gear sets */
 		if (ring_one_ix != ring_two_ix ||       /* rings must not be the same */
-		    ring_one_ix == 0) {               /* unless they are the null ring */
+		                ring_one_ix == 0) {               /* unless they are the null ring */
 			set_t *p = &gear_sets[curr_set];
 			p->weapon = &weapons[weapon_ix];
 			p->armor = &armors[armor_ix];
@@ -171,8 +169,7 @@ generate_gear_sets(
 void
 update_mob_stats(
         mob_t *mob
-)
-{
+) {
 	mob->curr_hp = mob->hp;
 	mob->damage = mob->equipped->weapon->damage +
 	              (mob->equipped->ring_one ? mob->equipped->ring_one->damage : 0) +
@@ -191,8 +188,7 @@ update_mob_stats(
 void
 strip_mob(
         mob_t *mob
-)
-{
+) {
 	assert(mob);
 	assert(mob->equipped->weapon &&
 	       strcmp(mob->tag, "Boss") != 0);
@@ -238,8 +234,7 @@ mob_t *
 read_mob(
         char *tag,
         FILE *from
-)
-{
+) {
 	/* per `man 3 rewind`, while rewind does not return an error,
 	 * we can check to see if one occured this way. */
 	errno = 0;
@@ -267,19 +262,19 @@ read_mob(
 	while (fgets(iline, INPUT_LEN_MAX - 1, from)) {
 		tokens = split_string(iline, ": ");
 		if (tokens[1] &&
-		    strcmp(tokens[1], "Hit") == 0 &&
-		    strcmp(tokens[2], "Points") == 0) {
+		                strcmp(tokens[1], "Hit") == 0 &&
+		                strcmp(tokens[2], "Points") == 0) {
 			mob->hp = atol(tokens[3]);
 			mob->curr_hp = mob->hp;
 			continue;
 		}
 		if (tokens[1] &&
-		    strcmp(tokens[1], "Damage") == 0) {
+		                strcmp(tokens[1], "Damage") == 0) {
 			mob->damage = atol(tokens[2]);
 			continue;
 		}
 		if (tokens[1] &&
-		    strcmp(tokens[1], "Armor") == 0) {
+		                strcmp(tokens[1], "Armor") == 0) {
 			mob->armor = atol(tokens[2]);
 			continue;
 		}
@@ -298,8 +293,7 @@ read_mob(
 void
 ready_mob(
         mob_t *mob
-)
-{
+) {
 	mob->curr_hp = mob->hp;
 }
 
@@ -313,8 +307,7 @@ int
 hit(
         mob_t *aggressor,
         mob_t *defender
-)
-{
+) {
 	return max(1, aggressor->damage - defender->armor);
 }
 
@@ -329,8 +322,7 @@ battle(
         mob_t *player,
         mob_t *boss,
         bool print
-)
-{
+) {
 	assert(player &&
 	       player->equipped->weapon &&
 	       player->hp > 0);
@@ -354,7 +346,8 @@ battle(
 		player->equipped->total_hits += 1;
 		boss->curr_hp -= player_hit;
 		if (print)
-			printf("player hits boss for %d leaving boss with %d hp\n", player_hit, boss->curr_hp);
+			printf("player hits boss for %d leaving boss with %d hp\n", player_hit,
+			       boss->curr_hp);
 		if (boss->curr_hp < 1) {
 			if (print)
 				printf("boss is dead\n");
@@ -366,7 +359,8 @@ battle(
 		player->curr_hp -= boss_hit;
 		player->equipped->final_hp = player->curr_hp;
 		if (print)
-			printf("boss hits player for %d leaving player with %d hp\n", boss_hit, player->curr_hp);
+			printf("boss hits player for %d leaving player with %d hp\n", boss_hit,
+			       player->curr_hp);
 		if (player->curr_hp < 1) {
 			if (print)
 				printf("player is dead\n");
@@ -385,8 +379,7 @@ battle(
 void
 reset_all(
         void
-)
-{
+) {
 	memset(gear_sets, 0, sizeof(gear_sets));
 	generate_gear_sets();
 }
@@ -399,8 +392,7 @@ reset_all(
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	reset_all();
 
@@ -440,8 +432,10 @@ part_one(
 				boss_wins += 1;
 				boss_min_hp = min(boss_min_hp, boss->curr_hp);
 				boss_max_hp = max(boss_max_hp, boss->curr_hp);
-				boss_win_player_min_cost = min(boss_win_player_min_cost, player->equipped->total_cost);
-				boss_win_player_max_cost = max(boss_win_player_max_cost, player->equipped->total_cost);
+				boss_win_player_min_cost = min(boss_win_player_min_cost,
+				                               player->equipped->total_cost);
+				boss_win_player_max_cost = max(boss_win_player_max_cost,
+				                               player->equipped->total_cost);
 			}
 			strip_mob(player);
 		}
@@ -464,8 +458,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 
 	return EXIT_SUCCESS;
 }

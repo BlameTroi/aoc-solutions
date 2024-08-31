@@ -20,8 +20,7 @@
 void
 reset_state(
         int rel
-)
-{
+) {
 	if (rel) {
 		for (int i = 0; i < INGREDIENTS_MAX; i++) {
 			if (ingredients[i].name)
@@ -46,8 +45,7 @@ reset_state(
 void
 parse_line(
         const char *iline
-)
-{
+) {
 	assert(num_ingredients < INGREDIENTS_MAX);
 
 	const char **t = split_string(iline, " ,:\n");
@@ -77,8 +75,7 @@ parse_line(
 long
 score(
         int *units
-)
-{
+) {
 	long attributes[SCOREABLE_MAX];
 	memset(attributes, 0, sizeof(attributes));
 
@@ -106,8 +103,7 @@ score(
 long
 calories(
         int *units
-)
-{
+) {
 	long r = 0;
 	for (int i = 0; i < num_ingredients;  i++)
 		r += units[i] * ingredients[i].attributes[CAL];
@@ -123,8 +119,7 @@ calories(
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -185,8 +180,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");

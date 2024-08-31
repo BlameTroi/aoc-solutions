@@ -28,21 +28,18 @@ char *prog_one[] = {
  */
 
 void
-test_setup(void)
-{
+test_setup(void) {
 }
 
 void
-test_teardown(void)
-{
+test_teardown(void) {
 }
 
 
 /*
  * sample test shell.
  */
-MU_TEST(test_create)
-{
+MU_TEST(test_create) {
 	cpu *eniac = create(RAM_MAX);
 	mu_should(eniac);
 	mu_should(eniac->pic == 0);
@@ -52,8 +49,7 @@ MU_TEST(test_create)
 	free(eniac);
 }
 
-MU_TEST(test_assemble_one)
-{
+MU_TEST(test_assemble_one) {
 	inst code = assemble("hlf a\n");
 	mu_should(code.opc == HLF);
 	mu_should(code.offset == 0);
@@ -76,8 +72,7 @@ MU_TEST(test_assemble_one)
    "tpl a\n",
    "inc a\n", */
 
-MU_TEST(test_program_one)
-{
+MU_TEST(test_program_one) {
 	cpu *eniac = create(10);
 	int i = 0;
 	while (prog_one[i]) {
@@ -96,8 +91,7 @@ MU_TEST(test_program_one)
  * to create the suite in the editor, but for now it's just a matter
  * of doing it manually.
  */
-MU_TEST_SUITE(test_suite)
-{
+MU_TEST_SUITE(test_suite) {
 
 	/* always have a setup and teardown, even if they */
 	/* do nothing. */
@@ -115,8 +109,7 @@ MU_TEST_SUITE(test_suite)
  */
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;

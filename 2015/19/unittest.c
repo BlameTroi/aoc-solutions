@@ -47,14 +47,12 @@ char *test_input[] = {
  */
 
 void
-test_setup(void)
-{
+test_setup(void) {
 	reset_state(0);
 }
 
 void
-test_teardown(void)
-{
+test_teardown(void) {
 	reset_state(1);
 }
 
@@ -63,8 +61,7 @@ test_teardown(void)
  */
 
 void
-load_input(void)
-{
+load_input(void) {
 	int i = 0;
 	while (test_input[i]) {
 		if (strlen(test_input[i]) == 0) {
@@ -86,15 +83,13 @@ load_input(void)
  * sample test shell.
  */
 
-MU_TEST(test_parse)
-{
+MU_TEST(test_parse) {
 	load_input();
 	mu_assert_int_eq(3, num_transforms);
 	mu_assert_string_eq("HOH", base);
 }
 
-MU_TEST(test_transforms)
-{
+MU_TEST(test_transforms) {
 	load_input();
 
 	mu_assert_string_eq("H", transforms[0]->from);
@@ -138,8 +133,7 @@ MU_TEST(test_transforms)
  * to create the suite in the editor, but for now it's just a matter
  * of doing it manually.
  */
-MU_TEST_SUITE(test_suite)
-{
+MU_TEST_SUITE(test_suite) {
 
 	/* always have a setup and teardown, even if they */
 	/* do nothing. */
@@ -159,8 +153,7 @@ MU_TEST_SUITE(test_suite)
  */
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;

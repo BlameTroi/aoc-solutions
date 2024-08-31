@@ -19,8 +19,7 @@
  */
 
 void
-reset_state(int rel)
-{
+reset_state(int rel) {
 	if (rel) {
 		for (int i = 0; i < RACERS_MAX; i++) {
 			if (racers[i].name)
@@ -47,8 +46,7 @@ reset_state(int rel)
 void
 parse_line(
         const char *iline
-)
-{
+) {
 	assert(num_racers < RACERS_MAX);
 	char *s = strdup(iline);
 	const char **tokens = split_string(s, " .,\n");
@@ -73,8 +71,7 @@ parse_line(
  */
 
 void
-iterate(void)
-{
+iterate(void) {
 
 	for (int i = 0; i < num_racers; i++) {
 		race_trace_t *r = &racers[i];
@@ -105,8 +102,7 @@ iterate(void)
  */
 
 int
-run_race_distance(int ticks)
-{
+run_race_distance(int ticks) {
 	int max_distance = 0;
 
 	for (int i = 0; i < ticks; i++)
@@ -120,8 +116,7 @@ run_race_distance(int ticks)
 
 
 int
-run_race_score(int ticks)
-{
+run_race_score(int ticks) {
 	int max_score = 0;
 
 	for (int i = 0; i < ticks; i++) {
@@ -150,8 +145,7 @@ run_race_score(int ticks)
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -185,8 +179,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");

@@ -3,9 +3,9 @@
 /*
  * probably a fire hazard
  *
- * lights in a 0,0 -> 999,999 grid are turned off and on
- * as directed, how many lights are left lit at the end
- * of the run if all the lights are off at the start.
+ * lights in a 0,0 -> 999,999 grid are turned off and on as directed,
+ * how many lights are left lit at the end of the run if all the
+ * lights are off at the start.
  *
  * (turn on|turn off|toggle) x0,y0 through x1,y1
  */
@@ -23,12 +23,11 @@
  * return an initialized empty circuit board.
  */
 
-circuit_t *
-initCircuit()
-{
-	circuit_t * circuit = calloc(sizeof(circuit_t), 1);
-	assert(circuit);
-	return circuit;
+circuit *
+init_circuit() {
+	circuit *c = malloc(sizeof(circuit));
+	memset(c, 0, sizeof(circuit));
+	return c;
 }
 
 
@@ -37,32 +36,30 @@ initCircuit()
  */
 
 void
-freeCircuit(
-        circuit_t *circuit
-)
-{
+free_circuit(
+        circuit *circuit
+) {
 	free(circuit);
 }
 
 
 /*
- * add a connection as defined by the input string to the circuit board.
- * they are added sequentially, order is not relevant. returns false
- * on an error (parse failure or running out of room).
+ * add a connection as defined by the input string to the circuit
+ * board. they are added sequentially, order is not relevant. returns
+ * false on an error (parse failure or running out of room).
  */
 
 bool
-addConnection(
-        circuit_t *circuit,
+add_connection(
+        circuit *circuit,
         const char *iline
-)
-{
+) {
 	if (circuit->num_connections >= CONNECTIONS_MAX-1) {
 		printf("circuit full %d\n", circuit->num_connections);
 		return false;
 	}
 
-	connection_t this = parseConnection(iline);
+	connection this = parse_connection(iline);
 	if (strlen(this.wire) == 0) {
 		printf("parse failure\n");
 		return false;
@@ -87,8 +84,8 @@ uint16_t part_oneResult = 0;
 /*
  * part one:
  *
- * load and parse the connections into a circuit and then run it.
- * what signal is on wire a once the circuit is complete?
+ * load and parse the connections into a circuit and then run it. what
+ * signal is on wire a once the circuit is complete?
  *
  * saves data to reconfigure the circuit for part two.
  */
@@ -96,8 +93,7 @@ uint16_t part_oneResult = 0;
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -107,20 +103,20 @@ part_one(
 
 	char iline[INPUT_LEN_MAX];
 
-	circuit_t *circuit = initCircuit();
+	circuit *circuit = init_circuit();
 	while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-		if (!addConnection(circuit, iline)) {
+		if (!add_connection(circuit, iline)) {
 			printf("error trying to add connection '%s'\n", iline);
 			return EXIT_FAILURE;
 		}
 	}
 
-	runCircuit(circuit);
-	connection_t *this = connectionFor(circuit, resultWire);
+	run_circuit(circuit);
+	connection *this = connection_for(circuit, resultWire);
 	part_oneResult = this->signal;
 	printf("part one: %d\n", this->signal);
 
-	freeCircuit(circuit);
+	free_circuit(circuit);
 
 	fclose(ifile);
 	return EXIT_SUCCESS;
@@ -131,8 +127,8 @@ part_one(
  * part two:
  *
  * "take the signal you got on wire a in part one, override wire b to
- * that signal, and reset the other wires (including wire a). what
- * new signal is ultimately provided to wire a?"
+ * that signal, and reset the other wires (including wire a). what new
+ * signal is ultimately provided to wire a?"
  *
  * since we're already built to reload the dataset, we'll do that
  * and use values saved from part_one to configure the circuit before
@@ -142,8 +138,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");
@@ -153,9 +148,9 @@ part_two(
 	}
 	char iline[INPUT_LEN_MAX];
 
-	circuit_t *circuit = initCircuit();
+	circuit *circuit = init_circuit();
 	while (fgets(iline, INPUT_LEN_MAX - 1, ifile)) {
-		if (!addConnection(circuit, iline)) {
+		if (!add_connection(circuit, iline)) {
 			printf("error trying to add connection '%s'\n", iline);
 			return EXIT_FAILURE;
 		}
@@ -164,15 +159,15 @@ part_two(
 	/* modify the input for wire b to be the result from wire a
 	   in part_one */
 
-	connection_t *this = connectionFor(circuit, modifyInputWire);
+	connection *this = connection_for(circuit, modifyInputWire);
 	this->inp_value = part_oneResult;
 
-	runCircuit(circuit);
+	run_circuit(circuit);
 
-	this = connectionFor(circuit, resultWire);
+	this = connection_for(circuit, resultWire);
 	printf("part two: %d\n", this->signal);
 
-	freeCircuit(circuit);
+	free_circuit(circuit);
 
 	fclose(ifile);
 	return EXIT_SUCCESS;
@@ -186,10 +181,9 @@ part_two(
 /* an input wire name is one or two lower case letters. */
 
 bool
-validWireName(
+valid_wire_name(
         const char *str
-)
-{
+) {
 	int i = strlen(str);
 	if (i < 1 || i > 2)
 		return false;
@@ -204,10 +198,9 @@ validWireName(
 /* a valid input value (signal) is a 16 bit unsigned number. */
 
 bool
-validInputValue(
+valid_input_value(
         const char *str
-)
-{
+) {
 	int i = strlen(str);
 	if (i < 1 || i > 5)
 		return false;
@@ -226,10 +219,9 @@ validInputValue(
 /* a valid bit shift value is 1-15. */
 
 bool
-validBitShift(
+valid_bit_shift(
         const char *str
-)
-{
+) {
 
 	int i = strlen(str);
 	if (i < 1 || i > 2)
@@ -250,21 +242,20 @@ validBitShift(
  * parse an input line producing an intermediate block.
  *
  * since error handling in advent of code is minimal, the only
- * indication of an error is the name of the wire coming back as
- * an empty string.
+ * indication of an error is the name of the wire coming back as an
+ * empty string.
  *
  * the input format is:
  *
  * (single wire | gate expression | literal value) -> wire name
  */
 
-connection_t
-parseConnection(
+connection
+parse_connection(
         const char *iline
-)
-{
+) {
 
-	connection_t pb;                    /* empty result block */
+	connection pb;                    /* empty result block */
 	memset(&pb, 0, sizeof(pb));
 	pb.received_signal = false;
 
@@ -304,7 +295,7 @@ parseConnection(
 	 */
 	if (strcmp(tokens[numtokens-2], "->") != 0)
 		return pb;
-	if (!validWireName(tokens[numtokens-1]))
+	if (!valid_wire_name(tokens[numtokens-1]))
 		return pb;
 
 	/* remember position */
@@ -312,30 +303,30 @@ parseConnection(
 
 
 	/*
-	 * parse each type of connection definition, returning a valid pb only
-	 * once we are sure the syntax is correct.
+	 * parse each type of connection definition, returning a valid
+	 * pb only once we are sure the syntax is correct.
 	 *
-	 * the general pattern for these is to first check for a gate type
-	 * if we think this is a gate connection, do further checks for
-	 * valid data. if the data is valid, plug it in. regardless, if the
-	 * connection looked enough like a gate to check for validity, we
-	 * return to caller.
+	 * the general pattern for these is to first check for a gate
+	 * type if we think this is a gate connection, do further
+	 * checks for valid data. if the data is valid, plug it in.
+	 * regardless, if the connection looked enough like a gate to
+	 * check for validity, we return to caller.
 	 */
 
 
 	/*
-	 * the two non-gate connections are hard wired signal and a direct
-	 * wire to wire.
+	 * the two non-gate connections are hard wired signal and a
+	 * direct wire to wire.
 	 *
 	 * (signal) (->) (wire)
 	 * (wire) (->) (wire)
 	 */
 	if (numtokens == 3) {
-		if (validInputValue(tokens[0])) {
+		if (valid_input_value(tokens[0])) {
 			pb.source_type = se_value;
 			strlcpy(pb.wire, tokens[name_at], WIRE_MAX);
 			pb.inp_value = strtol(tokens[0], NULL, 10);
-		} else if (validWireName(tokens[0])) {
+		} else if (valid_wire_name(tokens[0])) {
 			pb.source_type = se_wire;
 			strlcpy(pb.wire, tokens[name_at], WIRE_MAX);
 			strlcpy(pb.inp_wire, tokens[0], WIRE_MAX);
@@ -349,14 +340,15 @@ parseConnection(
 	 *
 	 * (wire or mask) (AND|OR) (wire or mask) (->) (wire)
 	 */
-	if (numtokens == 5 && (strcmp(tokens[1], "AND") == 0 || strcmp(tokens[1], "OR") == 0)) {
-		if (validWireName(tokens[0]) && validWireName(tokens[2])) {
+	if (numtokens == 5 && (strcmp(tokens[1], "AND") == 0 ||
+	                       strcmp(tokens[1], "OR") == 0)) {
+		if (valid_wire_name(tokens[0]) && valid_wire_name(tokens[2])) {
 			strlcpy(pb.inp_gate.wire1, tokens[0], WIRE_MAX);
 			strlcpy(pb.inp_gate.wire2, tokens[2], WIRE_MAX);
-		} else if (validWireName(tokens[0]) && validInputValue(tokens[2])) {
+		} else if (valid_wire_name(tokens[0]) && valid_input_value(tokens[2])) {
 			strlcpy(pb.inp_gate.wire1, tokens[0], WIRE_MAX);
 			pb.inp_gate.mask = strtol(tokens[2], NULL, 10);
-		} else if (validInputValue(tokens[0]) && validWireName(tokens[2])) {
+		} else if (valid_input_value(tokens[0]) && valid_wire_name(tokens[2])) {
 			strlcpy(pb.inp_gate.wire1, tokens[2], WIRE_MAX);
 			pb.inp_gate.mask = strtol(tokens[0], NULL, 10);
 		} else {
@@ -377,8 +369,9 @@ parseConnection(
 	 *
 	 * (wire) ((L|R)SHIFT) (bits) (->) (wire)
 	 */
-	if (numtokens == 5 && (strcmp(tokens[1], "LSHIFT") == 0 || strcmp(tokens[1], "RSHIFT") == 0)) {
-		if (validWireName(tokens[0]) && validBitShift(tokens[2])) {
+	if (numtokens == 5 && (strcmp(tokens[1], "LSHIFT") == 0 ||
+	                       strcmp(tokens[1], "RSHIFT") == 0)) {
+		if (valid_wire_name(tokens[0]) && valid_bit_shift(tokens[2])) {
 			pb.source_type = se_gate;
 			pb.inp_gate.type = (strcmp(tokens[1], "LSHIFT") == 0) ? ge_lshift : ge_rshift;
 			strlcpy(pb.inp_gate.wire1, tokens[0], WIRE_MAX);
@@ -393,7 +386,8 @@ parseConnection(
 	 *
 	 * (NOT) (wire) (->) (wire)
 	 */
-	if (numtokens == 4 && strcmp(tokens[0], "NOT") == 0 && validWireName(tokens[1])) {
+	if (numtokens == 4 && strcmp(tokens[0], "NOT") == 0 &&
+	                valid_wire_name(tokens[1])) {
 		pb.source_type = se_gate;
 		strlcpy(pb.wire, tokens[name_at], WIRE_MAX);
 		pb.inp_gate.type = ge_not;
@@ -414,12 +408,11 @@ parseConnection(
  * an issue.
  */
 
-connection_t *
-connectionFor(
-        circuit_t *circuit,
+connection *
+connection_for(
+        circuit *circuit,
         const char *wire
-)
-{
+) {
 	int i = 0;
 	for (i = 0; i < circuit->num_connections; i++) {
 		if (strcmp(wire, circuit->connections[i].wire) == 0)
@@ -440,11 +433,10 @@ connectionFor(
    starts. just pass it through. */
 
 int
-postValueTo(
-        circuit_t *circuit,
-        connection_t *this
-)
-{
+post_value_to(
+        circuit *circuit,
+        connection *this
+) {
 	if (this->received_signal)
 		return this->received_signal;
 	this->signal = this->inp_value;
@@ -457,14 +449,13 @@ postValueTo(
    received its signal). */
 
 int
-postWireTo(
-        circuit_t *circuit,
-        connection_t *this
-)
-{
+post_wire_to(
+        circuit *circuit,
+        connection *this
+) {
 	if (this->received_signal)
 		return this->received_signal;
-	connection_t *that = connectionFor(circuit, this->inp_wire);
+	connection *that = connection_for(circuit, this->inp_wire);
 	if (that->received_signal) {
 		this->signal = that->signal;
 		this->received_signal = true;
@@ -477,28 +468,27 @@ postWireTo(
    wires must be hot for the gate to process. */
 
 int
-postGateTo(
-        circuit_t *circuit,
-        connection_t *this
-)
-{
+post_gate_to(
+        circuit *circuit,
+        connection *this
+) {
 	if (this->received_signal)
 		return this->received_signal;
 
-	connection_t *that = NULL;
+	connection *that = NULL;
 
 	switch (this->inp_gate.type) {
 
 	case ge_and:
 	case ge_or:
 		/* these have either two wires or one wire and one mask */
-		that = connectionFor(circuit, this->inp_gate.wire1);
+		that = connection_for(circuit, this->inp_gate.wire1);
 		if (!that->received_signal) {
 			/* first/only wire is not hot */
 			break;
 		}
 		if (strlen(this->inp_gate.wire2) > 0) {
-			connection_t *other = connectionFor(circuit, this->inp_gate.wire2);
+			connection *other = connection_for(circuit, this->inp_gate.wire2);
 			if (!other->received_signal) {
 				/* still waiting on this wire */
 				break;
@@ -520,7 +510,7 @@ postGateTo(
 
 	case ge_not:
 		/* invert the incoming signal */
-		that = connectionFor(circuit, this->inp_gate.wire1);
+		that = connection_for(circuit, this->inp_gate.wire1);
 		if (that->received_signal) {
 			this->signal = ~that->signal;
 			this->received_signal = that->received_signal;
@@ -530,7 +520,7 @@ postGateTo(
 	case ge_lshift:
 	case ge_rshift:
 		/* shift in the appropriate direction */
-		that = connectionFor(circuit, this->inp_gate.wire1);
+		that = connection_for(circuit, this->inp_gate.wire1);
 		if (that->received_signal) {
 			this->signal =
 			        this->inp_gate.type == ge_lshift ?
@@ -560,10 +550,9 @@ postGateTo(
  */
 
 bool
-runCircuit(
-        circuit_t *circuit
-)
-{
+run_circuit(
+        circuit *circuit
+) {
 
 	int runaway = 0;
 	int notDone = 1;
@@ -573,7 +562,7 @@ runCircuit(
 		   satisfy it's input */
 		int i;
 		for (i = 0; i < circuit->num_connections; i++) {
-			connection_t *this = &circuit->connections[i];
+			connection *this = &circuit->connections[i];
 			if (this->received_signal)
 				continue;
 			/* printf("%d %d %d\n", runaway, notDone, i); */
@@ -581,15 +570,15 @@ runCircuit(
 			notDone += 1;
 			switch (this->source_type) {
 			case se_gate:
-				postGateTo(circuit, this);
+				post_gate_to(circuit, this);
 				break;
 			case se_wire:
 				/* check if the other end of the wire is hot */
-				postWireTo(circuit, this);
+				post_wire_to(circuit, this);
 				break;
 			case se_value:
 				/* simple case, updates signal received immediately. */
-				postValueTo(circuit, this);
+				post_value_to(circuit, this);
 				break;
 			case se_undefined:
 				/* this is a should not occur */

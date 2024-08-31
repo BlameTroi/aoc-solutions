@@ -43,8 +43,7 @@
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -80,8 +79,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");
@@ -121,8 +119,7 @@ isValid(char c);
 bool
 isValid(
         char c
-)
-{
+) {
 	return isdigit(c) ||
 	       c == '-';
 }
@@ -143,8 +140,7 @@ int
 scrubObjects(
         char *s,
         char *a
-)
-{
+) {
 	/* quick guards */
 	if (s == NULL || *s == '\0' | strlen(s) <= strlen(a)+3)
 		return 0;
@@ -230,8 +226,7 @@ int
 sumNumbers(
         char *from,
         char *to
-)
-{
+) {
 	int sum = 0;
 
 	const char *beg = from;

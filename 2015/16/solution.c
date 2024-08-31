@@ -37,8 +37,7 @@ map_t map[DATA_MAX] = {
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -54,7 +53,8 @@ part_one(
 
 	/* problem qualificiation, search the aunts for a match on this */
 
-	char *ticker = "children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1\n";
+	char *ticker =
+	        "children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1\n";
 
 	facts_t cond = parse_condition(ticker);
 
@@ -76,8 +76,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");
@@ -95,7 +94,8 @@ part_two(
 	   but now the sensor reports floors for cats and trees, and ceilings for
 	   pomeranians and goldfish. */
 
-	char *ticker = "children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1\n";
+	char *ticker =
+	        "children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1\n";
 	map[get_data_ix("cats")].op = '>';
 	map[get_data_ix("trees")].op = '>';
 	map[get_data_ix("pomeranians")].op = '<';
@@ -115,8 +115,7 @@ part_two(
 
 
 void
-print_aunt(facts_t *aunt)
-{
+print_aunt(facts_t *aunt) {
 	printf("%3d: ", aunt->id);
 	for (int i = 0; i < DATA_MAX; i++)
 		printf("%3d", aunt->data[i]);
@@ -135,8 +134,7 @@ print_aunt(facts_t *aunt)
 void
 parse_line(
         const char *iline
-)
-{
+) {
 	assert(num_aunts < AUNT_MAX);
 	const char **t = split_string(iline, " :,\n");
 	facts_t *this = &aunts[num_aunts];
@@ -159,8 +157,7 @@ parse_line(
 int
 get_data_ix(
         const char *tag
-)
-{
+) {
 	int n = strlen(tag);
 	for (int i = 0; i < DATA_MAX; i++) {
 		if (strncmp(tag, map[i].tag, n) == 0)
@@ -181,8 +178,7 @@ get_data_ix(
 facts_t
 parse_condition(
         const char *iline
-)
-{
+) {
 	facts_t cond;
 	cond.id = -1;
 	for (int i = 0; i < DATA_MAX; i++)
@@ -208,8 +204,7 @@ parse_condition(
  */
 
 int
-satisfy_count(facts_t cond)
-{
+satisfy_count(facts_t cond) {
 	int n = 0;
 	for (int i = 0; i < num_aunts; i++) {
 		if (satisfies(cond, i))
@@ -226,8 +221,7 @@ satisfy_count(facts_t cond)
  */
 
 bool
-satisfies(facts_t cond, int ix)
-{
+satisfies(facts_t cond, int ix) {
 	if (ix < 0 || ix >= AUNT_MAX)
 		return false;
 
@@ -271,8 +265,7 @@ satisfies(facts_t cond, int ix)
  */
 
 int
-satisfy_ix(facts_t cond, int start)
-{
+satisfy_ix(facts_t cond, int start) {
 	if (start < 0 || start >= num_aunts)
 		return -1;
 	for (int i = start; i < num_aunts; i++) {
@@ -288,8 +281,7 @@ satisfy_ix(facts_t cond, int start)
  */
 
 void
-reset_state(int rel)
-{
+reset_state(int rel) {
 	if (rel) {
 		/* no dynamic allocations at the moment */
 	}

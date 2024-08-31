@@ -22,26 +22,23 @@
 /* empty for this problem */
 
 void
-test_setup(void)
-{
+test_setup(void) {
 }
 
 void
-test_teardown(void)
-{
+test_teardown(void) {
 }
 
 
 /* helper to wrap an input string in double quotes for the test harness.*/
 
 char *
-wrapString(const char *inp)
-{
+wrap_string(const char *inp) {
 	char *oup = calloc(strlen(inp) + 2 + 1, 1);
 	char *tmp = oup;
 	*tmp = '"';
 	tmp += 1;
-	while(*inp)
+	while (*inp)
 		*tmp++ = *inp++;
 	*tmp++ = '"';
 	*tmp='\0';
@@ -52,57 +49,53 @@ wrapString(const char *inp)
 /* tests from the problem statement */
 
 
-MU_TEST(test_empty)
-{
+MU_TEST(test_empty) {
 	char* cc_empty = "";
-	char *c = wrapString(cc_empty);
-	char *d = encodedString(c);
+	char *c = wrap_string(cc_empty);
+	char *d = encoded_string(c);
 	/* printf("\nprocessing '%s' => '%s' => '%s'\n", cc_empty, c, d); */
-	mu_assert_int_eq(2, sourceStringLength(c));
-	mu_assert_int_eq(strlen(cc_empty), compiledStringLength(c));
-	mu_assert_int_eq(6, encodedStringLength(d));
+	mu_assert_int_eq(2, source_string_length(c));
+	mu_assert_int_eq(strlen(cc_empty), compiled_string_length(c));
+	mu_assert_int_eq(6, encoded_string_length(d));
 	free(c);
 	free(d);
 }
 
 
-MU_TEST(test_no_escape)
-{
+MU_TEST(test_no_escape) {
 	char* cc_no_escape = "abc";
-	char *c = wrapString(cc_no_escape);
-	char *d = encodedString(c);
+	char *c = wrap_string(cc_no_escape);
+	char *d = encoded_string(c);
 	/* printf("\nprocessing '%s' => '%s' => '%s'\n", cc_no_escape, c, d); */
-	mu_assert_int_eq(5, sourceStringLength(c));
-	mu_assert_int_eq(3, compiledStringLength(c));
-	mu_assert_int_eq(9, encodedStringLength(d));
+	mu_assert_int_eq(5, source_string_length(c));
+	mu_assert_int_eq(3, compiled_string_length(c));
+	mu_assert_int_eq(9, encoded_string_length(d));
 	free(c);
 	free(d);
 }
 
 
-MU_TEST(test_embedded_quote)
-{
+MU_TEST(test_embedded_quote) {
 	char* cc_embedded_quote = "aaa\\\"aaa";
-	char *c = wrapString(cc_embedded_quote);
-	char *d = encodedString(c);
+	char *c = wrap_string(cc_embedded_quote);
+	char *d = encoded_string(c);
 	/* printf("\nprocessing '%s' => '%s' => '%s'\n", cc_embedded_quote, c, d); */
-	mu_assert_int_eq(10, sourceStringLength(c));
-	mu_assert_int_eq(7, compiledStringLength(c));
-	mu_assert_int_eq(16, encodedStringLength(d));
+	mu_assert_int_eq(10, source_string_length(c));
+	mu_assert_int_eq(7, compiled_string_length(c));
+	mu_assert_int_eq(16, encoded_string_length(d));
 	free(c);
 	free(d);
 }
 
 
-MU_TEST(test_hex_escape)
-{
+MU_TEST(test_hex_escape) {
 	char* cc_hex_escape = "\\x27";
-	char *c = wrapString(cc_hex_escape);
-	char *d = encodedString(c);
+	char *c = wrap_string(cc_hex_escape);
+	char *d = encoded_string(c);
 	/* printf("\nprocessing '%s' => '%s' => '%s'\n", cc_hex_escape, c, d); */
-	mu_assert_int_eq(6, sourceStringLength(c));
-	mu_assert_int_eq(1, compiledStringLength(c));
-	mu_assert_int_eq(11, encodedStringLength(d));
+	mu_assert_int_eq(6, source_string_length(c));
+	mu_assert_int_eq(1, compiled_string_length(c));
+	mu_assert_int_eq(11, encoded_string_length(d));
 	free(c);
 	free(d);
 }
@@ -115,8 +108,7 @@ MU_TEST(test_hex_escape)
  * of doing it manually.
  */
 
-MU_TEST_SUITE(test_suite)
-{
+MU_TEST_SUITE(test_suite) {
 
 	/* always have a setup and teardown, even if they */
 	/* do nothing. */
@@ -133,8 +125,7 @@ MU_TEST_SUITE(test_suite)
 
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;

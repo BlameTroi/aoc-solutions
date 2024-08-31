@@ -38,8 +38,7 @@ char *cond_0 = "goldfish: 11, cars: 0\n";
  */
 
 void
-test_setup(void)
-{
+test_setup(void) {
 	reset_state(0);
 	int i = 0;
 	while (strlen(input_lines[i]) != 0) {
@@ -50,8 +49,7 @@ test_setup(void)
 
 
 void
-test_teardown(void)
-{
+test_teardown(void) {
 	reset_state(1);
 }
 
@@ -62,8 +60,7 @@ test_teardown(void)
 
  */
 
-MU_TEST(test_created)
-{
+MU_TEST(test_created) {
 	mu_assert_int_eq(10, num_aunts);
 	mu_assert_int_eq(9, aunts[8].id);
 	mu_assert_int_eq(-1, aunts[8].data[FISH_IX]);
@@ -82,8 +79,7 @@ MU_TEST(test_created)
 
 }
 
-MU_TEST(test_satisfaction)
-{
+MU_TEST(test_satisfaction) {
 	facts_t cond = parse_condition(cond_get_2);
 	mu_assert_int_eq(1, satisfy_count(cond));
 	mu_assert_int_eq(1, satisfy_ix(cond, 0));
@@ -97,8 +93,7 @@ MU_TEST(test_satisfaction)
  * to create the suite in the editor, but for now it's just a matter
  * of doing it manually.
  */
-MU_TEST_SUITE(test_suite)
-{
+MU_TEST_SUITE(test_suite) {
 
 	/* always have a setup and teardown, even if they */
 	/* do nothing. */
@@ -117,8 +112,7 @@ MU_TEST_SUITE(test_suite)
  */
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;

@@ -13,14 +13,12 @@
 
 
 void
-test_setup(void)
-{
+test_setup(void) {
 	/* does nothing at the moment. */
 }
 
 void
-test_teardown(void)
-{
+test_teardown(void) {
 	/* does nothing at the moment. */
 }
 
@@ -45,8 +43,7 @@ char *expectedLocations[] = {
 
 
 
-MU_TEST(test_problem_data)
-{
+MU_TEST(test_problem_data) {
 
 	/* clear any prior work */
 	resetData();
@@ -73,8 +70,7 @@ MU_TEST(test_problem_data)
  * of doing it manually.
  */
 
-MU_TEST_SUITE(test_suite)
-{
+MU_TEST_SUITE(test_suite) {
 
 	/* always have a setup and teardown, even if they */
 	/* do nothing. */
@@ -89,8 +85,7 @@ MU_TEST_SUITE(test_suite)
 
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;

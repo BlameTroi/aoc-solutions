@@ -55,8 +55,7 @@
 int
 part_one(
         const char *fname
-)
-{
+) {
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
 		printf("could not open file: %s\n", fname);
@@ -112,8 +111,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	return EXIT_SUCCESS;
 	/* this is handled in part one
 	FILE *ifile;
@@ -141,8 +139,7 @@ part_two(
  */
 
 const char *
-pairFrom(const char *p)
-{
+pairFrom(const char *p) {
 	while (*p) {
 		if (*p == *(p+1))
 			return p;
@@ -176,8 +173,7 @@ pairFrom(const char *p)
 bool
 password_p(
         const char *candidate
-)
-{
+) {
 
 	/* eliminate via guards */
 	if (candidate == NULL || strlen(candidate) != PASSWORD_MAX)
@@ -241,8 +237,7 @@ password_p(
 char *
 password_increment(
         char *p
-)
-{
+) {
 
 	char c;                /* character work */
 	int r = 1;             /* adding 1, becomes carry as propogated */

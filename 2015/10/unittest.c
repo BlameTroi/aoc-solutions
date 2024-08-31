@@ -18,49 +18,42 @@
  */
 
 void
-test_setup(void)
-{
+test_setup(void) {
 }
 
 void
-test_teardown(void)
-{
+test_teardown(void) {
 }
 
 
 
 /* the tests given in the problem statement for part one */
 
-MU_TEST(test_1)
-{
+MU_TEST(test_1) {
 	char *said = seesay("1");
 	mu_assert_string_eq("11", said);
 	free(said);
 }
 
-MU_TEST(test_11)
-{
+MU_TEST(test_11) {
 	char *said = seesay("11");
 	mu_assert_string_eq("21", said);
 	free(said);
 }
 
-MU_TEST(test_21)
-{
+MU_TEST(test_21) {
 	char *said = seesay("21");
 	mu_assert_string_eq("1211", said);
 	free(said);
 }
 
-MU_TEST(test_1211)
-{
+MU_TEST(test_1211) {
 	char *said = seesay("1211");
 	mu_assert_string_eq("111221", said);
 	free(said);
 }
 
-MU_TEST(test_chunky)
-{
+MU_TEST(test_chunky) {
 	/* a bit white box here, the output buffer is allocated in blocks
 	   of 16 bytes, make sure build the result correctly across that
 	   boundary. */
@@ -76,8 +69,7 @@ MU_TEST(test_chunky)
  * to create the suite in the editor, but for now it's just a matter
  * of doing it manually.
  */
-MU_TEST_SUITE(test_suite)
-{
+MU_TEST_SUITE(test_suite) {
 
 	/* always have a setup and teardown, even if they */
 	/* do nothing. */
@@ -97,8 +89,7 @@ MU_TEST_SUITE(test_suite)
 
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;

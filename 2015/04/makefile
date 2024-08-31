@@ -13,7 +13,10 @@ OBJS = solution.o
 
 DATADIR=$(HOME)/projects/aoc/datasets/$(YEAR)/$(MONTH)
 
-.PHONY: all clean short long
+.PHONY: clean unit test all short long check-syntax
+
+check-syntax:
+	$(CC) $(CFLAGS) -Wextra -Wpedantic -fsyntax-only $(SRCS)
 
 all: solution
 

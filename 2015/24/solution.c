@@ -50,8 +50,7 @@ smaller data:
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	printf("part one: %lu\n", try_combination(fname, 3));
 
@@ -67,8 +66,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	printf("part two: %lu\n", try_combination(fname, 4));
 
 	return EXIT_SUCCESS;
@@ -93,8 +91,7 @@ int max_packages = 0;           /* largest allowed grouping */
  */
 
 void
-zero_data(void)
-{
+zero_data(void) {
 	if (packages) {
 		free(packages);
 		packages = NULL;
@@ -121,8 +118,7 @@ load_data(
         const char *fname,
         bool ascending,
         int groups
-)
-{
+) {
 
 	zero_data();
 
@@ -210,8 +206,7 @@ unsigned long
 quantum_entanglement(
         int n,
         int *p
-)
-{
+) {
 	unsigned long qe = 1;
 	for (int i = 0; i < n; i ++)
 		qe *= packages[p[i]];
@@ -228,8 +223,7 @@ unsigned long
 try_permutation(
         const char *data_file_name,
         int groups
-)
-{
+) {
 	load_data(data_file_name, true, groups);
 	if (num_packages > 15) {
 		fprintf(stderr, "error: too many packages for permutation %d", num_packages);
@@ -311,8 +305,7 @@ unsigned long
 try_combination(
         const char *data_file_name,
         int groups
-)
-{
+) {
 
 	load_data(data_file_name, false, groups);
 

@@ -20,8 +20,7 @@
 int
 runlen(
         const char *c
-)
-{
+) {
 	const char *p = c;
 	while (*p == *c)
 		p += 1;
@@ -37,8 +36,7 @@ runlen(
 int
 digitsNeeded(
         int n
-)
-{
+) {
 	assert(n > 0 && n < 1000);
 	if (n < 10)
 		return 1;
@@ -66,8 +64,7 @@ digitsNeeded(
 char *
 seesay(
         const char *s
-)
-{
+) {
 
 	/* safety first */
 	assert(s);
@@ -113,8 +110,7 @@ seesay(
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -161,8 +157,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");

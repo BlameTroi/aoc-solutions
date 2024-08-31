@@ -27,8 +27,7 @@ int maxDistance;
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -58,8 +57,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");
@@ -93,8 +91,7 @@ part_two(
 int
 indexOfLocation(
         const char *s
-)
-{
+) {
 	int i;
 	/* if it's already here, return it */
 	for (i = 0; i < numLocations; i++) {
@@ -113,8 +110,7 @@ indexOfLocation(
  */
 
 int
-distanceForPath(int n, int path[n])
-{
+distanceForPath(int n, int path[n]) {
 	int d = 0;
 	for (int i = 0; i < n - 1; i++)
 		d += distances[path[i]][path[i + 1]];
@@ -132,8 +128,7 @@ distanceForPath(int n, int path[n])
 /* initilize for a new run */
 
 void
-resetData(void)
-{
+resetData(void) {
 	memset(distances, 0, sizeof(distances));
 	for (int i = 0; i < numLocations; i++)
 		free(locations[i]);
@@ -155,8 +150,7 @@ resetData(void)
 void
 addDistance(
         const char *s
-)
-{
+) {
 
 	/* first city in 1, second in 3, distance in 5 */
 	const char **tokens = split_string(s, " \n");
@@ -185,8 +179,7 @@ addDistance(
    find the path distances. */
 
 void
-permutePaths(void)
-{
+permutePaths(void) {
 	int path[numLocations];
 	for (int i = 0; i < numLocations; i++)
 		path[i] = i;
@@ -205,8 +198,7 @@ permutePaths(void)
    among the permuted paths. */
 
 int
-shortestPath(void)
-{
+shortestPath(void) {
 	if (minDistance == -1)
 		permutePaths();
 	return minDistance;
@@ -214,8 +206,7 @@ shortestPath(void)
 
 
 int
-longestPath(void)
-{
+longestPath(void) {
 	if (maxDistance == -1)
 		permutePaths();
 	return maxDistance;

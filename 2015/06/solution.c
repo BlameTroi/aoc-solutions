@@ -3,9 +3,9 @@
 /*
  * probably a fire hazard
  *
- * lights in a 0,0 -> 999,999 grid are turned off and on
- * as directed, how many lights are left lit at the end
- * of the run if all the lights are off at the start.
+ * lights in a 0,0 -> 999,999 grid are turned off and on as directed,
+ * how many lights are left lit at the end of the run if all the
+ * lights are off at the start.
  *
  * (turn on|turn off|toggle) x0,y0 through x1,y1
  */
@@ -26,8 +26,7 @@
 int
 part_one(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");
@@ -41,11 +40,11 @@ part_one(
 	/* length, expected to have a trailing \n */
 	size_t ilen;
 
-	lights_t *g = initGrid(1);
+	lights *g = init_grid(1);
 
 	while ((iline = fgetln(ifile, &ilen))) {
-		cmd_t c = parseCmd(iline, ilen);
-		doCmd(g, c);
+		cmd c = parse_cmd(iline, ilen);
+		do_cmd(g, c);
 	}
 
 	printf("part one: %ld\n", g->lit);
@@ -58,8 +57,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");
@@ -73,11 +71,11 @@ part_two(
 	/* length, expected to have a trailing \n */
 	size_t ilen;
 
-	lights_t *g = initGrid(0);
+	lights *g = init_grid(0);
 
 	while ((iline = fgetln(ifile, &ilen))) {
-		cmd_t c = parseCmd(iline, ilen);
-		doCmd(g, c);
+		cmd c = parse_cmd(iline, ilen);
+		do_cmd(g, c);
 	}
 
 	printf("part one: %ld\n", g->intensity);
@@ -88,33 +86,32 @@ part_two(
 
 
 /* create a grid of lights: */
-lights_t *
-initGrid(
-        int digital
-)
-{
-	lights_t *g = calloc(sizeof(lights_t), 1);
+lights *
+init_grid(
+        bool digital
+) {
+	lights *g = malloc(sizeof(lights));
+	memset(g, 0, sizeof(lights));
 	assert(g);
 	if (digital) {
 		g->digital = 1;
-		g->fnon = turnOnD;
-		g->fnoff = turnOffD;
-		g->fntog = toggleD;
+		g->fnon = turn_on_d;
+		g->fnoff = turn_off_d;
+		g->fntog = toggle_d;
 	} else {
 		g->digital = 0;
-		g->fnon = turnOnA;
-		g->fnoff = turnOffA;
-		g->fntog = toggleA;
+		g->fnon = turn_on_a;
+		g->fnoff = turn_off_a;
+		g->fntog = toggle_a;
 	}
 	return g;
 }
 
 /* release the grid of lights: */
 void
-freeGrid(
-        lights_t *g
-)
-{
+free_grid(
+        lights *g
+) {
 	free(g);
 }
 
@@ -128,15 +125,14 @@ freeGrid(
  * not needed for advent of code type work.
  */
 
-cmd_t
-parseCmd(
+cmd
+parse_cmd(
         const char *iline,
         int len
-)
-{
+) {
 
 	/* fill the shell */
-	cmd_t cmd;                            /* our answer */
+	cmd cmd;                              /* our answer */
 	cmd_e hold = e_invalid;               /* the command, plugged in at end */
 	cmd.cmd = e_invalid;                  /* build invalid shell */
 	cmd.p0.x = 0;
@@ -208,8 +204,7 @@ parseCmd(
  * how many lights are on?
  */
 long
-numberOn(lights_t *g)
-{
+number_on(lights *g) {
 	return g->lit;
 }
 
@@ -217,8 +212,7 @@ numberOn(lights_t *g)
  * what is their total intensity if analog mode?
  */
 long
-totalIntensity(lights_t *g)
-{
+total_intensity(lights *g) {
 	return g->intensity;
 }
 
@@ -226,27 +220,24 @@ totalIntensity(lights_t *g)
  * turn single light on, off, or toggle it.
  */
 void
-turnOnD(lights_t *g, coord_t p)
-{
-	if (isLit(g, p))
+turn_on_d(lights *g, coord p) {
+	if (is_lit(g, p))
 		return;
 	g->bulb[p.x][p.y] = 1;
 	g->lit += 1;
 }
 
 void
-turnOffD(lights_t *g, coord_t p)
-{
-	if (!isLit(g, p))
+turn_off_d(lights *g, coord p) {
+	if (!is_lit(g, p))
 		return;
 	g->bulb[p.x][p.y] = 0;
 	g->lit -= 1;
 }
 
 void
-toggleD(lights_t *g, coord_t p)
-{
-	isLit(g, p) ? g->fnoff(g, p) : g->fnon(g, p);
+toggle_d(lights *g, coord p) {
+	is_lit(g, p) ? g->fnoff(g, p) : g->fnon(g, p);
 }
 
 
@@ -260,15 +251,13 @@ toggleD(lights_t *g, coord_t p)
  * does not yet track total count of lights actually lit.
  */
 void
-turnOnA(lights_t *g, coord_t p)
-{
+turn_on_a(lights *g, coord p) {
 	g->bulb[p.x][p.y] += 1;
 	g->intensity += 1;
 }
 
 void
-turnOffA(lights_t *g, coord_t p)
-{
+turn_off_a(lights *g, coord p) {
 	if (g->bulb[p.x][p.y] == 0)
 		return;
 	g->bulb[p.x][p.y] -= 1;
@@ -276,8 +265,7 @@ turnOffA(lights_t *g, coord_t p)
 }
 
 void
-toggleA(lights_t *g, coord_t p)
-{
+toggle_a(lights *g, coord p) {
 	g->bulb[p.x][p.y] += 2;
 	g->intensity += 2;
 }
@@ -286,9 +274,9 @@ toggleA(lights_t *g, coord_t p)
 /*
  * single light's status.
  */
+
 bool
-isLit(lights_t *g, coord_t p)
-{
+is_lit(lights *g, coord p) {
 	return g->bulb[p.x][p.y];
 }
 
@@ -298,14 +286,12 @@ isLit(lights_t *g, coord_t p)
  * by your command...
  */
 int
-min(int a, int b)
-{
+min(int a, int b) {
 	return a < b ? a : b;
 }
 
 void
-doCmd(lights_t *g, cmd_t c)
-{
+do_cmd(lights *g, cmd c) {
 
 	/* get light indices in proper ordering */
 	int x1 = min(c.p0.x, c.p1.x);
@@ -314,7 +300,7 @@ doCmd(lights_t *g, cmd_t c)
 	int y2 = y1 == c.p0.y ? c.p1.y : c.p0.y;
 
 	/* get function for command */
-	void (*fn)(lights_t *, coord_t) = NULL;
+	void (*fn)(lights *, coord) = NULL;
 	switch (c.cmd) {
 	case e_on:
 		fn = g->fnon;
@@ -335,7 +321,7 @@ doCmd(lights_t *g, cmd_t c)
 	/* do whatever we need to */
 	int i, j;
 	for (i = x1; i <= x2; i++) {
-		coord_t p = {i, -1};
+		coord p = {i, -1};
 		for (j = y1; j <= y2; j++) {
 			p.y = j;
 			(*fn)(g, p);

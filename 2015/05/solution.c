@@ -33,26 +33,28 @@
 
 int
 part_one(char *fname);
+
 int
 part_two(char *fname);
 
-/* mainline */
-int
-main(int argc, char **argv)
-{
+/*
+ * mainline
+ */
 
+int
+main(int argc, char **argv) {
 	if (argc < 2) {
-		printf("usage: %s path-to-input\n", argv[0]);
+		fprintf(stderr, "usage: %s path-to-input\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
 	if (part_one(argv[1]) != EXIT_SUCCESS) {
-		printf("error in part one\n");
+		fprintf(stderr, "error in part one\n");
 		return EXIT_FAILURE;
 	}
 
 	if (part_two(argv[1]) != EXIT_SUCCESS) {
-		printf("error in part two\n");
+		fprintf(stderr, "error in part two\n");
 		return EXIT_FAILURE;
 	}
 
@@ -81,8 +83,7 @@ main(int argc, char **argv)
  */
 
 int
-part_one(char *fname)
-{
+part_one(char *fname) {
 
 	FILE *ifile;
 
@@ -180,8 +181,7 @@ part_one(char *fname)
  */
 
 int
-part_two(char *fname)
-{
+part_two(char *fname) {
 
 	FILE *ifile;
 

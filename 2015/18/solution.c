@@ -27,8 +27,7 @@
  */
 
 void
-reset_state(int rel)
-{
+reset_state(int rel) {
 	if (rel) {
 		/* not used this day */
 	}
@@ -50,8 +49,7 @@ reset_state(int rel)
  */
 
 void
-flip_pages(void)
-{
+flip_pages(void) {
 	page_t *swap = reading;
 	reading = writing;
 	writing = swap;
@@ -67,8 +65,7 @@ bool
 stuck_p(
         int row,
         int col
-)
-{
+) {
 	if (stuck_rules) {
 		if (row == 0 && (col == 0 || col == dim_cols-1))
 			return true;
@@ -89,8 +86,7 @@ bool
 on_p(
         int row,
         int col
-)
-{
+) {
 	if (row < 0 || col < 0 || row > dim_rows - 1 || col > dim_cols - 1)
 		return false;
 	if (stuck_p(row, col))
@@ -108,8 +104,7 @@ void
 turn_on(
         int row,
         int col
-)
-{
+) {
 	writing->p[row][col] = G_ON;
 }
 
@@ -122,8 +117,7 @@ void
 turn_off(
         int row,
         int col
-)
-{
+) {
 	if (stuck_p(row, col))
 		return;
 	writing->p[row][col] = G_OFF;
@@ -138,8 +132,7 @@ int
 neighbors_on(
         int row,
         int col
-)
-{
+) {
 	int r = 0;
 	r += on_p(row-1, col-1) + on_p(row, col-1) + on_p(row+1, col-1);
 	r += on_p(row-1, col) + /*     this cell          */ on_p(row+1, col);
@@ -163,8 +156,7 @@ bool
 decide(
         int row,
         int col
-)
-{
+) {
 	if (stuck_p(row, col))
 		return true;
 	int hood = neighbors_on(row, col);
@@ -181,8 +173,7 @@ decide(
  */
 
 int
-cycle_lights(void)
-{
+cycle_lights(void) {
 	int lit = 0;
 	for (int r = 0; r < dim_rows; r++) {
 		for (int c = 0; c < dim_cols; c++) {
@@ -206,8 +197,7 @@ void
 load_row(
         int row,
         const char *s
-)
-{
+) {
 	assert(strlen(s) == dim_cols + 1);
 	for (int c = 0; c < dim_cols; c++) {
 		switch (s[c]) {
@@ -236,8 +226,7 @@ load_row(
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -290,8 +279,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {

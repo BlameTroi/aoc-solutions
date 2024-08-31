@@ -26,8 +26,7 @@ char *test_input[] = {
  */
 
 void
-test_setup(void)
-{
+test_setup(void) {
 	reset_state(0);
 	char **iline = test_input;
 	while (strlen(*iline)) {
@@ -38,8 +37,7 @@ test_setup(void)
 }
 
 void
-test_teardown(void)
-{
+test_teardown(void) {
 	reset_state(1);
 }
 
@@ -48,8 +46,7 @@ test_teardown(void)
  * sample test shell.
  */
 
-MU_TEST(test_parse)
-{
+MU_TEST(test_parse) {
 	mu_assert_int_eq(2, num_ingredients);
 	mu_assert_string_eq("Butterscotch", ingredients[0].name);
 	mu_assert_string_eq("Cinnamon", ingredients[1].name);
@@ -60,8 +57,7 @@ MU_TEST(test_parse)
 	mu_assert_int_eq(8, ingredients[0].attributes[CAL]);
 }
 
-MU_TEST(test_mixes)
-{
+MU_TEST(test_mixes) {
 	/* score provided in problem statement */
 	int portions[] = {44, 56};
 	mu_assert_int_eq(62842880, score(portions));
@@ -113,8 +109,7 @@ MU_TEST(test_mixes)
  * of doing it manually.
  */
 
-MU_TEST_SUITE(test_suite)
-{
+MU_TEST_SUITE(test_suite) {
 
 	/* always have a setup and teardown, even if they */
 	/* do nothing. */
@@ -134,8 +129,7 @@ MU_TEST_SUITE(test_suite)
  */
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;

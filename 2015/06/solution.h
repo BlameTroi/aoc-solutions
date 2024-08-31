@@ -24,22 +24,24 @@
 
 
 /* coordinate block */
-typedef struct coord_t {
+typedef struct coord coord;
+struct coord {
 	int x;
 	int y;
-} coord_t;
+};
 
 
 /* use a grid of booleans */
-typedef struct lights_t {
+typedef struct lights lights;
+struct lights {
 	long lit;                            /* number of lights lit */
 	long intensity;                      /* total intensity if in analog mode */
-	void (*fnon)(struct lights_t *, coord_t);   /* pointers to proper on/off/toggle */
-	void (*fnoff)(struct lights_t *, coord_t);  /* implementations for the grid mode */
-	void (*fntog)(struct lights_t *, coord_t);
+	void (*fnon)(lights *, coord);   /* pointers to proper on/off/toggle */
+	void (*fnoff)(lights *, coord);  /* implementations for the grid mode */
+	void (*fntog)(lights *, coord);
 	int bulb[1000][1000];                /* the lights in the grid */
 	int digital;                         /* digital (part_one) or analog (part_two) */
-} lights_t;
+};
 
 
 /* commands symbolically */
@@ -52,33 +54,34 @@ typedef enum cmd_e {
 
 
 /* command block */
-typedef struct cmd_t {
+typedef struct cmd cmd;
+struct cmd {
 	cmd_e cmd;
-	coord_t p0;
-	coord_t p1;
-} cmd_t;
+	coord p0;
+	coord p1;
+};
 
 
 /* functions: */
 
 
 /* let there be lights */
-lights_t *
-initGrid(
-        int                /* 1 = use digital interface, 0 = use analog interface */
+lights *
+init_grid(
+        bool                /* 1 = use digital interface, 0 = use analog interface */
 );
 
 
 /* entropy wins */
 void
-freeGrid(
-        lights_t *          /* light grid */
+free_grid(
+        lights *          /* light grid */
 );
 
 
 /* parse command line into our command structure */
-cmd_t
-parseCmd(
+cmd
+parse_cmd(
         const char *,       /* command line text */
         int                 /* length to consume, makes buffered reads easier */
 );
@@ -88,8 +91,8 @@ parseCmd(
  * how many lights are on?
  */
 long
-numberOn(
-        lights_t *          /* light grid */
+number_on(
+        lights *          /* light grid */
 );
 
 
@@ -97,8 +100,8 @@ numberOn(
  * total intensity of lights.
  */
 long
-totalIntensity(
-        lights_t *          /* light grid */
+total_intensity(
+        lights *          /* light grid */
 );
 
 /*
@@ -106,55 +109,56 @@ totalIntensity(
  * are for digital, either on or off. The 'A' versions are
  * for analog, where a dial adjusts intensity.
  */
+
 void
-turnOnD(
-        lights_t *,           /* light grid */
-        coord_t               /* where */
+turn_on_d(
+        lights *,           /* light grid */
+        coord               /* where */
 );
 
 void
-turnOffD(
-        lights_t *,          /* light grid */
-        coord_t              /* where */
+turn_off_d(
+        lights *,          /* light grid */
+        coord              /* where */
 );
 
 void
-toggleD(
-        lights_t *,           /* light grid */
-        coord_t               /* where */
+toggle_d(
+        lights *,           /* light grid */
+        coord               /* where */
 );
 
 void
-turnOnA(
-        lights_t *,           /* light grid */
-        coord_t               /* where */
+turn_on_a(
+        lights *,           /* light grid */
+        coord               /* where */
 );
 
 void
-turnOffA(
-        lights_t *,          /* light grid */
-        coord_t              /* where */
+turn_off_a(
+        lights *,          /* light grid */
+        coord              /* where */
 );
 
 void
-toggleA(
-        lights_t *,           /* light grid */
-        coord_t               /* where */
+toggle_a(
+        lights *,           /* light grid */
+        coord               /* where */
 );
 
 /*
  * single light's status.
  */
 bool
-isLit(
-        lights_t *,            /* light grid */
-        coord_t                /* where */
+is_lit(
+        lights *,            /* light grid */
+        coord                /* where */
 );
 
 int
 intensity(
-        lights_t *,        /* light grid */
-        coord_t            /* where */
+        lights *,        /* light grid */
+        coord            /* where */
 );
 
 
@@ -162,9 +166,9 @@ intensity(
  * by your command
  */
 void
-doCmd(
-        lights_t *,            /* light grid */
-        cmd_t                  /* parsed command line */
+do_cmd(
+        lights *,            /* light grid */
+        cmd                  /* parsed command line */
 );
 
 

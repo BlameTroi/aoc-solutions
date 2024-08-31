@@ -15,6 +15,7 @@
  */
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,8 +24,10 @@
 #define TXBMD5_IMPLEMENTATION
 #include "txbmd5.h"
 
-/* maximum length of the text to digest. it actually can't be more */
-/* than 21 + length of key, but memory is rather cheap. */
+/*
+ * maximum length of the text to digest. it actually can't be more
+ * than 21 + length of key, but memory is rather cheap.
+ */
 
 #define HASH_MAX (1024)
 
@@ -32,49 +35,66 @@ int
 main(
         int argc,
         const char **argv
-)
-{
-
+) {
 	if (argc < 2) {
-		printf("usage: %s secret-key\n", argv[0]);
+		fprintf(stderr, "usage: %s secret-key\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	const char *baseKey = argv[1];
-	size_t keyLen = strlen(baseKey);
-	char *workarea = calloc(HASH_MAX, 1);
+	const char *base_key = argv[1];
+	int len_key = strlen(base_key);
+	char *workarea = malloc(HASH_MAX);
 	assert(workarea);
-	strcpy(workarea, baseKey);
+	memset(workarea, 0, HASH_MAX);
+	strcpy(workarea, base_key);
 	uint64_t odometer = 0;
 	unsigned char digest[16];
-	int done5 = 0;
-	int done6 = 0;
+	bool done5 = false;
+	bool done6 = false;
 
-	/* no check for runaway here. the expectation is that we */
-	/* will get an answer within the limits of the problem. */
+	/*
+	 * there is no check for a runaway here. the expectation is
+	 * that we will get an answer within the limits of the
+	 * problem.
+	 */
+
 	while (!done5 || !done6) {
 		odometer += 1;
-		memset(workarea+keyLen, 0, HASH_MAX-1-keyLen);
-		sprintf(workarea+keyLen, "%llu", odometer);
+		memset(workarea+len_key, 0, HASH_MAX-1-len_key);
+		sprintf(workarea+len_key, "%llu", odometer);
 		md5_string(workarea, digest);
-		/* checking for leading zeros is actually pretty easy. */
-		if (digest[0])
-			continue;
-		if (digest[1])
-			continue;
+
+		if (digest[0]) continue;
+		if (digest[1]) continue;
+
 		if (digest[2] < 16) {
 			if (!done5) {
-				printf("(5)odometer: %llu\n", odometer);
-				done5 = 1;
+				fprintf(stdout, "(5)odometer: %llu\n", odometer);
+				done5 = true;
 			}
 		}
-		if (digest[2])
-			continue;
+
+		if (digest[2]) continue;
 		if (!done6) {
-			printf("(6)odometer: %llu\n", odometer);
-			done6 = 1;
+			fprintf(stdout, "(6)odometer: %llu\n", odometer);
+			done6 = true;
 		}
 	}
 
 	return EXIT_SUCCESS;
+}
+
+void
+test(
+        char *blarg,
+        int bleh
+) {
+	printf("this is a test");
+}
+
+int
+incrementer(
+	int i
+	) {
+	return i + 1;
 }

@@ -9,20 +9,17 @@
 #include "solution.h"
 
 void
-test_setup(void)
-{
+test_setup(void) {
 }
 
 void
-test_teardown(void)
-{
+test_teardown(void) {
 }
 
 #define DESIRED_ROW      2981
 #define DESIRED_COL      3075
 
-MU_TEST(test_diag)
-{
+MU_TEST(test_diag) {
 	printf("%d,1 = %lu\n", 6, diag_begin(6));
 	printf("1,%d = %lu\n", 6, diag_end(6));
 	printf("%d,1 = %lu\n", DESIRED_ROW, diag_begin(DESIRED_ROW));
@@ -35,8 +32,7 @@ MU_TEST(test_diag)
 	mu_should(diag_end(6) == 21);
 }
 
-MU_TEST(test_next_code)
-{
+MU_TEST(test_next_code) {
 	unsigned long code[50];
 	code[1] = SEED;
 	printf("%3d %12lu\n", 1, code[0]);
@@ -54,8 +50,7 @@ MU_TEST(test_next_code)
 	mu_should(code[11] == 77061);
 }
 
-MU_TEST(test_full_run)
-{
+MU_TEST(test_full_run) {
 	const int COL = 3075;
 	const int ROW = 2981;
 	unsigned long code[COL+2];
@@ -68,8 +63,7 @@ MU_TEST(test_full_run)
 }
 
 
-MU_TEST(test_bfc)
-{
+MU_TEST(test_bfc) {
 	const int COL = 3075;
 	const int ROW = 2981;
 	unsigned long code = code_at(ROW, COL);
@@ -77,8 +71,7 @@ MU_TEST(test_bfc)
 	printf("%lu\n", code);
 }
 
-MU_TEST_SUITE(test_suite)
-{
+MU_TEST_SUITE(test_suite) {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
 	MU_RUN_TEST(test_next_code);
@@ -89,8 +82,7 @@ MU_TEST_SUITE(test_suite)
 }
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;

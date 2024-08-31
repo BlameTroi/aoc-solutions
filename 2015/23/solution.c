@@ -20,8 +20,7 @@
 cpu *
 create(
         int size
-)
-{
+) {
 	if (size > RAM_MAX)
 		return NULL;
 	cpu *r = malloc(sizeof(cpu));
@@ -40,8 +39,7 @@ itab iset[] = {
 };
 
 char *
-disassemble(char *buff, inst *curr)
-{
+disassemble(char *buff, inst *curr) {
 	memset(buff, 0, 255);
 	int i = 0;
 	char *mne = "inv";
@@ -69,8 +67,7 @@ disassemble(char *buff, inst *curr)
 }
 
 void
-trace(cpu *proc)
-{
+trace(cpu *proc) {
 	char buff[256];
 	printf("%4d %8ld %8ld %s\n",
 	       proc->pic, proc->a, proc->b,
@@ -78,8 +75,7 @@ trace(cpu *proc)
 }
 
 void
-run(cpu *proc)
-{
+run(cpu *proc) {
 	proc->pic = 0;
 	proc->a = 0;
 	proc->b = 0;
@@ -129,8 +125,7 @@ run(cpu *proc)
 inst
 assemble(
         char *stmt
-)
-{
+) {
 	inst r = {INV, 0, 0};
 	const char **tokens = split_string(stmt, " ,\n");
 	assert(tokens);
@@ -168,8 +163,7 @@ assemble(
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -210,8 +204,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");

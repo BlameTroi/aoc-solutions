@@ -1,10 +1,10 @@
 /*  solution.c -- aoc 2015 02 -- troy brumley */
 
 /*
- * how much wrapping paper is needed? gift dimensions are supplied in feet:
- * lxwxh. each gift is a perfect rectangle so its surface area is
- * 2*l*w + 2*w*h + 2*h*l. each gift requires a slack amount of paper
- * equal to the area of its smallest side.
+ * how much wrapping paper is needed? gift dimensions are supplied in
+ * feet: lxwxh. each gift is a perfect rectangle so its surface area
+ * is 2*l*w + 2*w*h + 2*h*l. each gift requires a slack amount of
+ * paper equal to the area of its smallest side.
  *
  * example:
  *
@@ -32,30 +32,33 @@
 #define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
 
+
 /*
  * gift box metrics type, units are consistent.
  */
-typedef struct gift_t {
-	size_t l;
-	size_t w;
-	size_t h;
-	size_t area;           /*  total surface area */
-	size_t slack;          /*  extra wrap surface */
-	size_t ribbon;         /*  shortest perimiter */
-	size_t bow;            /*  bow length = volume units */
-} gift_t;
+
+typedef struct gift gift;
+struct gift {
+	int l;              /* input values */
+	int w;
+	int h;
+	int area;           /* total surface area */
+	int slack;          /* extra wrap surface */
+	int ribbon;         /* shortest perimiter */
+	int bow;            /* bow length = volume units */
+};
 
 
 /*
- * given an input line lxwxh\n, parse out the
- * dimensions and compute the metrics.
+ * given an input line lxwxh\n, parse out the dimensions and compute
+ * the metrics.
  */
-gift_t
-getWrap(
+
+gift
+get_wrap(
         char *line,
-        size_t line_max
-)
-{
+        int line_max
+) {
 	char *work = strdup(line);
 	assert(work);
 	char *pos = work;
@@ -67,21 +70,21 @@ getWrap(
 	char *h = strsep(&pos, "x\n");
 	assert(h);
 
-	gift_t g;
+	gift g;
 
 	g.l = atoi(l);
 	g.w = atoi(w);
 	g.h = atoi(h);
 
 	/* each surface's area */
-	size_t lw = g.l * g.w;
-	size_t wh = g.w * g.h;
-	size_t hl = g.h * g.l;
+	int lw = g.l * g.w;
+	int wh = g.w * g.h;
+	int hl = g.h * g.l;
 
 	/* and each surface's perimiter */
-	size_t plw = g.l*2 + g.w*2;
-	size_t pwh = g.w*2 + g.h*2;
-	size_t phl = g.h*2 + g.l*2;
+	int plw = g.l*2 + g.w*2;
+	int pwh = g.w*2 + g.h*2;
+	int phl = g.h*2 + g.l*2;
 
 	/* total surface area */
 	g.area = 2*lw + 2*wh + 2*hl;
@@ -109,40 +112,40 @@ int
 main(
         int argc,
         const char **argv
-)
-{
+) {
 	FILE *ifile;
-	size_t totalWrap = 0;
-	size_t totalRibbon = 0;
+	int total_wrap = 0;
+	int total_ribbon = 0;
 
 	if (argc < 2) {
-		printf("usage: %s path-to-input\n", argv[0]);
+		fprintf(stderr, "usage: %s path-to-input\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
 	ifile = fopen(argv[1], "r");
 	if (!ifile) {
-		printf("could not open file: %s\n", argv[1]);
+		fprintf(stderr, "could not open file: %s\n", argv[1]);
 		return EXIT_FAILURE;
 	}
 
-	const size_t LINE_MAX = 255;
+	const int LINE_MAX = 255;
 	char iline[LINE_MAX+1];
+	memset(iline, 0, LINE_MAX+1);
 
 	while (fgets(iline, LINE_MAX, ifile)) {
-		gift_t g = getWrap(iline, LINE_MAX);
-		totalWrap = totalWrap + g.area + g.slack;
-		totalRibbon = totalRibbon + g.ribbon + g.bow;
+		gift g = get_wrap(iline, LINE_MAX);
+		total_wrap = total_wrap + g.area + g.slack;
+		total_ribbon = total_ribbon + g.ribbon + g.bow;
 	}
 
 	if (ferror(ifile)) {
-		printf("error: aborting\n");
+		fprintf(stderr, "error: aborting\n");
 		fclose(ifile);
 		return EXIT_FAILURE;
 	}
 
-	printf("total wrapping paper needed: %zu\n", totalWrap);
-	printf("total ribbon needed: %zu\n", totalRibbon);
+	fprintf(stdout, "total wrapping paper needed: %d\n", total_wrap);
+	fprintf(stdout, "total ribbon needed: %d\n", total_ribbon);
 
 	fclose(ifile);
 

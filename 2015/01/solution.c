@@ -16,22 +16,24 @@
 
 int
 
-main(int argc, char **argv)
-{
+main(
+	int argc, char **argv
+) {
 	FILE *ifile;
 
 	if (argc < 2) {
-		printf("usage: %s path-to-input\n", argv[0]);
+		fprintf(stderr, "usage: %s path-to-input\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
 	ifile = fopen(argv[1], "r");
 	if (!ifile) {
-		printf("could not open file: %s\n", argv[1]);
+		fprintf(stderr, "could not open file: %s\n", argv[1]);
 		return EXIT_FAILURE;
 	}
 
-	int atBasement = 0;       /* which position of input sends santa to basement for the first time */
+	int atBasement = 0;       /* which position of input sends santa to
+				     the basement for the first time */
 	int floor = 0;            /* what is the current floor */
 	int parens = 0;           /* parens read/current paren position */
 	int ch = 0;               /* input character, could include newlines */
@@ -44,19 +46,19 @@ main(int argc, char **argv)
 		} else if (ch == ')') {
 			parens += 1;
 			floor -= 1;
-			/* part two, did that move us into the first basement level for */
-			/* the first time? */
+			/* part two, did that move us into the first
+			   basement level for the first time? */
 			if (atBasement == 0 && floor == -1)
 				atBasement = parens;
 		} else if (ch != '\n') {
-			printf("error: illegal character %d, aborting\n", ch);
+			fprintf(stderr, "error: illegal character %d, aborting\n", ch);
 			fclose(ifile);
 			return EXIT_FAILURE;
 		}
 	}
 
-	printf("after %d parens, santa finds himeself on floor %d.\n", parens, floor);
-	printf("and he first entered the basement on paren %d.\n", atBasement);
+	fprintf(stdout, "after %d parens, santa finds himeself on floor %d.\n", parens, floor);
+	fprintf(stdout, "and he first entered the basement on paren %d.\n", atBasement);
 
 	fclose(ifile);
 

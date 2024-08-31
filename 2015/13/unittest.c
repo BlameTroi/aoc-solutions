@@ -22,14 +22,12 @@
  */
 
 void
-test_setup(void)
-{
+test_setup(void) {
 	reset_state(0);
 }
 
 void
-test_teardown(void)
-{
+test_teardown(void) {
 	reset_state(1);
 }
 
@@ -38,8 +36,7 @@ test_teardown(void)
  * sample test shell.
  */
 
-MU_TEST(test_created)
-{
+MU_TEST(test_created) {
 	node_count = 2;
 	node_names[0] = strdup("fred");
 	node_names[1] = strdup("barney");
@@ -55,8 +52,7 @@ MU_TEST(test_created)
 	mu_assert_int_eq(want, got);
 }
 
-MU_TEST(test_load_parse)
-{
+MU_TEST(test_load_parse) {
 	char *test_data[] = {
 		"Alice would gain 54 happiness units by sitting next to Bob.",
 		"Alice would lose 79 happiness units by sitting next to Carol.",
@@ -113,8 +109,7 @@ MU_TEST(test_load_parse)
  * to create the suite in the editor, but for now it's just a matter
  * of doing it manually.
  */
-MU_TEST_SUITE(test_suite)
-{
+MU_TEST_SUITE(test_suite) {
 
 	/* always have a setup and teardown, even if they */
 	/* do nothing. */
@@ -133,8 +128,7 @@ MU_TEST_SUITE(test_suite)
  */
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;

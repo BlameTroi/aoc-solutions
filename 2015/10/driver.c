@@ -13,8 +13,7 @@
 int
 main(
         int argc,
-        const char **argv)
-{
+        const char **argv) {
 
 	if (argc < 2) {
 		printf("usage: %s path-to-input\n", argv[0]);

@@ -28,8 +28,7 @@ evaluate(int[]);
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -68,8 +67,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");
@@ -114,8 +112,7 @@ part_two(
  */
 
 void
-reset_state(int rel)
-{
+reset_state(int rel) {
 	node_count = 0;
 	for (int i = 0; i < NODES_MAX; i++) {
 		if (rel && node_names[i])
@@ -135,8 +132,7 @@ reset_state(int rel)
 int
 add_node_name(
         const char *s
-)
-{
+) {
 	assert(node_count <= NODES_MAX);
 	node_names[node_count] = strdup(s);
 	node_count += 1;
@@ -151,8 +147,7 @@ add_node_name(
 int
 node_index(
         const char *s
-)
-{
+) {
 	if (node_count == 0)
 		return add_node_name(s);
 	for (int i = 0; i < node_count; i++) {
@@ -178,8 +173,7 @@ node_index(
 void
 parse_line(
         const char *iline
-)
-{
+) {
 	const int from_tok = 1;
 	const int to_tok = 11;
 	const int delta_tok = 4;
@@ -205,8 +199,7 @@ parse_line(
  */
 
 int
-evaluate(int p[])
-{
+evaluate(int p[]) {
 	int r = 0;
 
 	/* forward */

@@ -40,15 +40,13 @@ dlcb_t *unique_transforms = NULL;
 int
 payload_compare(
         void *s1,
-        void *s2)
-{
+        void *s2) {
 	return strcmp(s1, s2);
 }
 
 
 void
-reset_state(bool rel)
-{
+reset_state(bool rel) {
 
 	if (rel) {
 		if (unique_transforms != NULL) {
@@ -86,8 +84,7 @@ reset_state(bool rel)
 bool
 parse_line(
         const char *iline
-)
-{
+) {
 
 	/* do we have a rule marker? */
 	char *c = strchr(iline, '=');
@@ -128,8 +125,7 @@ transformer(
         transform_t *t,
         const char *s,
         int *pos
-)
-{
+) {
 	if (t == NULL || s == NULL)
 		return NULL;
 
@@ -169,8 +165,7 @@ transformer(
 void
 invert(
         transform_t *t
-)
-{
+) {
 	char swap_text[TO_MAX];
 	int swap_len;
 	memcpy(swap_text, t->to, sizeof(swap_text));
@@ -188,8 +183,7 @@ invert(
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -245,8 +239,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");

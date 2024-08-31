@@ -11,7 +11,7 @@ OBJS = solution.o
 
 DATADIR=$(HOME)/projects/aoc/datasets/$(YEAR)/$(MONTH)
 
-.PHONY: all clean short long
+.PHONY: check-syntax all clean short long
 
 all: solution
 
@@ -29,3 +29,6 @@ short:
 
 long:
 	./solution $(DATADIR)/dataset.txt
+
+check-syntax:
+	$(CC) $(CFLAGS) -Wextra -Wpedantic -fsyntax-only $(SRCS)

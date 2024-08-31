@@ -17,13 +17,13 @@
  */
 
 unsigned long
-min_qe_r(int i, unsigned long accum_qe, int accum_weight)
-{
+min_qe_r(int i, unsigned long accum_qe, int accum_weight) {
 	if (accum_weight == target_weight)
 		return accum_qe;
 	if (i >= num_packages || accum_weight > target_weight)
 		return LONG_MAX;
-	unsigned long lhs = min_qe_r(i + 1, accum_qe *packages[i], accum_qe + packages[i]);
+	unsigned long lhs = min_qe_r(i + 1, accum_qe *packages[i],
+	                             accum_qe + packages[i]);
 	unsigned long rhs = min_qe_r(i + 1, accum_qe, accum_weight);
 	if (lhs == LONG_MAX)
 		return rhs;
@@ -33,8 +33,7 @@ min_qe_r(int i, unsigned long accum_qe, int accum_weight)
 }
 
 unsigned long
-try_recursive(char *fname, int groups)
-{
+try_recursive(char *fname, int groups) {
 	load_data(fname, true, groups);
 	return min_qe_r(0, 1, 0);
 }
@@ -46,8 +45,7 @@ try_recursive(char *fname, int groups)
  * description. */
 
 unsigned long
-try_loopy(const char *fname, int groups)
-{
+try_loopy(const char *fname, int groups) {
 	load_data(fname, true, groups);
 	int total = total_weight;
 	int third = total / 3;
@@ -94,26 +92,22 @@ try_loopy(const char *fname, int groups)
 static char *data_file_name = NULL;
 
 void
-test_setup(void)
-{
+test_setup(void) {
 	zero_data();
 }
 
 void
-test_teardown(void)
-{
+test_teardown(void) {
 	zero_data();
 }
 
-MU_TEST(test_loopy)
-{
+MU_TEST(test_loopy) {
 	unsigned long qe1 = try_loopy(data_file_name, 3);
 	unsigned long qe2 = try_loopy(data_file_name, 4);
 	mu_should(qe1 > 0 && qe2 > 0);
 }
 
-MU_TEST(test_combination)
-{
+MU_TEST(test_combination) {
 	unsigned long qe1 = try_combination(data_file_name, 3);
 	unsigned long qe2 = try_combination(data_file_name, 4);
 	printf("qe1 %lu\n", qe1);
@@ -121,8 +115,7 @@ MU_TEST(test_combination)
 	mu_should(qe1 > 0 && qe2 > 0);
 }
 
-MU_TEST(test_permute)
-{
+MU_TEST(test_permute) {
 	unsigned long qe1 = try_permutation(data_file_name, 3);
 	unsigned long qe2 = try_permutation(data_file_name, 4);
 	printf("qe1 %lu\n", qe1);
@@ -130,8 +123,7 @@ MU_TEST(test_permute)
 	mu_should(qe1 > 0 && qe2 > 0);
 }
 
-MU_TEST(test_recursive)
-{
+MU_TEST(test_recursive) {
 	unsigned long qe1 = try_recursive(data_file_name, 3);
 	unsigned long qe2 = try_recursive(data_file_name, 4);
 	printf("qe1 %lu\n", qe1);
@@ -139,8 +131,7 @@ MU_TEST(test_recursive)
 	mu_should(qe1 > 0 && qe2 > 0);
 }
 
-MU_TEST_SUITE(test_suite)
-{
+MU_TEST_SUITE(test_suite) {
 
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
@@ -154,8 +145,7 @@ MU_TEST_SUITE(test_suite)
 }
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
 
 	if (argc > 1)
 		data_file_name = argv[1];

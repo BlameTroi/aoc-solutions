@@ -29,8 +29,7 @@ FILE *testdata = NULL;
  */
 
 void
-test_setup(void)
-{
+test_setup(void) {
 	reset_all();
 	testdata = fopen("unitdata.txt", "r");
 	if (!testdata)
@@ -38,21 +37,18 @@ test_setup(void)
 }
 
 void
-test_teardown(void)
-{
+test_teardown(void) {
 	fclose(testdata);
 }
 
 
-MU_TEST(test_battle_state)
-{
+MU_TEST(test_battle_state) {
 	battle_state s = create_battle_state(10, 250, 13, 8, false);
 	mu_should(s.player_hp == 10);
 	mu_should(s.boss_damage == 8);
 }
 
-MU_TEST(test_sample_battle)
-{
+MU_TEST(test_sample_battle) {
 	/* for example, suppose the player has 10 hit points and 250 mana, and that the boss has 13 hit points and 8 damage: */
 
 	battle_state init = create_battle_state(10, 250, 13, 8, false);
@@ -88,7 +84,8 @@ MU_TEST(test_sample_battle)
 	Poison deals 3 damage; its timer is now 4.
 	Player casts Magic Missile, dealing 4 damage. */
 
-	mu_should(init.player_hp == 2 && init.player_mana == 77 && init.player_temp_armor == 0);
+	mu_should(init.player_hp == 2 && init.player_mana == 77 &&
+	          init.player_temp_armor == 0);
 	tick_spells(&init);
 	mu_should(init.spell_timers[POISON] == 4);
 	mu_should(init.boss_hp == 7);
@@ -109,8 +106,7 @@ MU_TEST(test_sample_battle)
 	mu_should(init.player_hp > 0);
 }
 
-MU_TEST(test_sample_battle_2)
-{
+MU_TEST(test_sample_battle_2) {
 	/* for example, suppose the player has 10 hit points and 250 mana, and that the boss has 14 hit points and 8 damage: */
 
 	battle_state init = create_battle_state(10, 250, 14, 8, false);
@@ -174,23 +170,20 @@ MU_TEST(test_sample_battle_2)
 
 }
 
-MU_TEST(test_battle_data_1)
-{
+MU_TEST(test_battle_data_1) {
 
 	int ans = battle(10, 250, 13, 8, false);
 	printf("%d\n", ans);
 	mu_should(ans == 226);
 }
 
-MU_TEST(test_battle_data_live)
-{
+MU_TEST(test_battle_data_live) {
 	int ans = battle(50, 500, 71, 10, false);
 	printf("%d\n", ans);
 	mu_should(ans > 1500 && ans < 3000);
 }
 
-MU_TEST(test_battle_data_live_hard)
-{
+MU_TEST(test_battle_data_live_hard) {
 	int ans = battle(50, 500, 71, 10, true);
 	printf("%d\n", ans);
 	mu_should(ans > 1500 && ans < 3000);
@@ -202,8 +195,7 @@ MU_TEST(test_battle_data_live_hard)
  * to create the suite in the editor, but for now it's just a matter
  * of doing it manually.
  */
-MU_TEST_SUITE(test_suite)
-{
+MU_TEST_SUITE(test_suite) {
 
 	/* always have a setup and teardown, even if they */
 	/* do nothing. */
@@ -225,8 +217,7 @@ MU_TEST_SUITE(test_suite)
  */
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
 	MU_RUN_SUITE(test_suite);
 	MU_REPORT();
 	return MU_EXIT_CODE;

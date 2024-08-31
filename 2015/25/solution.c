@@ -86,13 +86,11 @@
  */
 
 inline unsigned long
-diag_end(int n)
-{
+diag_end(int n) {
 	return n * (n + 1) / 2;
 }
 inline unsigned long
-diag_begin(int n)
-{
+diag_begin(int n) {
 	return diag_end(n) - (n - 1);
 }
 
@@ -101,8 +99,7 @@ diag_begin(int n)
  */
 
 inline unsigned long
-next_code(unsigned long code)
-{
+next_code(unsigned long code) {
 	return (code *FACTOR) % DIVISOR;
 }
 
@@ -115,8 +112,7 @@ unsigned long
 code_at(
         int row,
         int col
-)
-{
+) {
 	unsigned long code;
 	code = SEED;
 	int r = 1;
@@ -143,8 +139,7 @@ code_at(
 int
 part_one(
         const char *fname
-)
-{
+) {
 
 	FILE *ifile = fopen(fname, "r");
 	if (!ifile) {
@@ -191,8 +186,7 @@ part_one(
 int
 part_two(
         const char *fname
-)
-{
+) {
 	printf("part two: a freebie\n");
 	return EXIT_SUCCESS;
 }

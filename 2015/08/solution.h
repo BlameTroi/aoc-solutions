@@ -40,7 +40,7 @@
    it under (most) of the backslash-escape conventions */
 
 int
-compiledStringLength(
+compiled_string_length(
         const char *
 );
 
@@ -49,7 +49,7 @@ compiledStringLength(
    quotes but not whitespace */
 
 int
-sourceStringLength(
+source_string_length(
         const char *
 );
 
@@ -60,7 +60,7 @@ sourceStringLength(
    the surrounding double quotes. */
 
 char *
-encodedString(
+encoded_string(
         const char *
 );
 
@@ -69,7 +69,7 @@ encodedString(
    turns out to be strlen, but i'm keeping the wrapper in place. */
 
 int
-encodedStringLength(
+encoded_string_length(
         const char *
 );
 
