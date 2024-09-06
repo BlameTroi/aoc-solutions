@@ -82,8 +82,168 @@ test_teardown(void) {
 	if (datafile)
 		fclose(datafile);
 }
-/*For example, suppose you start with abcde and perform the following
-operations:
+
+/*
+
+  5  dhbcagfe->bcagfedh  rotate based on position of letter a
+  8  cbdagfeh->hcbdagfe  rotate based on position of letter h
+  9  hcbdagfe->cbdagfeh  rotate based on position of letter g
+ 10  cbdagfeh->hcbdagfe  rotate based on position of letter h
+ 16  bedfchag->chagbedf  rotate based on position of letter f
+ 26  fdhcegab->gabfdhce  rotate based on position of letter h
+ 32  eafdhbgc->afdhbgce  rotate based on position of letter b
+ 39  hbfgecda->cdahbfge  rotate based on position of letter f
+ 44  gfbhadec->decgfbha  rotate based on position of letter b
+ 55  cfdgabhe->ecfdgabh  rotate based on position of letter e
+ 56  ecfdgabh->bhecfdga  rotate based on position of letter c
+ 58  bhgcfdea->abhgcfde  rotate based on position of letter b
+ 59  abhgcfde->deabhgcf  rotate based on position of letter b
+ 67  cedgbfah->fahcedgb  rotate based on position of letter d
+ 70  faedhcgb->bfaedhcg  rotate based on position of letter f
+ 88  beghfadc->adcbeghf  rotate based on position of letter g
+ 89  adcbeghf->dcbeghfa  rotate based on position of letter g
+ 95  edcbgafh->afhedcbg  rotate based on position of letter c
+
+ */
+
+char *rotation_results[][3] = {
+	{ "dhbcagfe", "bcagfedh", "a" },
+	{ "cbdagfeh", "hcbdagfe", "h" },
+	{ "hcbdagfe", "cbdagfeh", "g" },
+	{ "cbdagfeh", "hcbdagfe", "h" },
+	{ "bedfchag", "chagbedf", "f" },
+	{ "fdhcegab", "gabfdhce", "h" },
+	{ "eafdhbgc", "afdhbgce", "b" },
+	{ "hbfgecda", "cdahbfge", "f" },
+	{ "gfbhadec", "decgfbha", "b" },
+	{ "cfdgabhe", "ecfdgabh", "e" },
+	{ "ecfdgabh", "bhecfdga", "c" },
+	{ "bhgcfdea", "abhgcfde", "b" },
+	{ "abhgcfde", "deabhgcf", "b" },
+	{ "cedgbfah", "fahcedgb", "d" },
+	{ "faedhcgb", "bfaedhcg", "f" },
+	{ "beghfadc", "adcbeghf", "g" },
+	{ "adcbeghf", "dcbeghfa", "g" },
+	{ "edcbgafh", "afhedcbg", "c" },
+	{ NULL, NULL, NULL}
+};
+
+/*
+ * rotate based on position of letter X means that the whole string
+ * should be rotated to the right based on the index of letter X
+ * (counting from 0) as determined before this instruction does any
+ * rotations. Once the index is determined, rotate the string to the
+ * right one time, plus a number of times equal to that index, plus
+ * one additional time if the index was at least 4.
+ */
+
+void
+xxx_unrotate_position(char *str, int n, char x) {
+	int p = pos_char(str, 0, x);
+
+	if (p < 0)
+		return;
+
+	int rot = 0;
+
+
+	/* case 1, character was last character before rotate and is now
+	   the first character, rotate left by p + 1 and we got it. */
+	if (p == 0) {
+		rot = 1 + p;
+		rotate_left(str, n, rot);
+		return;
+	}
+
+	/* case 2, character was first character and is now second character,
+	   rotate left by exactly 1. */
+	if (p == 1) {
+		rot = 1;
+		rotate_left(str, n, rot);
+		return;
+	}
+
+	/* case 3, character was fifth character and is now third character,
+	   rotate right by 2. */
+	if (p == 2) {
+		rot = 2;
+		rotate_right(str, n, rot);
+		return;
+	}
+
+	/* case 4, character was second character and is now fourth character,
+	   rotate left by 2. */
+	if (p == 3) {
+		rot = 2;
+		rotate_left(str, n, rot);
+		return;
+	}
+
+	/* case 5, character was sixth character and is now fifth character,
+	   rotate right by 1. */
+	if (p == 4) {
+		rot = 1;
+		rotate_right(str, n, rot);
+		return;
+	}
+
+	/* case 6, character was second character, now is sixth character.
+	   rotate left by 3. */
+	if (p == 5) {
+		rot = 3;
+		rotate_left(str, n, rot);
+		return;
+	}
+
+	/* case 7. no test available yet. */
+
+	/* case 8. character was fourth character, now is eighth character.
+	   rotate left by 4. */
+	if (p == 7) {
+		rot = 4;
+		rotate_left(str, n, rot);
+		return;
+	}
+
+	/* default, just apply the original rotation again to do something */
+	rot = 1 + p;
+	if (p >= 4)
+		rot += 1;
+	rotate_right(str, n, rot);
+}
+
+/* rotation_results { input to rotate, output from rotate, based on letter }
+   rotate position should get output, then unrotate the output should get the input */
+
+MU_TEST(test_unrotate) {
+	printf("\n");
+	int i = 0;
+	while (rotation_results[i][0]) {
+		char *original = rotation_results[i][0];
+		char *rotated = rotation_results[i][1];
+		char base_character = rotation_results[i][2][0];
+		char *password = dup_string(original);
+		rotate_position(password, strlen(password), base_character);
+		unrotate_position(password, strlen(password), base_character);
+		printf("rotate based on %c (%d) %s -> (%d) %s  unrotated -> %s  %s\n",
+			base_character, pos_char(original, 0, base_character), original,
+			pos_char(rotated, 0, base_character), rotated, password,
+			equal_string(original, password) ? "success" : "*FAIL*");
+		/* more to come */
+		i += 1;
+	}
+	printf("\n");
+	char *password = dup_string("01234567");
+	printf("\n%s", password);
+	rotate_position(password, strlen(password), '6');
+	printf("\n%s     <- after rotate based on position of character '%c'\n",
+		password, '6');
+
+}
+
+/*
+ * For example, suppose you start with abcde and perform the following
+ * operations:
  */
 MU_TEST(test_sample) {
 	char *password = dup_string("abcde");
@@ -234,7 +394,7 @@ MU_TEST(test_rotate) {
 	printf("\n%s\n", password);
 	rotate_position(password, n, '2');
 	printf("\n%s     <- after rotate based on position of character '2'\n",
-	       password);
+		password);
 	printf("\n");
 	for (int i = 0; i < strlen(password); i++) {
 		char chr = '0' + i;
@@ -242,7 +402,7 @@ MU_TEST(test_rotate) {
 		printf("\n%s", password);
 		rotate_position(password, n, chr);
 		printf("\n%s     <- after rotate based on position of character '%c'\n",
-		       password, chr);
+			password, chr);
 	}
 
 	char *cmd = dup_string("rotate based on position of letter c               ");
@@ -297,15 +457,6 @@ MU_TEST(test_indices) {
 }
 
 /*
- * sample test shell.
- */
-
-MU_TEST(test_test) {
-	mu_should(true);
-	mu_shouldnt(false);
-}
-
-/*
  * here we define the whole test suite.
  */
 MU_TEST_SUITE(test_suite) {
@@ -313,7 +464,8 @@ MU_TEST_SUITE(test_suite) {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 
 	/* run your tests here */
-	MU_RUN_TEST(test_test);
+	MU_RUN_TEST(test_unrotate);
+	return;
 	MU_RUN_TEST(test_sample);
 	MU_RUN_TEST(test_undo);
 	MU_RUN_TEST(test_rotate);

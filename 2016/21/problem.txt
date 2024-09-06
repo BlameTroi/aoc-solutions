@@ -92,11 +92,9 @@ process.
 
 What is the un-scrambled version of the scrambled password fbgdceah?
 
-Answer: bdgheacf  correct but i used someone else's python code, like
-                  most everyone i'm stuck on reversing the rotate
-		  based on position. i've got an idea still to try
-		  so i've still got work to do here.
+Answer: bdgheacf  correct
 
-                  i'm thinking my root problem is trying to undo via
-		  editing the commands. when i return to this i will
-		  switch away from that approach.
+i ended up using someone else's python code to get an answer so i
+could move to the next day's problem, but then i came back and finally
+figured it out. it should not have taken so long. sometimes you just
+need to get the pen and paper out.
