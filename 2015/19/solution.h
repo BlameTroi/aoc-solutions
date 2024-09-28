@@ -19,8 +19,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "txbdl.h"
-
 #define INPUT_LEN_MAX 1024
 
 /* observed plus padding to avoid gratuitous mallocs */
@@ -43,17 +41,18 @@
 
 /* given from => to in input */
 
-typedef struct transform_t {
+typedef struct transform transform;
+
+struct transform {
 	size_t from_len;
 	size_t to_len;
 	char from[FROM_MAX];
 	char to[TO_MAX];
-} transform_t;
+};
 
 /*
  * functions:
  */
-
 
 void
 reset_state(bool rel);
@@ -65,7 +64,7 @@ parse_line(
 
 char *
 transformer(
-        transform_t *t,
+        transform *t,
         const char *s,
         int *pos);
 

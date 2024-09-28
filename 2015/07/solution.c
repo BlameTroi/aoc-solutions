@@ -24,7 +24,7 @@
  */
 
 circuit *
-init_circuit() {
+init_circuit(void) {
 	circuit *c = malloc(sizeof(circuit));
 	memset(c, 0, sizeof(circuit));
 	return c;

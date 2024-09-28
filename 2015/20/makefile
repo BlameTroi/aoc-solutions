@@ -5,7 +5,7 @@ MONTH=20
 DATADIR=$(HOME)/projects/aoc/datasets/$(YEAR)/$(MONTH)
 
 CC=clang
-CFLAGS=-Wall -g3 -std=c99
+CFLAGS=-Wall -g3 -std=c18 --pedantic-errors
 LDFLAGS=-lm
 
 SRCS = driver.c solution.c unittest.c
@@ -22,19 +22,8 @@ clean:
 
 all: driver
 
-unit: unittest
-
 solution.o: solution.c solution.h
 	$(CC) $(CFLAGS) -c solution.c
-
-unittest.o: unittest.c solution.h solution.c
-	$(CC) $(CFLAGS) -c unittest.c
-
-unittest: unittest.o solution.o
-	$(CC) $(CFLAGS) -o unittest unittest.o solution.o -lm
-
-test:
-	./unittest
 
 driver.o: driver.c
 	$(CC) $(CFLAGS) -c driver.c

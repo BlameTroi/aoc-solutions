@@ -14,7 +14,7 @@
  */
 
 int num_transforms;
-transform_t *transforms[TRANSFORM_MAX];
+transform *transforms[TRANSFORM_MAX];
 char base[INPUT_LEN_MAX];
 
 /*
@@ -143,7 +143,6 @@ MU_TEST_SUITE(test_suite) {
 	/* run your tests here */
 	MU_RUN_TEST(test_parse);
 	MU_RUN_TEST(test_transforms);
-
 
 }
 

@@ -5,7 +5,7 @@ MONTH=19
 DATADIR=$(HOME)/projects/aoc/datasets/$(YEAR)/$(MONTH)
 
 CC=clang
-CFLAGS=-Wall -g3 -std=c99
+CFLAGS=-Wall -g3 -std=c18 --pedantic-errors
 LDFLAGS=-lm
 
 SRCS = driver.c solution.c unittest.c

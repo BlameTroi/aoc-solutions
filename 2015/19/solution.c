@@ -1,4 +1,4 @@
-/* solution.c -- aoc 2015 13 -- troy brumley */
+/* solution.c -- aoc 2015 19 -- troy brumley */
 
 #include <assert.h>
 #include <limits.h>
@@ -13,10 +13,10 @@
 #include "txbmisc.h"
 #define TXBSTR_IMPLEMENTATION
 #include "txbstr.h"
-#define TXBABORT_IMPLEMENTATION
-#include "txbabort.h"
-#define TXBDL_IMPLEMENTATION
-#include "txbdl.h"
+#define TXBKL_IMPLEMENTATION
+#include "txbkl.h"
+#define TXBRAND_IMPLEMENTATION
+#include "txbrand.h"
 
 #include "solution.h"
 
@@ -26,21 +26,23 @@
  */
 
 int num_transforms;
-transform_t *transforms[TRANSFORM_MAX];
+transform *transforms[TRANSFORM_MAX];
 
 char base[INPUT_LEN_MAX];
 
 int num_run = 0;
-dlcb_t *unique_transforms = NULL;
+klcb *unique_transforms = NULL;
 
 /*
  * the usual utility functions
  */
 
+static
 int
-payload_compare(
-        void *s1,
-        void *s2) {
+key_compare(
+	void *s1,
+	void *s2
+) {
 	return strcmp(s1, s2);
 }
 
@@ -50,8 +52,12 @@ reset_state(bool rel) {
 
 	if (rel) {
 		if (unique_transforms != NULL) {
-			dl_delete_all(unique_transforms);
-			dl_destroy(unique_transforms);
+			void *key;
+			void *value;
+			/* TODO leaks */
+			while (kl_get_first(unique_transforms, &key, &value))
+				kl_delete(unique_transforms, key);
+			kl_destroy(unique_transforms);
 			unique_transforms = NULL;
 		}
 		for (int i = 0; i < TRANSFORM_MAX; i++) {
@@ -60,10 +66,7 @@ reset_state(bool rel) {
 		}
 	}
 
-	unique_transforms = dl_create_by_key(
-	                            false,
-	                            payload_compare,
-	                            free);
+	unique_transforms = kl_create(key_compare);
 
 	num_transforms = 0;
 	memset(transforms, 0, sizeof(transforms));
@@ -83,7 +86,7 @@ reset_state(bool rel) {
 
 bool
 parse_line(
-        const char *iline
+	const char *iline
 ) {
 
 	/* do we have a rule marker? */
@@ -94,7 +97,8 @@ parse_line(
 	/* build the rule in the next available slot */
 	assert(num_transforms < TRANSFORM_MAX);
 	const char **t = split_string(iline, " \n");
-	transform_t *p = calloc(sizeof(transform_t), 1);
+	transform *p = malloc(sizeof(transform));
+	memset(p, 0, sizeof(transform));
 	transforms[num_transforms] = p;
 	strncpy(p->from, t[1], sizeof(p->from));
 	p->from_len = strlen(t[1]);
@@ -102,9 +106,7 @@ parse_line(
 	p->to_len = strlen(t[3]);
 	num_transforms += 1;
 
-	/* housekeeping */
-	free((void *)t[0]);
-	free(t);
+	free_split(t);
 
 	return true;
 }
@@ -122,10 +124,11 @@ parse_line(
 
 char *
 transformer(
-        transform_t *t,
-        const char *s,
-        int *pos
+	transform *t,
+	const char *s,
+	int *pos
 ) {
+
 	if (t == NULL || s == NULL)
 		return NULL;
 
@@ -142,7 +145,8 @@ transformer(
 	while (p + t->from_len <= slen) {
 		if (memcmp(s + p, t->from, t->from_len) == 0) {
 			/* and we found a starting point */
-			char *res = calloc(1, max_transform_len);
+			char *res = malloc(max_transform_len);
+			memset(res, 0, max_transform_len);
 			memcpy(res, s, p);
 			memcpy(res + p, t->to, t->to_len);
 			strcpy(res + p + t->to_len, s + p + t->from_len);
@@ -162,10 +166,12 @@ transformer(
  * rules.
  */
 
+static
 void
 invert(
-        transform_t *t
+	transform *t
 ) {
+
 	char swap_text[TO_MAX];
 	int swap_len;
 	memcpy(swap_text, t->to, sizeof(swap_text));
@@ -182,7 +188,7 @@ invert(
 
 int
 part_one(
-        const char *fname
+	const char *fname
 ) {
 
 	FILE *ifile = fopen(fname, "r");
@@ -213,16 +219,15 @@ part_one(
 	 * transform created */
 
 	for (int i = 0; i < num_transforms; i++) {
-		long id = 0;
 		int pos = 0;
 		void *try = (void *)transformer(transforms[i], base, &pos);
 		while (try) {
-			dl_insert(unique_transforms, id, try);
+			kl_insert(unique_transforms, try, try);
 			try = transformer(transforms[i], base, &pos);
 		}
 	}
 
-	printf("part one: %d\n", dl_count(unique_transforms));
+	printf("part one: %d\n", kl_count(unique_transforms));
 
 	reset_state(true);
 
@@ -238,8 +243,9 @@ part_one(
 
 int
 part_two(
-        const char *fname
+	const char *fname
 ) {
+
 	FILE *ifile;
 
 	ifile = fopen(fname, "r");

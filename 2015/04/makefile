@@ -6,7 +6,7 @@ YEAR=2015
 MONTH=04
 
 CC=clang
-CFLAGS=-Wall -g3 -std=c99
+CFLAGS=-Wall -g3 -std=c18 --pedantic-errors
 
 SRCS = solution.c
 OBJS = solution.o
