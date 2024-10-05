@@ -333,14 +333,14 @@ part_one(
 	char iline[INPUT_LINE_MAX];
 
 	bool failed = false;
-	char *password = dup_string(UNHASHED);
+	char *password = strdup(UNHASHED);
 	int n = strlen(password);
 	printf("%s\n", password);
 	char **commands = malloc(200 * sizeof(char *));
 	memset(commands, 0, 200 * sizeof(char *));
 	int num_commands = 0; /* abcn */
 	while (fgets(iline, INPUT_LINE_MAX - 1, ifile)) {
-		commands[num_commands] = dup_string(iline);
+		commands[num_commands] = strdup(iline);
 		commands[num_commands][strlen(iline)-1] = '\0';
 		num_commands += 1;
 	}
@@ -379,14 +379,14 @@ part_two(
 	char iline[INPUT_LINE_MAX];
 
 	bool failed = false;
-	char *password = dup_string(HASHED);
+	char *password = strdup(HASHED);
 	int n = strlen(password);
 	printf("%s\n", password);
 	char **commands = malloc(200 * sizeof(char *));
 	memset(commands, 0, 200 * sizeof(char *));
 	int num_commands = 0;
 	while (fgets(iline, INPUT_LINE_MAX - 1, ifile)) {
-		commands[num_commands] = dup_string(iline);
+		commands[num_commands] = strdup(iline);
 		commands[num_commands][strlen(iline)-1] = '\0';
 		num_commands += 1;
 	}

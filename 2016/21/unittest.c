@@ -222,7 +222,7 @@ MU_TEST(test_unrotate) {
 		char *original = rotation_results[i][0];
 		char *rotated = rotation_results[i][1];
 		char base_character = rotation_results[i][2][0];
-		char *password = dup_string(original);
+		char *password = strdup(original);
 		rotate_position(password, strlen(password), base_character);
 		unrotate_position(password, strlen(password), base_character);
 		printf("rotate based on %c (%d) %s -> (%d) %s  unrotated -> %s  %s\n",
@@ -233,7 +233,7 @@ MU_TEST(test_unrotate) {
 		i += 1;
 	}
 	printf("\n");
-	char *password = dup_string("01234567");
+	char *password = strdup("01234567");
 	printf("\n%s", password);
 	rotate_position(password, strlen(password), '6');
 	printf("\n%s     <- after rotate based on position of character '%c'\n",
@@ -246,7 +246,7 @@ MU_TEST(test_unrotate) {
  * operations:
  */
 MU_TEST(test_sample) {
-	char *password = dup_string("abcde");
+	char *password = strdup("abcde");
 	int n = strlen(password);
 
 	swap_position(password, n, 4, 0);
@@ -278,7 +278,7 @@ MU_TEST(test_sample) {
 }
 
 MU_TEST(test_undo) {
-	char *password = dup_string("abcde");
+	char *password = strdup("abcde");
 	int n = strlen(password);
 
 	printf("\n%s\n", password);
@@ -316,7 +316,7 @@ MU_TEST(test_undo) {
 	mu_should(equal_string(password, "bdeac"));
 
 	free(password);
-	password = dup_string("01234567");
+	password = strdup("01234567");
 	n = strlen(password);
 	printf("\n%s\n", password);
 	processor(password, n, "move position 6 to position 3");
@@ -388,7 +388,7 @@ MU_TEST(test_undo) {
 
  */
 MU_TEST(test_rotate) {
-	char *password = dup_string("01234567");
+	char *password = strdup("01234567");
 	int n = strlen(password);
 	strcpy(password, "01234567");
 	printf("\n%s\n", password);
@@ -405,7 +405,7 @@ MU_TEST(test_rotate) {
 			password, chr);
 	}
 
-	char *cmd = dup_string("rotate based on position of letter c               ");
+	char *cmd = strdup("rotate based on position of letter c               ");
 	char cmd_len = strlen(cmd);
 	for (int i = 0; i < strlen(password); i++) {
 		strcpy(password, "abcdefgh");
@@ -422,9 +422,9 @@ MU_TEST(test_rotate) {
 }
 
 MU_TEST(test_indices) {
-	char *original = dup_string("01234567");
-	char *rotated = dup_string("01234567");
-	char *trial = dup_string("01234567");
+	char *original = strdup("01234567");
+	char *rotated = strdup("01234567");
+	char *trial = strdup("01234567");
 
 	int n = strlen(original);
 	int indices[] = { -1, -1, -1, -1, -1, -1, -1, -1 };
