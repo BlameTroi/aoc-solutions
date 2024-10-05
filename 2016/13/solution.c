@@ -433,7 +433,7 @@ cells_within_path_length(
 		/* printf("\n"); */
 		qu_destroy(adj);
 		if (distances[offset(m, c)] <= max_path_length)
-			kl_insert(kl, 0, (void *)c);
+			kl_insert(kl, (void *)c, (void *)c);
 
 		else
 			free(c);
