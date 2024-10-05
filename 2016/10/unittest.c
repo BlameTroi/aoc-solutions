@@ -14,7 +14,7 @@
 #include "txbmisc.h"
 #define TXBQU_IMPLEMENTATION
 #include "txbqu.h"
-#include "txbfs.h"
+#include "txbst.h"
 
 /*
  * minunit setup and teardown of infrastructure.
@@ -120,7 +120,7 @@ struct bot_node {
 
 typedef struct output_bin output_bin;
 struct output_bin {
-	fscb *fs;
+	stcb *st;
 };
 
 typedef struct load_command load_command;
@@ -176,7 +176,7 @@ give_to_bot(bot_node *bot, int value) {
 static
 void
 give_to_bin(output_bin *bin, int value) {
-	fs_push(bin->fs, (void *)(long)value);
+	st_push(bin->st, (void *)(long)value);
 }
 
 static
@@ -198,7 +198,7 @@ MU_TEST(test_build) {
 	output_bin bins[100];
 	memset(bins, 0, sizeof(bins));
 	for (int i = 0; i < 100; i++)
-		bins[i].fs = fs_create(10);
+		bins[i].st = st_create();
 
 	int last_bot = -1;
 	bot_node bots[250];
@@ -259,13 +259,13 @@ MU_TEST(test_build) {
 	printf("\npost load cmds\n");
 	for (int i = 0; i <= last_bot; i++) {
 		printf(
-		        "%3d %c %c %c %s %3d %s %3d %c %3d %3d\n",
-		        i,
-		        bool_char(bots[i].ref_load), bool_char(bots[i].ref_input),
-		        bool_char(bots[i].ref_inferred),
-		        dest_string(bots[i].low_bot), bots[i].low_dest,
-		        dest_string(bots[i].high_bot), bots[i].high_dest,
-		        bool_char(bots[i].full), bots[i].low_value, bots[i].high_value
+			"%3d %c %c %c %s %3d %s %3d %c %3d %3d\n",
+			i,
+			bool_char(bots[i].ref_load), bool_char(bots[i].ref_input),
+			bool_char(bots[i].ref_inferred),
+			dest_string(bots[i].low_bot), bots[i].low_dest,
+			dest_string(bots[i].high_bot), bots[i].high_dest,
+			bool_char(bots[i].full), bots[i].low_value, bots[i].high_value
 		);
 	}
 	printf("\nrun until no full bots\n");
@@ -298,22 +298,22 @@ MU_TEST(test_build) {
 	printf("\npost run cmds\n");
 	for (int i = 0; i <= last_bot; i++) {
 		printf(
-		        "%3d %c %c %c %s %3d %s %3d %c %3d %3d\n",
-		        i,
-		        bool_char(bots[i].ref_load), bool_char(bots[i].ref_input),
-		        bool_char(bots[i].ref_inferred),
-		        dest_string(bots[i].low_bot), bots[i].low_dest,
-		        dest_string(bots[i].high_bot), bots[i].high_dest,
-		        bool_char(bots[i].full), bots[i].low_value, bots[i].high_value
+			"%3d %c %c %c %s %3d %s %3d %c %3d %3d\n",
+			i,
+			bool_char(bots[i].ref_load), bool_char(bots[i].ref_input),
+			bool_char(bots[i].ref_inferred),
+			dest_string(bots[i].low_bot), bots[i].low_dest,
+			dest_string(bots[i].high_bot), bots[i].high_dest,
+			bool_char(bots[i].full), bots[i].low_value, bots[i].high_value
 		);
 		if (bots[i].seen_17 && bots[i].seen_61)
 			printf("saw both 17 and 61\n");
 	}
 	for (int i = 0; i <= last_bin; i++) {
-		printf("%3d [%d] ", i, fs_depth(bins[i].fs));
+		printf("%3d [%d] ", i, st_depth(bins[i].st));
 		void *v;
-		while (!fs_empty(bins[i].fs))
-			printf(" %ld", (long)fs_pop(bins[i].fs));
+		while (!st_empty(bins[i].st))
+			printf(" %ld", (long)st_pop(bins[i].st));
 		printf("\n");
 	}
 	printf("\ndone?\n");

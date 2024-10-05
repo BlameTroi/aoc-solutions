@@ -55,7 +55,7 @@ fn_cmp_range_asc(const void *a, const void *b) {
 
 int
 part_one(
-        const char *fname
+	const char *fname
 ) {
 
 	FILE *ifile = fopen(fname, "r");
@@ -85,8 +85,8 @@ part_one(
 		ranges[num_ranges].ip_max = strtol(tokens[2], NULL, 10);
 		for (long i = ranges[num_ranges].ip_min; i <= ranges[num_ranges].ip_max; i++)
 			BITCLEAR(bits, i);
-		min_ip = lmin(ranges[num_ranges].ip_min, min_ip);
-		max_ip = lmax(ranges[num_ranges].ip_max, max_ip);
+		min_ip = min(ranges[num_ranges].ip_min, min_ip);
+		max_ip = max(ranges[num_ranges].ip_max, max_ip);
 		num_ranges += 1;
 		free_split(tokens);
 	}
@@ -122,7 +122,7 @@ part_one(
 
 int
 part_two(
-        const char *fname
+	const char *fname
 ) {
 	return EXIT_SUCCESS;
 }

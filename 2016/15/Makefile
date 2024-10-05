@@ -5,8 +5,8 @@ MONTH=15
 DATADIR=$(HOME)/projects/aoc/datasets/$(YEAR)/$(MONTH)
 
 CC=clang
-# CFLAGS=-Wall -O3 -std=c99
-CFLAGS=-fsanitize=address -Wall -g3 -O0 -std=c99
+# CFLAGS=-Wall -O3 -std=c18 --pedantic-errors
+CFLAGS=-fsanitize=address -Wall -g3 -O0 -std=c18 --pedantic-errors
 # LDFLAGS=-lm
 LDFLAGS=
 

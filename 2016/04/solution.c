@@ -100,8 +100,8 @@ create_room_code(char *str) {
 	memset(rc, 0, sizeof(room_code));
 	memcpy(rc->tag, ROOM_CODE_TAG, sizeof(rc->tag));
 
-	rc->as_read = dup_string(str);
-	rc->encrypted_name = dup_string(str);
+	rc->as_read = strdup(str);
+	rc->encrypted_name = strdup(str);
 
 	char *p = rc->encrypted_name;
 	int i = -1;
@@ -109,7 +109,7 @@ create_room_code(char *str) {
 		i += 1;
 		assert(p[i]);
 		if (is_lowercase(p[i]) ||
-		                (p[i] == '-' && is_lowercase(p[i+1])))
+		(p[i] == '-' && is_lowercase(p[i+1])))
 			continue;
 		break;
 	}
@@ -142,7 +142,7 @@ create_room_code(char *str) {
 
 static void
 calculate_checksum(
-        room_code *rc
+	room_code *rc
 ) {
 
 	for (int i = 0; i < 26; i++) {
@@ -229,7 +229,7 @@ decrypt_char(int rot, char c) {
 
 const char *
 get_decrypted_name(room_code *rc) {
-	char *decrypted = dup_string(get_encrypted_name(rc));
+	char *decrypted = strdup(get_encrypted_name(rc));
 	int rot = strtol(get_sector_id(rc), NULL, 10);
 	char *p = decrypted;
 	while (*p) {
@@ -244,8 +244,8 @@ is_valid_room_code(room_code *rc) {
 	assert(rc && memcmp(rc->tag, ROOM_CODE_TAG, sizeof(rc->tag)) == 0);
 	if (rc->valid == UNKNOWN) {
 		rc->valid = memcmp(get_provided_checksum(rc),
-		                   get_valid_checksum(rc),
-		                   sizeof(rc->provided)) == 0 ? VALID : INVALID;
+			get_valid_checksum(rc),
+		sizeof(rc->provided)) == 0 ? VALID : INVALID;
 	}
 	return rc->valid == VALID;
 }
@@ -257,7 +257,7 @@ is_valid_room_code(room_code *rc) {
 
 int
 part_one(
-        const char *fname
+	const char *fname
 ) {
 
 	FILE *ifile = fopen(fname, "r");
@@ -294,7 +294,7 @@ part_one(
 
 int
 part_two(
-        const char *fname
+	const char *fname
 ) {
 	FILE *ifile;
 
@@ -310,7 +310,7 @@ part_two(
 		room_code *rc = NULL;
 		rc = create_room_code(iline);
 		if (is_valid_room_code(rc) &&
-		                strcmp(get_decrypted_name(rc), TARGET_NAME) == 0)
+		strcmp(get_decrypted_name(rc), TARGET_NAME) == 0)
 			sid = strtol(get_sector_id(rc), NULL, 10);
 		destroy_room_code(rc);
 	}

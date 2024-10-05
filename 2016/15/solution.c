@@ -69,12 +69,11 @@ spinner(int part) {
 
 /*
  * part one:
- *
  */
 
 int
 part_one(
-        const char *fname
+	const char *fname
 ) {
 
 	printf("part one: %ld\n", spinner(1));
@@ -85,12 +84,11 @@ part_one(
 
 /*
  * part two:
- *
  */
 
 int
 part_two(
-        const char *fname
+	const char *fname
 ) {
 
 	printf("part two: %ld\n", spinner(2));

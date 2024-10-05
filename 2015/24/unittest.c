@@ -23,13 +23,13 @@ min_qe_r(int i, unsigned long accum_qe, int accum_weight) {
 	if (i >= num_packages || accum_weight > target_weight)
 		return LONG_MAX;
 	unsigned long lhs = min_qe_r(i + 1, accum_qe *packages[i],
-	                             accum_qe + packages[i]);
+			accum_qe + packages[i]);
 	unsigned long rhs = min_qe_r(i + 1, accum_qe, accum_weight);
 	if (lhs == LONG_MAX)
 		return rhs;
 	if (rhs == LONG_MAX)
 		return lhs;
-	return ulmin(lhs, rhs);
+	return min(lhs, rhs);
 }
 
 unsigned long
@@ -64,19 +64,19 @@ try_loopy(const char *fname, int groups) {
 					unsigned long d = packages[w];
 					if (a+b+c+d == fourth) {
 						unsigned long prod = a*b*c*d;
-						quantum_f = ulmin(quantum_f, prod);
+						quantum_f = min(quantum_f, prod);
 					}
 					for (int v = w - 1; v > -1; v--) {
 						unsigned long e = packages[v];
 						if (a+b+c+d+e == fourth) {
 							unsigned long prod = a*b*c*d*e;
-							quantum_f = ulmin(quantum_f, prod);
+							quantum_f = min(quantum_f, prod);
 						}
 						for (int u = v - 1; u > -1; u--) {
 							unsigned long f = packages[u];
 							if (a+b+c+d+e+f == third) {
 								unsigned long prod = a*b*c*d*e*f;
-								quantum_t = ulmin(quantum_t, prod);
+								quantum_t = min(quantum_t, prod);
 							}
 						}
 					}

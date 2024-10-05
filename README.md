@@ -82,7 +82,7 @@ There are two compilers I am alternating between: gfortran 13.2 and lfortran. lf
 
 ### C
 
-I started on 2015 using `C`. At this time clang 15 is the version Apple provides. All my code is compiled with `-Wall -O0 -g3 -fsanitize=address --std=c99`.
+I started on 2015 using `C`. At this time clang 15 is the version Apple provides. All my code is compiled with `-Wall -O0 -g3 -fsanitize=address --std=c18 --pedantic-errors`.
 
 
 ### Editor/IDE

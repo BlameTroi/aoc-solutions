@@ -1,0 +1,3 @@
+./driver /Users/troi/projects/aoc/datasets/2016/15/dataset.txt
+part one: 203660
+part two: 2408135

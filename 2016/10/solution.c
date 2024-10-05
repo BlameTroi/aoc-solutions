@@ -14,8 +14,8 @@
 #define TXBMISC_IMPLEMENTATION
 #include "txbmisc.h"
 
-#define TXBFS_IMPLEMENTATION
-#include "txbfs.h"
+#define TXBST_IMPLEMENTATION
+#include "txbst.h"
 
 /*
  * a bot has two hands, when they are full of values
@@ -46,7 +46,7 @@ struct bot_node {
 
 typedef struct output_bin output_bin;
 struct output_bin {
-	fscb *fs;
+	stcb *st;
 };
 
 /*
@@ -79,7 +79,7 @@ initialize(void) {
 
 	memset(bins, 0, sizeof(bins));
 	for (int i = 0; i < 50; i++)
-		bins[i].fs = fs_create(10);
+		bins[i].st = st_create();
 
 	memset(bots, 0, sizeof(bots));
 	for (int i = 0; i < 250; i++) {
@@ -133,7 +133,7 @@ give_to_bot(bot_node *bot, int value) {
 
 void
 give_to_bin(output_bin *bin, int value) {
-	fs_push(bin->fs, (void *)(long)value);
+	st_push(bin->st, (void *)(long)value);
 }
 
 /*
@@ -142,7 +142,7 @@ give_to_bin(output_bin *bin, int value) {
 
 int
 part_one(
-        const char *fname
+	const char *fname
 ) {
 
 	FILE *ifile = fopen(fname, "r");
@@ -249,9 +249,9 @@ part_one(
 
 	printf("part one: %d\n", the_bot);
 
-	int the_product = (long)fs_pop(bins[0].fs) *
-	                  (long)fs_pop(bins[1].fs) *
-	                  (long)fs_pop(bins[2].fs);
+	int the_product = (long)st_pop(bins[0].st) *
+		(long)st_pop(bins[1].st) *
+		(long)st_pop(bins[2].st);
 	printf("part two: %d\n", the_product);
 
 	fclose(ifile);
@@ -266,7 +266,7 @@ part_one(
 
 int
 part_two(
-        const char *fname
+	const char *fname
 ) {
 	return EXIT_SUCCESS;
 }

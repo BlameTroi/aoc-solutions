@@ -48,14 +48,14 @@
 
 static bool
 aba_here(
-        const char *str,
-        int i
+	const char *str,
+	int i
 );
 
 static inline bool
 aba_here(
-        const char *str,
-        int i
+	const char *str,
+	int i
 ) {
 	if (str[i+2] == 0 || str[i+1] == 0 || str[i] == 0)
 		return false;
@@ -68,14 +68,14 @@ aba_here(
 
 static bool
 abba_here(
-        const char *str,
-        int i
+	const char *str,
+	int i
 );
 
 static inline bool
 abba_here(
-        const char *str,
-        int i
+	const char *str,
+	int i
 ) {
 	if (i == 0)
 		return false;
@@ -94,7 +94,7 @@ abba_here(
 
 bool
 has_good_abba(
-        const char *str
+	const char *str
 ) {
 	int len = strlen(str);
 	int i = 1;
@@ -127,7 +127,7 @@ has_good_abba(
 
 bool
 has_bad_abba(
-        const char *str
+	const char *str
 ) {
 	int len = strlen(str);
 	int i = 1;
@@ -163,7 +163,7 @@ has_bad_abba(
 
 bool
 supports_tls(
-        const char *str
+	const char *str
 ) {
 	return has_good_abba(str) && !has_bad_abba(str);
 }
@@ -178,7 +178,7 @@ supports_tls(
 
 bool
 supports_ssl(
-        const char *str
+	const char *str
 ) {
 	int len = strlen(str);
 
@@ -186,8 +186,8 @@ supports_ssl(
 	 * anything outside of [] is supernet, and anything inside [] is
 	 * hypernet. */
 
-	char *supernet = dup_string(str);
-	char *hypernet = dup_string(str);
+	char *supernet = strdup(str);
+	char *hypernet = strdup(str);
 
 	/* for supernet values, replace anything inside [] with blank */
 	char *p = supernet;
@@ -260,7 +260,7 @@ supports_ssl(
 
 int
 part_one(
-        const char *fname
+	const char *fname
 ) {
 
 	FILE *ifile = fopen(fname, "r");
@@ -290,7 +290,7 @@ part_one(
 
 int
 part_two(
-        const char *fname
+	const char *fname
 ) {
 	FILE *ifile;
 

@@ -7,8 +7,6 @@
 
 #include "solution.h"
 
-#define TXBABORT_IMPLEMENTATION
-#include "txbabort.h"
 #define TXBSTR_IMPLEMENTATION
 #include "txbstr.h"
 #define TXBMISC_IMPLEMENTATION
@@ -26,7 +24,7 @@
 
 int
 part_one(
-        const char *fname
+	const char *fname
 ) {
 
 	FILE *ifile = fopen(fname, "r");
@@ -112,7 +110,7 @@ part_one(
 
 int
 part_two(
-        const char *fname
+	const char *fname
 ) {
 
 	FILE *ifile = fopen(fname, "r");

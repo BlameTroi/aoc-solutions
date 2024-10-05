@@ -12,10 +12,8 @@
 #include "txbmisc.h"
 #define TXBQU_IMPLEMENTATION
 #include "txbqu.h"
-#define TXBABORT_IMPLEMENTATION
-#include "txbabort.h"
-#define TXBDL_IMPLEMENTATION
-#include "txbdl.h"
+#define TXBKL_IMPLEMENTATION
+#include "txbkl.h"
 
 /*
  * generate a maze of a particular size using a peculiar algorithm.
@@ -49,7 +47,7 @@ static bool
 is_valid_maze_coordinate(const maze *m, const maze_coordinate *c) {
 	assert(m && c);
 	return c->row >= 0 && c->row < m->rows &&
-	       c->col >= 0 && c->col < m->cols;
+			c->col >= 0 && c->col < m->cols;
 }
 
 static bool
@@ -142,10 +140,10 @@ adjacent_maze_cells(const maze *m, const maze_coordinate *c) {
 	};
 	for (int i = 0; i < 4; i++) {
 		maze_coordinate *adj = adjust_maze_coordinate(
-		                               c,
-		                               adjacent_adjustments[i][0],
-		                               adjacent_adjustments[i][1]
-		                       );
+				c,
+				adjacent_adjustments[i][0],
+				adjacent_adjustments[i][1]
+			);
 		if (is_valid_maze_coordinate(m, adj))
 			qu_enqueue(ac, adj);
 	}
@@ -168,10 +166,10 @@ open_adjacent_maze_cells(const maze *m, const maze_coordinate *c) {
 	};
 	for (int i = 0; i < 4; i++) {
 		maze_coordinate *adj = adjust_maze_coordinate(
-		                               c,
-		                               adjacent_adjustments[i][0],
-		                               adjacent_adjustments[i][1]
-		                       );
+				c,
+				adjacent_adjustments[i][0],
+				adjacent_adjustments[i][1]
+			);
 		if (is_valid_maze_coordinate(m, adj) && is_open(m, adj))
 			qu_enqueue(ac, adj);
 
@@ -279,7 +277,7 @@ populate_maze(maze *m) {
 void
 fprint_maze(FILE *f, const maze *m) {
 	fprintf(f, "\nmaze %d rows %d columns, magic=%d\n\n", m->rows, m->cols,
-	        m->magic);
+		m->magic);
 	fprintf(f, "    ");
 	for (int x = 0; x < m->cols; x++)
 		fprintf(f, "%d", x % 10);
@@ -324,7 +322,7 @@ dup_maze_coordinate(const maze_coordinate *c) {
 void
 fprint_distances(FILE *f, const maze *m, int *distances) {
 	fprintf(f, "\nmaze %d rows %d columns, magic=%d\n\n", m->rows, m->cols,
-	        m->magic);
+		m->magic);
 	fprintf(f, "    ");
 	for (int x = 0; x < m->cols; x++)
 		fprintf(f, "%d", x % 10);
@@ -367,7 +365,7 @@ print_distances(const maze *m, int *distances) {
 
 int
 shortest_path_length(const maze *m, const maze_coordinate from,
-                     const maze_coordinate to) {
+	const maze_coordinate to) {
 	int dist = -INT_MAX;
 	int *distances = malloc((m->rows + 1) * (m->cols + 1) * sizeof(int));
 	memset(distances, -1, (m->rows + 1) * (m->cols + 1) * sizeof(int));
@@ -406,14 +404,14 @@ shortest_path_length(const maze *m, const maze_coordinate from,
 	return dist;
 }
 
-dlcb *
+klcb *
 cells_within_path_length(
-        const maze *m,
-        const maze_coordinate from,
-        const maze_coordinate to,
-        int max_path_length
+	const maze *m,
+	const maze_coordinate from,
+	const maze_coordinate to,
+	int max_path_length
 ) {
-	dlcb *dl = dl_create_by_key(false, compare_maze_coordinate, free);
+	klcb *kl = kl_create(compare_maze_coordinate);
 	int *distances = malloc((m->rows + 1) * (m->cols + 1) * sizeof(int));
 	memset(distances, -1, (m->rows + 1) * (m->cols + 1) * sizeof(int));
 	qucb *wq = qu_create();
@@ -435,7 +433,7 @@ cells_within_path_length(
 		/* printf("\n"); */
 		qu_destroy(adj);
 		if (distances[offset(m, c)] <= max_path_length)
-			dl_insert(dl, 0, (void *)c);
+			kl_insert(kl, 0, (void *)c);
 
 		else
 			free(c);
@@ -446,7 +444,7 @@ cells_within_path_length(
 	/* print_distances(m, distances); */
 	free(distances);
 
-	return dl;
+	return kl;
 }
 
 /*
@@ -456,7 +454,7 @@ cells_within_path_length(
 
 int
 part_one(
-        const char *fname
+	const char *fname
 ) {
 
 	maze  *m = create_maze(49, 42, 1350);
@@ -482,7 +480,7 @@ part_one(
 
 int
 part_two(
-        const char *fname
+	const char *fname
 ) {
 
 	maze  *m = create_maze(49, 42, 1350);
@@ -493,12 +491,13 @@ part_two(
 		39, 31
 	};
 
-	dlcb *dl = cells_within_path_length(m, from, to, 50);
+	klcb *kl = cells_within_path_length(m, from, to, 50);
 
-	printf("part two: %d\n", dl_count(dl));
+	printf("part two: %d\n", kl_count(kl));
 
-	dl_delete_all(dl);
-	dl_destroy(dl);
+	/* TODO leak */
+	kl_reset(kl);
+	kl_destroy(kl);
 
 	return EXIT_SUCCESS;
 }

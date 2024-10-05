@@ -394,7 +394,7 @@ try_combination(
 			unsigned long qe = 1;
 			for (int k = 0; k < j; k++)
 				qe *= packages[dx[k]];
-			group_qe[j-1][1] = lmin(group_qe[j-1][1], qe);
+			group_qe[j-1][1] = min(group_qe[j-1][1], qe);
 		}
 
 		/* next trial combination */

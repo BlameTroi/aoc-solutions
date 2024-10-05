@@ -12,7 +12,7 @@ SRCS = driver.c solution.c unittest.c
 HDRS = solution.h
 OBJS = driver.o solution.o unittest.o
 
-.PHONY: clean unit test all short long check-syntax
+.PHONY: clean all short long check-syntax
 
 check-syntax:
 	$(CC) $(CFLAGS) -Wextra -Wpedantic -fsyntax-only $(SRCS)
@@ -22,19 +22,8 @@ clean:
 
 all: driver
 
-unit: unittest
-
 solution.o: solution.c solution.h
 	$(CC) $(CFLAGS) -c solution.c
-
-unittest.o: unittest.c solution.h solution.c
-	$(CC) $(CFLAGS) -c unittest.c
-
-unittest: unittest.o solution.o
-	$(CC) $(CFLAGS) -o unittest unittest.o solution.o -lm
-
-test:
-	./unittest
 
 driver.o: driver.c
 	$(CC) $(CFLAGS) -c driver.c

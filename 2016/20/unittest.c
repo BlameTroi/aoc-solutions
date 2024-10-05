@@ -84,7 +84,7 @@ ip_blacklist_range big_range[] = {
 
 
 uint32_t
-try_it_big() {
+try_it_big(void) {
 	uint32_t c = 4294967295;
 	uint64_t n = BITNSLOTS(c);
 	uint8_t *bits = malloc(n);
@@ -93,8 +93,8 @@ try_it_big() {
 	memset(bits, 0xff, n);
 	assert(bits);
 	for (uint32_t i = 0; big_range[i].ip_min != big_range[i].ip_max; i++) {
-		max_seen = ulmax(max_seen, big_range[i].ip_max);
-		min_seen = ulmax(min_seen, big_range[i].ip_min);
+		max_seen = max(max_seen, big_range[i].ip_max);
+		min_seen = max(min_seen, big_range[i].ip_min);
 		for (uint32_t j = big_range[i].ip_min; j <= big_range[i].ip_max; j++)
 			BITCLEAR(bits, j);
 	}
@@ -109,7 +109,7 @@ try_it_big() {
 }
 
 uint32_t
-try_it_small() {
+try_it_small(void) {
 	uint8_t *bits = malloc(10); /* calloc(10, 1);*/ /* 0->9 */
 	memset(bits, 0xff, 10);
 	for (int i = 5; i <= 8; i++)

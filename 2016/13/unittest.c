@@ -7,7 +7,7 @@
 
 #include "minunit.h"
 #include "solution.h"
-#include "txbdl.h"
+#include "txbkl.h"
 
 int num_args;
 char **the_args;
@@ -34,10 +34,10 @@ MU_TEST(test_test) {
 
 	printf("%d\n", d);
 
-	dlcb *dl = cells_within_path_length(m, from, to, 5);
-	printf("\n%d\n", dl_count(dl));
-	dl_delete_all(dl);
-	dl_destroy(dl);
+	klcb *kl = cells_within_path_length(m, from, to, 5);
+	printf("\n%d\n", kl_count(kl));
+	kl_reset(kl);
+	kl_destroy(kl);
 
 	destroy_maze(m);
 
@@ -57,10 +57,10 @@ MU_TEST(test_test) {
 	d = shortest_path_length(m, to, from);
 	printf("\n%d\n", d);
 
-	dl = cells_within_path_length(m, from, to, 50);
-	printf("\n%d\n", dl_count(dl));
-	dl_delete_all(dl);
-	dl_destroy(dl);
+	kl = cells_within_path_length(m, from, to, 50);
+	printf("\n%d\n", kl_count(kl));
+	kl_reset(kl);
+	kl_destroy(kl);
 	destroy_maze(m);
 	mu_should(true);
 	mu_shouldnt(false);
